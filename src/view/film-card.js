@@ -1,5 +1,34 @@
+import {generateFilm} from "../mock/film.js";
+
+// eslint-disable-next-line quotes
+
+
+const createFilmsControls = (film) => {
+    const {isWatchList, isWatched, isFavorite} = film;
+
+    const watchListClass = isWatchList 
+        ? "film-card__controls-item--add-to-watchlist film-card__controls-item--active" : 
+        "film-card__controls-item--add-to-watchlist";
+    const watchedClass = isWatched 
+        ? "film-card__controls-item--mark-as-watched film-card__controls-item--active" : 
+        "film-card__controls-item--mark-as-watched";
+    const favoriteClass = isFavorite 
+        ? "film-card__controls-item--favorite film-card__controls-item--active" : 
+        "film-card__controls-item--favorite";
+    
+    return (`<button class="film-card__controls-item ${watchListClass}" type="button">Add to watchlist</button>
+      <button class="film-card__controls-item ${watchedClass}" type="button">Mark as watched</button>
+      <button class="film-card__controls-item ${favoriteClass}" type="button">Mark as favorite</button>`
+    );
+
+};
+
+const filmControls =  createFilmsControls(generateFilm());
+
 const createFilmCardTemplate = (film) => {
-    const {poster, title, rate, year, duration, genre, description, comments} = film;
+    const {poster, title, rate, year, duration, genres, description, comments} = film;
+    const genre = genres.slice(0, 1);
+
     return `<article class="film-card">
     <h3 class="film-card__title">${title}</h3>
     <p class="film-card__rating">${rate}</p>
@@ -10,11 +39,9 @@ const createFilmCardTemplate = (film) => {
     </p>
     <img src="${poster}" alt="" class="film-card__poster">
     <p class="film-card__description">${description}</p>
-    <a class="film-card__comments">${comments}</a>
+    <a class="film-card__comments">${comments.length}</a>
     <div class="film-card__controls">
-      <button class="film-card__controls-item film-card__controls-item--add-to-watchlist" type="button">Add to watchlist</button>
-      <button class="film-card__controls-item film-card__controls-item--mark-as-watched" type="button">Mark as watched</button>
-      <button class="film-card__controls-item film-card__controls-item--favorite" type="button">Mark as favorite</button>
+    ${filmControls}
     </div>
   </article>`;
 };
@@ -29,3 +56,4 @@ const createFilmListSectionTemplate = () => {
 };
 
 export{createFilmCardTemplate, createFilmListSectionTemplate};
+
