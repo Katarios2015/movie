@@ -1,4 +1,7 @@
-import {getRandomArrayElement, getRandomCeilNumber, getRandomNumber, getRandomArray} from "./util.js";
+import {getRandomArrayElement, getRandomCeilNumber, getRandomNumber, getRandomArray, getTimeFormat} from "./util.js";
+const dayjs = require("dayjs");
+
+const COMMENTS_COUNT = 4;
 
 const filmTitles = [
     "The Dance of Life", "Sagebrush Trail","The Man with the Golden Arm",
@@ -29,44 +32,65 @@ const filmDescriptions = [
 
 const filmGenres = ["Musical", "Comedy", "Drama", "Documental", "Historical"];
 
-const filmDuration = ["1h 3min", "2h 33min", "1h 00min", "2h 5min", "1h 10min"];
+const filmDurations = [56, 120, 77, 140, 180];
 
-const directors = ["Anthony Mann", "Guy Ritchie", "David Yates", "Ridley Scott", "Alfred Hitchcock",]; 
+const idComments = [5, 120, 7, 140, 1];
+
+const directors = ["Anthony Mann", "Guy Ritchie", "David Yates", "Ridley Scott", "Alfred Hitchcock"]; 
 const writers = ["Anne Wigton", "Heinz Herald", "Richard Weil", "Russell Tee", "Noel Adams", "Clemence Dane"];
-const actors = ["Robert De Niro", "Jack Nicholson", "Marlon Brando", "Denzel Washington", " Katharine Hepburn"];
+const actors = ["Robert De Niro", "Jack Nicholson", "Marlon Brando", "Denzel Washington", "Katharine Hepburn"];
 const releases = ["01 April 1945", "30 March 1945", "30 May 1925", "05 October 2000"];
 const countryes = ["USA","Great Britain", "Russia"];
 
+const commentAthors = ["Ivan Pypkov", "Kate Ritchie", "David", "Roman Scott", "Alfred"];
+const commentDates = ["2019-05-11T16:12:32.554Z", "2020-10-11T16:12:32.554Z", "2009-11-11T16:12:32.554Z", "2023-01-11T16:12:32.554Z"];
+const commentEmotions = [
+    "./images/emoji/angry.png",
+    "./images/emoji/puke.png",
+    "./images/emoji/sleeping.png",
+    "./images/emoji/smile.png"
+];
+
+const generatePopupComment = () => {
+    return {
+        id: getRandomArrayElement(idComments),
+        author: getRandomArrayElement(commentAthors),
+        commentText: getRandomArray(filmDescriptions, 0, 5),
+        date: dayjs(getRandomArrayElement(commentDates)).format("YYYY/MM/DD  hh:mm"),
+        emotion: getRandomArrayElement(commentEmotions),
+    };
+};
+
+const popupComments = new Array(COMMENTS_COUNT).fill().map(generatePopupComment);
+
+const selectCommentsDependOfID = (id, comments) => {
+    return comments.filter((item) => item.id === id);
+};
+
 const generateFilm = () => {
+    const idOfComments = getRandomArrayElement(idComments);
+    const comments = popupComments;
     return {
         poster: getRandomArrayElement(filmPosters),
         title: getRandomArrayElement(filmTitles),
         rate: getRandomNumber(0, 10),
         year: getRandomCeilNumber(1921, 2005),
-        duration: getRandomArrayElement(filmDuration),
-        genre: getRandomArrayElement(filmGenres),
+        duration: getTimeFormat(getRandomArrayElement(filmDurations)),
+        genres:  getRandomArray(filmGenres, 0, 3),
         description: getRandomArray(filmDescriptions, 0, 5),
-        comments: getRandomCeilNumber(0, 5),
-    };
-};
+        comments: selectCommentsDependOfID(idOfComments, comments),
+        isWatchList: Boolean(getRandomCeilNumber(0, 1)),
+        isWatched: Boolean(getRandomCeilNumber(0, 1)),
+        isFavorite: Boolean(getRandomCeilNumber(0, 1)),
 
-const generatePopupFilm = () => {
-    return {
-        poster: getRandomArrayElement(filmPosters),
-        title: getRandomArrayElement(filmTitles),
         originalTitle: getRandomArrayElement(filmTitles),
         director: getRandomArrayElement(directors),
         writers: getRandomArray(writers, 0, 3),
         actors: getRandomArray(actors, 0, 5),
-        release: getRandomArrayElement(releases),
-        rate: getRandomNumber(0, 10),
+        release: dayjs(getRandomArrayElement(releases)).format("DD MMMM YYYY"),
         ageRate: `${getRandomCeilNumber(0, 18)}+`,
-        duration: getRandomArrayElement(filmDuration),
         country: getRandomArrayElement(countryes),
-        genre: getRandomArrayElement(filmGenres),//если жанров несколько выводить geners
-        description: getRandomArray(filmDescriptions, 0, 5),
-        /*comments: getRandomCeilNumber(0, 5), завести отдельную структуру*/
     };
 };
 
-export {generateFilm, generatePopupFilm};
+export {generateFilm};

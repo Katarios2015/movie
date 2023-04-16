@@ -7,8 +7,8 @@ const getRandomArrayElement = (items) => {
 
 const getRandomCeilNumber = (min, max) => {
     min = Math.ceil(min);
-    max = Math.floor(max);
-    const randCeilNumber = Number(Math.floor(Math.random() * (max - min) + min));
+    max = Math.ceil(max);
+    const randCeilNumber = Number(Math.round(Math.random() * (max - min) + min));
     return randCeilNumber;
 };
 
@@ -30,4 +30,12 @@ const getRandomArray = (someArray, minLength, maxLength) => {
     return newMass;
 };
 
-export {getRandomArrayElement, getRandomCeilNumber, getRandomNumber, getRandomArray};
+const getTimeFormat = (minutes) => {
+    const hours = Math.floor(minutes/60);
+    const restMinutes = minutes%60;
+
+    const timeFormat = `${hours}h ${restMinutes}m`;
+    return timeFormat;
+};
+
+export {getRandomArrayElement, getRandomCeilNumber, getRandomNumber, getRandomArray, getTimeFormat};
