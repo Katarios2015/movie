@@ -97,8 +97,6 @@ if(mockFilms.length === 0) {
             siteBody.removeChild(popupComponent);
             siteBody.classList.remove("hide-overflow");
         });
-   
-   
         render(filmListContainer, filmCardComponent.getElement(), RenderPosition.BEFOREEND);
 
     };
