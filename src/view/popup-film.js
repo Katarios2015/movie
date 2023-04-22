@@ -1,4 +1,5 @@
-import {generateFilm} from "../mock/film.js";
+import {createElement} from "../render.js";
+
 
 const createGenreTemplate = (popupFilm) => {
     const {genres} = popupFilm;
@@ -54,12 +55,6 @@ const createCommentTemplate = (comments) => {
 </div>
 </li>`).join("")}`);
 };
-
-
-
-const genreTemplate = createGenreTemplate(generateFilm());
-const controlsTamplate = createPopupControls(generateFilm());
-/*const commentItem = createCommentTemplate(generatePopupFilm());*/
 
 
 const createPopupTemplate = (popupFilm) => {
@@ -119,7 +114,7 @@ const createPopupTemplate = (popupFilm) => {
                 <td class="film-details__cell">${country}</td>
               </tr>
               <tr class="film-details__row">
-                ${genreTemplate}
+                ${createGenreTemplate(popupFilm)}
               </tr>
             </table>
   
@@ -130,7 +125,7 @@ const createPopupTemplate = (popupFilm) => {
         </div>
   
         <section class="film-details__controls">
-        ${controlsTamplate}
+        ${createPopupControls(popupFilm)}
         </section>
       </div>
   
@@ -177,4 +172,24 @@ const createPopupTemplate = (popupFilm) => {
   </section>`;
 };
 
-export {createPopupTemplate};
+export default class Popup {
+    constructor (popupFilm) {
+        this._popupFilm = popupFilm;
+        this._element = null;
+    }
+
+    getTemplate() {
+        return createPopupTemplate(this._popupFilm);
+    }
+
+    getElement () {
+        if(!this._element) {
+            this._element = createElement(this.getTemplate());
+        }
+        return this._element;
+    }
+
+    removeElement () {
+        this._element = null;
+    }
+}
