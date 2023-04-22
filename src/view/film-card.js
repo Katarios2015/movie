@@ -1,7 +1,5 @@
-import {generateFilm} from "../mock/film.js";
 
-// eslint-disable-next-line quotes
-
+import {createElement} from "../render.js";
 
 const createFilmsControls = (film) => {
     const {isWatchList, isWatched, isFavorite} = film;
@@ -15,15 +13,15 @@ const createFilmsControls = (film) => {
     const favoriteClass = isFavorite 
         ? "film-card__controls-item--favorite film-card__controls-item--active" : 
         "film-card__controls-item--favorite";
-    
+  
     return (`<button class="film-card__controls-item ${watchListClass}" type="button">Add to watchlist</button>
-      <button class="film-card__controls-item ${watchedClass}" type="button">Mark as watched</button>
-      <button class="film-card__controls-item ${favoriteClass}" type="button">Mark as favorite</button>`
+    <button class="film-card__controls-item ${watchedClass}" type="button">Mark as watched</button>
+    <button class="film-card__controls-item ${favoriteClass}" type="button">Mark as favorite</button>`
     );
 
 };
 
-const filmControls =  createFilmsControls(generateFilm());
+
 
 const createFilmCardTemplate = (film) => {
     const {poster, title, rate, year, duration, genres, description, comments} = film;
@@ -41,19 +39,32 @@ const createFilmCardTemplate = (film) => {
     <p class="film-card__description">${description}</p>
     <a class="film-card__comments">${comments.length}</a>
     <div class="film-card__controls">
-    ${filmControls}
+    ${createFilmsControls(film)}
     </div>
   </article>`;
 };
 
-const createFilmListSectionTemplate = () => {
-    return `<section class="films">
-  <section class="films-list">
-    <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
+export default class FilmCard {
+    constructor (film) {
+        this._film = film;
+        this._element = null;
+    }
 
-    <div class="films-list__container">
-  </section>`;
-};
+    getTemplate() {
+        return createFilmCardTemplate(this._film);
+    }
 
-export{createFilmCardTemplate, createFilmListSectionTemplate};
+    getElement() {
+        if(!this._element) {
+            this._element = createElement (this.getTemplate());
+        }
+        return this._element;
+    }
+
+    removeElement() {
+        this._element = null;
+    }
+}
+
+
 
