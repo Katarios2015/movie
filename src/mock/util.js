@@ -24,7 +24,7 @@ const getRandomArray = (someArray, minLength, maxLength) => {
     const randArrayLength = getRandomCeilNumber (minLength, maxLength);
     let newMass = [];
 
-    for(let i = 0; i<= randArrayLength; i++) {
+    for(let i = 0; i <= randArrayLength; i++) {
         newMass[i] = getRandomArrayElement(someArray);
     }
     return newMass;
@@ -37,5 +37,7 @@ const getTimeFormat = (minutes) => {
     const timeFormat = `${hours}h ${restMinutes}m`;
     return timeFormat;
 };
+
+
 
 export {getRandomArrayElement, getRandomCeilNumber, getRandomNumber, getRandomArray, getTimeFormat};
