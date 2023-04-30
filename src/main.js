@@ -14,7 +14,7 @@ import {generateFilm} from "./mock/film.js";
 import {generateFilter} from "./mock/filter.js";
 import {generateUseRank} from "./mock/rank.js";
 
-const MOCK_FILMS_COUNT = 20;
+const MOCK_FILMS_COUNT = 20;//Все константы movieList
 const MAX_FILM_COUNT = 5;
 const FILM_EXTRA_COUNT = 2;
 const EXTRA_SECTION_COUNT = 2;
@@ -22,6 +22,7 @@ const EXTRA_SECTION_COUNT = 2;
 
 const siteBody = document.querySelector("body");
 const siteMainContainer = document.querySelector(".main");
+
 const siteHeader = document.querySelector(".header");
 const siteFooter = document.querySelector(".footer");
 
@@ -46,11 +47,12 @@ if (mockFilms.length === 0) {
     render(siteMainContainer, new EmptyFilmList(), RenderPosition.BEFOREEND);
 } else {
     const filmListComponent = new FilmListView();
-    render(siteMainContainer, filmListComponent, RenderPosition.BEFOREEND);
+    render(siteMainContainer, filmListComponent, RenderPosition.BEFOREEND);//перенос
 
     const filmList = filmListComponent.getElement().querySelector(".films-list");
     const filmListContainer = filmListComponent.getElement().querySelector(".films-list__container");
 
+    //_renderFilmCard
     const renderFilmCards = (filmContainer, filmData) => {
         const filmCardComponent = new FilmCardView(filmData);
         const popupComponent = new PopupView(filmData);
@@ -96,8 +98,7 @@ if (mockFilms.length === 0) {
    
         render(filmContainer, filmCardComponent, RenderPosition.BEFOREEND);
 
-    };
-
+    }; //перенос в _renderFilmCard
 
 
     for (let i = 0; i <= Math.min(mockFilms.length, MAX_FILM_COUNT) - 1; i++) {
@@ -151,8 +152,7 @@ if (mockFilms.length === 0) {
         renderFilmCards(commentedContainer, sortedByCommentsFilms[i]); 
     }
 
-    
-    
+      
     renderTemplate(commentedSection, "<h2 class=\"films-list__title\">Most commented</h2>", RenderPosition.AFTERBEGIN );
     renderTemplate(ratedSection, "<h2 class=\"films-list__title\">Top rated</h2>", RenderPosition.AFTERBEGIN);
 }
