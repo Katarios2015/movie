@@ -1,5 +1,5 @@
 
-import {createElement} from "../render.js";
+import AbstractView from "./abstract.js";
 
 const createFilmsControls = (film) => {
     const {isWatchList, isWatched, isFavorite} = film;
@@ -44,26 +44,50 @@ const createFilmCardTemplate = (film) => {
   </article>`;
 };
 
-export default class FilmCard {
+export default class FilmCard extends AbstractView{
     constructor (film) {
+        super();
         this._film = film;
-        this._element = null;
+        this._filmCardClickHandler = this._filmCardClickHandler.bind(this);
+        this._filmCardMove = this._filmCardMove.bind(this);
     }
 
     getTemplate() {
         return createFilmCardTemplate(this._film);
     }
 
-    getElement() {
-        if(!this._element) {
-            this._element = createElement (this.getTemplate());
-        }
-        return this._element;
+    _filmCardClickHandler(evt) {
+        evt.preventDefault();
+        // 3. А внутри абстрактного обработчика вызовем колбэк
+        this._callback.clickFilmCard();
     }
 
-    removeElement() {
-        this._element = null;
+    _filmCardMove(evt) {
+        evt.preventDefault();
+        // 3. А внутри абстрактного обработчика вызовем колбэк
+        this._callback.move();
     }
+
+    setPosterClickHandler (callback) {
+        this._callback.clickFilmCard = callback;
+        this.getElement().querySelector(".film-card__poster").addEventListener("click", this._filmCardClickHandler);
+    }
+
+    setTitleMoveHandler (callback) {
+        this._callback.move = callback;
+        this.getElement().querySelector(".film-card__title").addEventListener("mousemove", this._filmCardMove);
+    }
+    
+    setTitleClickHandler (callback) {
+        this._callback.clickFilmCard = callback;
+        this.getElement().querySelector(".film-card__title").addEventListener("click", this._filmCardClickHandler);
+    }
+
+    setCommentsClickHandler (callback) {
+        this._callback.clickFilmCard = callback;
+        this.getElement().querySelector(".film-card__comments").addEventListener("click", this._filmCardClickHandler);
+    }
+
 }
 
 

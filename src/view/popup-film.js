@@ -1,4 +1,4 @@
-import {createElement} from "../render.js";
+import AbstractView from "./abstract.js";
 
 
 const createGenreTemplate = (popupFilm) => {
@@ -172,24 +172,26 @@ const createPopupTemplate = (popupFilm) => {
   </section>`;
 };
 
-export default class Popup {
+export default class Popup extends AbstractView {
     constructor (popupFilm) {
+        super();
         this._popupFilm = popupFilm;
-        this._element = null;
+
+        this._exitBtnClickHandler = this._exitBtnClickHandler.bind(this);
     }
 
     getTemplate() {
         return createPopupTemplate(this._popupFilm);
     }
 
-    getElement () {
-        if(!this._element) {
-            this._element = createElement(this.getTemplate());
-        }
-        return this._element;
+    _exitBtnClickHandler(evt) {
+        evt.preventDefault();
+        // 3. А внутри абстрактного обработчика вызовем колбэк
+        this._callback.clickExit();
     }
 
-    removeElement () {
-        this._element = null;
+    setExitBtnClickHandler (callback) {
+        this._callback.clickExit = callback;
+        this.getElement().querySelector(".film-details__close-btn").addEventListener("click", this._exitBtnClickHandler);
     }
 }
