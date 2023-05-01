@@ -45,13 +45,15 @@ export default class MovieList {
     // Метод для рендеринга сортировки
     }*/
 
-    _renderMovieCards(from, to) {
-        // Метод для рендеринга N-film за раз
-        const filmListContainer =  this._filmListComponent.getElement().querySelector(".films-list__container");  
-        this._mockFilms
+
+    _renderMovieCards(from, to, container, sortedArray) {
+        sortedArray
             .slice(from, to)
-            .forEach((filmCard) => this._renderFilmCard(filmListContainer, filmCard));
+            .forEach((filmCard) => {
+                this._renderFilmCard(container, filmCard);
+            });
     }
+
 
     _renderEmptyFilmList() {
         // Метод для рендеринга заглушки
@@ -59,7 +61,8 @@ export default class MovieList {
     }
 
     _handleShowMoreBtnButton() {
-        this._renderMovieCards(this._renderedFilmsCounter, this._renderedFilmsCounter + MAX_FILM_COUNT);
+        this._renderMovieCards(this._renderedFilmsCounter, this._renderedFilmsCounter + MAX_FILM_COUNT, 
+            this._filmListComponent.getElement().querySelector(".films-list__container"), this._mockFilms);
         this._renderedFilmsCounter += MAX_FILM_COUNT;
         
         if(this._renderedFilmsCounter >= this._mockFilms.length) {
@@ -122,16 +125,7 @@ export default class MovieList {
         render(filmContainer, filmCardComponent, RenderPosition.BEFOREEND);
     }
 
-    
-    _renderSortedFilmCard(from, to, container, sortedArray) {
-        sortedArray
-            .slice(from, to)
-            .forEach((filmCard) => {
-                this._renderFilmCard(container, filmCard);
-            });
-    }
-
-
+ 
     _renderExtraSection () {
         
         render(this._filmListComponent, this._ExtraSectionComponent, RenderPosition.BEFOREEND);
@@ -145,8 +139,8 @@ export default class MovieList {
         const sortedByRateFilms = this._mockFilms.slice().sort((a, b) => b.rate - a.rate);
         const sortedByCommentsFilms = this._mockFilms.slice().sort((a, b) => b.comments.length - a.comments.length);
 
-        this._renderSortedFilmCard(0, FILM_EXTRA_COUNT, ratedSection.querySelector(".films-list__container"), sortedByRateFilms);
-        this._renderSortedFilmCard(0, FILM_EXTRA_COUNT, commentedSection.querySelector(".films-list__container"), sortedByCommentsFilms);
+        this._renderMovieCards(0, FILM_EXTRA_COUNT, ratedSection.querySelector(".films-list__container"), sortedByRateFilms);
+        this._renderMovieCards(0, FILM_EXTRA_COUNT, commentedSection.querySelector(".films-list__container"), sortedByCommentsFilms);
     }
 
     
@@ -159,7 +153,8 @@ export default class MovieList {
         } else {
             render(this._siteMainContainer,  this._filmListComponent, RenderPosition.BEFOREEND);
 
-            this._renderMovieCards(0, Math.min(this._mockFilms.length, MAX_FILM_COUNT));
+            this._renderMovieCards(0, Math.min(this._mockFilms.length, MAX_FILM_COUNT), this._filmListComponent.getElement()
+                .querySelector(".films-list__container"), this._mockFilms);
 
             if(this._mockFilms.length > MAX_FILM_COUNT) {
                 this._renderShowMoreBtnButton();
