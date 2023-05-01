@@ -16,13 +16,17 @@ export default class MovieList {
     constructor(siteContainer, siteBody) {
         this._siteMainContainer = siteContainer;
         this._siteBodyContainer = siteBody;
+        this._renderedFilmsCounter = MAX_FILM_COUNT;      
 
         this._filmListComponent = new FilmListView();
         this._menuComponent = new MenuView();
         /*this._sortComponent = new SortView();*/
+        this._showMoreBtnComponent = new ShowMoreBtnView();
         this._EmptyFilmListComponent = new EmptyFilmListView();
         this._PopupComponent = new PopupView();
         this._ExtraSectionComponent = new ExtraSectionView();
+
+        this._handleShowMoreBtnButton = this._handleShowMoreBtnButton.bind(this);
 
     }
 
@@ -39,31 +43,33 @@ export default class MovieList {
     // Метод для рендеринга сортировки
     }*/
 
+    _renderMovieCards(from, to) {
+        // Метод для рендеринга N-film за раз
+        const filmListContainer =  this._filmListComponent.getElement().querySelector(".films-list__container");  
+        this._mockFilms
+            .slice(from, to)
+            .forEach((filmCard) => this._renderFilmCard(filmListContainer, filmCard));
+    }
+
     _renderEmptyFilmList() {
         // Метод для рендеринга заглушки
         render(this._siteMainContainer, this._EmptyFilmListComponent, RenderPosition.BEFOREEND);
     }
+
+    _handleShowMoreBtnButton() {
+        this._renderMovieCards(this._renderedFilmsCounter, this._renderedFilmsCounter + MAX_FILM_COUNT);
+        this._renderedFilmsCounter += MAX_FILM_COUNT;
+        
+        if(this._renderedFilmsCounter >= this._mockFilms.length) {
+            remove(this._showMoreBtnComponent);
+        }      
+    }
     
-    _rendershowMoreBtnButton() {
+    _renderShowMoreBtnButton() {
         // Метод, куда уйдёт логика по отрисовке компонетов задачи,
         // текущая функция renderTask в main.js
-        const filmList =  this._filmListComponent.getElement().querySelector(".films-list");
-        let filmsCounter = MAX_FILM_COUNT;
-        
-        const showMoreBtnComponent = new ShowMoreBtnView();
-    
-        render(filmList, showMoreBtnComponent, RenderPosition.BEFOREEND);
-            
-        showMoreBtnComponent.setClickHandler(() => {
-            this._mockFilms.slice(filmsCounter, filmsCounter + MAX_FILM_COUNT)
-                .forEach((film) => this._renderFilmCard(this._filmListComponent.getElement().querySelector(".films-list__container"), film));
-        
-            filmsCounter += MAX_FILM_COUNT;
-        
-            if(filmsCounter >= this._mockFilms.length) {
-                remove(showMoreBtnComponent);
-            }      
-        }) ;
+        render(this._filmListComponent.getElement().querySelector(".films-list"), this._showMoreBtnComponent, RenderPosition.BEFOREEND);
+        this._showMoreBtnComponent.setClickHandler(this._handleShowMoreBtnButton);
     }
 
     _renderFilmCard(filmContainer, filmData) {
@@ -114,14 +120,9 @@ export default class MovieList {
         render(filmContainer, filmCardComponent, RenderPosition.BEFOREEND);
     }
 
-    _renderFilmCards() {
-    // Метод для рендеринга N-film за раз
-        const filmListContainer =  this._filmListComponent.getElement().querySelector(".films-list__container");  
+
     
-        for (let i = 0; i <= Math.min(this._mockFilms.length, MAX_FILM_COUNT) - 1; i++) {
-            this._renderFilmCard(filmListContainer, this._mockFilms[i]);
-        }
-    }
+
 
     _renderExtraSection () {
 
@@ -165,9 +166,11 @@ export default class MovieList {
             this._renderEmptyFilmList();
         } else {
             render(this._siteMainContainer,  this._filmListComponent, RenderPosition.BEFOREEND);//перенос
-            this._renderFilmCards;
+
+            this._renderMovieCards(0, Math.min(this._mockFilms.length, MAX_FILM_COUNT));
+
             if(this._mockFilms.length > MAX_FILM_COUNT) {
-                this._rendershowMoreBtnButton();
+                this._renderShowMoreBtnButton();
             }
 
             this._renderExtraSection();
