@@ -1,23 +1,28 @@
-import {renderTemplate, render, RenderPosition, remove} from "./render.js";
+import {renderTemplate, render, RenderPosition} from "./render.js";
 import Menu from "./view/menu.js";
 import SortView from "./view/sort.js";
-import FilmListView from "./view/film-list.js";
-
-import FilmCardView from "./view/film-card.js";
 import UserRank from "./view/user-rank.js";
+
+/*import FilmListView from "./view/film-list.js";
+import FilmCardView from "./view/film-card.js";
+
 import ShowMoreBtnView from "./view/show-more-btn.js";
 import ExtraSectionView from "./view/create-extra-section.js";
 import PopupView from "./view/popup-film.js";
-import EmptyFilmList from "./view/empty-list.js";
+import EmptyFilmList from "./view/empty-list.js";*/
 
 import {generateFilm} from "./mock/film.js";
 import {generateFilter} from "./mock/filter.js";
 import {generateUseRank} from "./mock/rank.js";
 
+import MovieListPresenter from "./presenter/movie-list.js";
+
+
+
 const MOCK_FILMS_COUNT = 20;//Все константы movieList
-const MAX_FILM_COUNT = 5;
+/*const MAX_FILM_COUNT = 5;
 const FILM_EXTRA_COUNT = 2;
-const EXTRA_SECTION_COUNT = 2;
+const EXTRA_SECTION_COUNT = 2;*/
 
 
 const siteBody = document.querySelector("body");
@@ -40,10 +45,12 @@ render(siteMainContainer, new Menu(filmFilters), RenderPosition.AFTERBEGIN);
 render(siteMainContainer, new SortView(), RenderPosition.BEFOREEND);
 render(siteHeader, new UserRank(generateUseRank()), RenderPosition.BEFOREEND);
 
-
 renderTemplate (footerStat, `<p>${MOCK_FILMS_COUNT} movies inside</p>`, RenderPosition.BEFOREEND);
 
-if (mockFilms.length === 0) {
+const movieListPresenter = new MovieListPresenter(siteMainContainer, siteBody);
+movieListPresenter.init(mockFilms);
+
+/*if (mockFilms.length === 0) {
     render(siteMainContainer, new EmptyFilmList(), RenderPosition.BEFOREEND);
 } else {
     const filmListComponent = new FilmListView();
@@ -155,4 +162,4 @@ if (mockFilms.length === 0) {
       
     renderTemplate(commentedSection, "<h2 class=\"films-list__title\">Most commented</h2>", RenderPosition.AFTERBEGIN );
     renderTemplate(ratedSection, "<h2 class=\"films-list__title\">Top rated</h2>", RenderPosition.AFTERBEGIN);
-}
+}*/

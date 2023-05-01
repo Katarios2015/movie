@@ -1,12 +1,13 @@
 import FilmListView from "../view/film-list.js";
 /*import SortView from "../view/sort.js";*/
-import MenuView from "../view/menu.js";
+//import MenuView from "../view/menu.js";
 import EmptyFilmListView from "../view/empty-list.js";
 import FilmCardView from "../view/film-card.js";
-import ShowMoreBtnView from "./view/show-more-btn.js";
-import {renderTemplate, render, RenderPosition, remove} from "./render.js";
+import ShowMoreBtnView from "../view/show-more-btn.js";
 import PopupView from "../view/popup-film.js";
 import ExtraSectionView from "../view/create-extra-section.js";
+
+import {renderTemplate, render, RenderPosition, remove} from "../render.js";
 
 const MAX_FILM_COUNT = 5;
 const FILM_EXTRA_COUNT = 2;
@@ -16,10 +17,11 @@ export default class MovieList {
     constructor(siteContainer, siteBody) {
         this._siteMainContainer = siteContainer;
         this._siteBodyContainer = siteBody;
-        this._renderedFilmsCounter = MAX_FILM_COUNT;      
+        this._renderedFilmsCounter = MAX_FILM_COUNT;
+        
 
         this._filmListComponent = new FilmListView();
-        this._menuComponent = new MenuView();
+        //this._menuComponent = new MenuView();
         /*this._sortComponent = new SortView();*/
         this._showMoreBtnComponent = new ShowMoreBtnView();
         this._EmptyFilmListComponent = new EmptyFilmListView();
@@ -27,7 +29,7 @@ export default class MovieList {
         this._ExtraSectionComponent = new ExtraSectionView();
 
         this._handleShowMoreBtnButton = this._handleShowMoreBtnButton.bind(this);
-
+        this._renderExtraSection = this._renderExtraSection.bind(this);
     }
 
     init(mockFilms) {
@@ -120,41 +122,31 @@ export default class MovieList {
         render(filmContainer, filmCardComponent, RenderPosition.BEFOREEND);
     }
 
-
     
+    _renderSortedFilmCard(from, to, container, sortedArray) {
+        sortedArray
+            .slice(from, to)
+            .forEach((filmCard) => {
+                this._renderFilmCard(container, filmCard);
+            });
+    }
 
 
     _renderExtraSection () {
+        
+        render(this._filmListComponent, this._ExtraSectionComponent, RenderPosition.BEFOREEND);
 
-        for (let i = 0; i < EXTRA_SECTION_COUNT; i++) {
-   
-            render(this._filmListComponent, this._ExtraSectionComponent, RenderPosition.BEFOREEND);
-        }
-    
-        const extraSections = this._filmListComponent.getElement().querySelectorAll(".films-list--extra");
-        extraSections[0].classList.add("films-list--rate");
-        extraSections[1].classList.add("films-list--comment");
-    
         const ratedSection = this._filmListComponent.getElement().querySelector(".films-list--rate");
-        const commentedSection = this._filmListComponent.getElement().querySelector(".films-list--comment");
-    
-        const ratedContainer = ratedSection.querySelector(".films-list__container");
-        const commentedContainer = commentedSection.querySelector(".films-list__container");
-    
-    
-        for (let i = 0; i < FILM_EXTRA_COUNT; i++) {
-            const sortedByRateFilms = this._mockFilms.slice().sort((a, b) => b.rate - a.rate);
-            this._renderFilmCard(ratedContainer, sortedByRateFilms[i]);
-        }
-    
-        for (let i = 0; i < FILM_EXTRA_COUNT; i++) {
-            const sortedByCommentsFilms = this._mockFilms.slice().sort((a, b) => b.comments.length - a.comments.length);
-            this._renderFilmCard(commentedContainer, sortedByCommentsFilms[i]); 
-        }
-          
-        renderTemplate(commentedSection, "<h2 class=\"films-list__title\">Most commented</h2>", RenderPosition.AFTERBEGIN );
-        renderTemplate(ratedSection, "<h2 class=\"films-list__title\">Top rated</h2>", RenderPosition.AFTERBEGIN);
+        const commentedSection = ratedSection.cloneNode(true);
+        commentedSection.className = ("films-list films-list--extra films-list--comment");
 
+        render(this._filmListComponent, commentedSection, RenderPosition.BEFOREEND);
+        commentedSection.querySelector("h2").innerHTML = "Most commented";
+        const sortedByRateFilms = this._mockFilms.slice().sort((a, b) => b.rate - a.rate);
+        const sortedByCommentsFilms = this._mockFilms.slice().sort((a, b) => b.comments.length - a.comments.length);
+
+        this._renderSortedFilmCard(0, FILM_EXTRA_COUNT, ratedSection.querySelector(".films-list__container"), sortedByRateFilms);
+        this._renderSortedFilmCard(0, FILM_EXTRA_COUNT, commentedSection.querySelector(".films-list__container"), sortedByCommentsFilms);
     }
 
     
@@ -165,7 +157,7 @@ export default class MovieList {
         if (this._mockFilms.length === 0) {
             this._renderEmptyFilmList();
         } else {
-            render(this._siteMainContainer,  this._filmListComponent, RenderPosition.BEFOREEND);//перенос
+            render(this._siteMainContainer,  this._filmListComponent, RenderPosition.BEFOREEND);
 
             this._renderMovieCards(0, Math.min(this._mockFilms.length, MAX_FILM_COUNT));
 
