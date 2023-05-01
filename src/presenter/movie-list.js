@@ -2,16 +2,16 @@ import FilmListView from "../view/film-list.js";
 /*import SortView from "../view/sort.js";*/
 //import MenuView from "../view/menu.js";
 import EmptyFilmListView from "../view/empty-list.js";
-import FilmCardView from "../view/film-card.js";
+//import FilmCardView from "../view/film-card.js";//перенос
 import ShowMoreBtnView from "../view/show-more-btn.js";
-import PopupView from "../view/popup-film.js";
+//import PopupView from "../view/popup-film.js";//перенос
 import ExtraSectionView from "../view/create-extra-section.js";
 
-import {renderTemplate, render, RenderPosition, remove} from "../render.js";
+import MoviePresenter from "./movie.js";
+import {render, RenderPosition, remove} from "../render.js";
 
 const MAX_FILM_COUNT = 5;
 const FILM_EXTRA_COUNT = 2;
-const EXTRA_SECTION_COUNT = 2;
 
 export default class MovieList {
     constructor(siteContainer, siteBody) {
@@ -25,7 +25,6 @@ export default class MovieList {
         /*this._sortComponent = new SortView();*/
         this._showMoreBtnComponent = new ShowMoreBtnView();
         this._EmptyFilmListComponent = new EmptyFilmListView();
-        this._PopupComponent = new PopupView();
         this._ExtraSectionComponent = new ExtraSectionView();
 
         this._handleShowMoreBtnButton = this._handleShowMoreBtnButton.bind(this);
@@ -46,8 +45,8 @@ export default class MovieList {
     }*/
 
 
-    _renderMovieCards(from, to, container, sortedArray) {
-        sortedArray
+    _renderMovieCards(from, to, container, dataArray) {
+        dataArray
             .slice(from, to)
             .forEach((filmCard) => {
                 this._renderFilmCard(container, filmCard);
@@ -78,9 +77,11 @@ export default class MovieList {
     }
 
     _renderFilmCard(filmContainer, filmData) {
+        const moviePresenter = new MoviePresenter(this._siteBodyContainer);
+        moviePresenter.init(filmContainer, filmData);
     // Метод, куда уйдёт логика созданию и рендерингу компонетов задачи,
     // текущая функция renderTask в main.js
-        const filmCardComponent = new FilmCardView(filmData);
+        /*const filmCardComponent = new FilmCardView(filmData);
         const popupComponent = new PopupView(filmData);
     
         const onEscKeyDown = (evt) => {
@@ -122,9 +123,8 @@ export default class MovieList {
         });
    
    
-        render(filmContainer, filmCardComponent, RenderPosition.BEFOREEND);
+        render(filmContainer, filmCardComponent, RenderPosition.BEFOREEND);*/
     }
-
  
     _renderExtraSection () {
         
@@ -143,15 +143,13 @@ export default class MovieList {
         this._renderMovieCards(0, FILM_EXTRA_COUNT, commentedSection.querySelector(".films-list__container"), sortedByCommentsFilms);
     }
 
-    
-
     _renderMovieList() {
     // Метод для инициализации (начала работы) модуля,
     // бОльшая часть текущей реализации в main.js
         if (this._mockFilms.length === 0) {
             this._renderEmptyFilmList();
         } else {
-            render(this._siteMainContainer,  this._filmListComponent, RenderPosition.BEFOREEND);
+            render(this._siteMainContainer, this._filmListComponent, RenderPosition.BEFOREEND);
 
             this._renderMovieCards(0, Math.min(this._mockFilms.length, MAX_FILM_COUNT), this._filmListComponent.getElement()
                 .querySelector(".films-list__container"), this._mockFilms);
@@ -162,6 +160,5 @@ export default class MovieList {
 
             this._renderExtraSection();
         }
-    
     }
 }
