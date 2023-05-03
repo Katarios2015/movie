@@ -48,19 +48,41 @@ export default class FilmCard extends AbstractView{
     constructor (film) {
         super();
         this._film = film;
-        this._filmCardClickHandler = this._filmCardClickHandler.bind(this);
+        
+        
         this._filmCardMove = this._filmCardMove.bind(this);
+
+        this._filmPosterClickHandler = this._filmPosterClickHandler.bind(this);
+        this._filmTitleClickHandler = this._filmTitleClickHandler.bind(this);
+        this._filmCommentsClickHandler = this._filmCommentsClickHandler.bind(this);
+
+        this._addToWhatchListClickHandler = this._addToWhatchListClickHandler.bind(this);
+        this._addToAlreadyWatchedHandler = this._addToAlreadyWatchedHandler.bind(this);
+        this._addToFavoriteClickHandler = this._addToFavoriteClickHandler.bind(this);
     }
 
     getTemplate() {
         return createFilmCardTemplate(this._film);
     }
 
-    _filmCardClickHandler(evt) {
+    _filmPosterClickHandler(evt) {
+        evt.preventDefault();
+        this._callback.clickFilmCard();
+    }
+
+    _filmTitleClickHandler(evt) {
         evt.preventDefault();
         // 3. А внутри абстрактного обработчика вызовем колбэк
         this._callback.clickFilmCard();
     }
+
+    _filmCommentsClickHandler(evt) {
+        evt.preventDefault();
+        // 3. А внутри абстрактного обработчика вызовем колбэк
+        this._callback.clickFilmCard();
+    }
+
+
 
     _filmCardMove(evt) {
         evt.preventDefault();
@@ -68,9 +90,31 @@ export default class FilmCard extends AbstractView{
         this._callback.move();
     }
 
+
+
+    _addToWhatchListClickHandler(evt) {
+        evt.preventDefault();
+        // 3. А внутри абстрактного обработчика вызовем колбэк
+        this._callback.clickItemWatchList();
+    }
+
+    _addToAlreadyWatchedHandler(evt) {
+        evt.preventDefault();
+        // 3. А внутри абстрактного обработчика вызовем колбэк
+        this._callback.clickItemToAlready();
+    }
+
+    _addToFavoriteClickHandler(evt) {
+        evt.preventDefault();
+        // 3. А внутри абстрактного обработчика вызовем колбэк
+        this._callback.clickItemToFavorite();
+    }
+
+
+
     setPosterClickHandler (callback) {
         this._callback.clickFilmCard = callback;
-        this.getElement().querySelector(".film-card__poster").addEventListener("click", this._filmCardClickHandler);
+        this.getElement().querySelector(".film-card__poster").addEventListener("click", this._filmPosterClickHandler);
     }
 
     setTitleMoveHandler (callback) {
@@ -80,12 +124,30 @@ export default class FilmCard extends AbstractView{
     
     setTitleClickHandler (callback) {
         this._callback.clickFilmCard = callback;
-        this.getElement().querySelector(".film-card__title").addEventListener("click", this._filmCardClickHandler);
+        this.getElement().querySelector(".film-card__title").addEventListener("click", this._filmTitleClickHandler);
     }
 
     setCommentsClickHandler (callback) {
         this._callback.clickFilmCard = callback;
-        this.getElement().querySelector(".film-card__comments").addEventListener("click", this._filmCardClickHandler);
+        this.getElement().querySelector(".film-card__comments").addEventListener("click", this._filmCommentsClickHandler);
+    }
+
+
+
+
+    setAddToWatchListClickHandler (callback) {
+        this._callback.clickItemWatchList = callback;
+        this.getElement().querySelector(".film-card__controls-item--add-to-watchlist").addEventListener("click", this._addToWhatchListClickHandler);
+    }
+    
+    setAlreadyWatchedClickHandler (callback) {
+        this._callback.clickItemToAlready = callback;
+        this.getElement().querySelector(".film-card__controls-item--mark-as-watched").addEventListener("click", this._addToAlreadyWatchedHandler);
+    }
+
+    setAddToFavoriteClickHandler (callback) {
+        this._callback.clickItemToFavorite = callback;
+        this.getElement().querySelector(".film-card__controls-item--favorite").addEventListener("click", this._addToFavoriteClickHandler);
     }
 
 }

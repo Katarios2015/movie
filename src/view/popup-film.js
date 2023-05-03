@@ -178,6 +178,10 @@ export default class Popup extends AbstractView {
         this._popupFilm = popupFilm;
 
         this._exitBtnClickHandler = this._exitBtnClickHandler.bind(this);
+        
+        this._addToWhatchListBtnClickHandler = this._addToWhatchListBtnClickHandler.bind(this);
+        this._addToAlreadyWatchedBtnHandler = this._addToAlreadyWatchedBtnHandler.bind(this);
+        this._addToFavoriteBtnClickHandler = this._addToFavoriteBtnClickHandler.bind(this);
     }
 
     getTemplate() {
@@ -190,8 +194,42 @@ export default class Popup extends AbstractView {
         this._callback.clickExit();
     }
 
+    _addToWhatchListBtnClickHandler(evt) {
+        evt.preventDefault();
+        // 3. А внутри абстрактного обработчика вызовем колбэк
+        this._callback.clickWatchList();
+    }
+
+    _addToAlreadyWatchedBtnHandler(evt) {
+        evt.preventDefault();
+        // 3. А внутри абстрактного обработчика вызовем колбэк
+        this._callback.clickToAlready();
+    }
+
+    _addToFavoriteBtnClickHandler(evt) {
+        evt.preventDefault();
+        // 3. А внутри абстрактного обработчика вызовем колбэк
+        this._callback.clickToFavorite();
+    }
+
+
     setExitBtnClickHandler (callback) {
         this._callback.clickExit = callback;
         this.getElement().querySelector(".film-details__close-btn").addEventListener("click", this._exitBtnClickHandler);
+    }
+
+    setAddToWatchBtnListClickHandler (callback) {
+        this._callback.clickWatchList = callback;
+        this.getElement().querySelector(".film-details__control-button--watchlist").addEventListener("click", this._addToWhatchListBtnClickHandler);
+    }
+  
+    setAlreadyWatchedBtnClickHandler (callback) {
+        this._callback.clickToAlready = callback;
+        this.getElement().querySelector(".film-details__control-button--watched").addEventListener("click", this._addToAlreadyWatchedBtnHandler);
+    }
+
+    setAddToFavoriteBtnClickHandler (callback) {
+        this._callback.clickToFavorite = callback;
+        this.getElement().querySelector(".film-details__control-button--favorite").addEventListener("click", this._addToFavoriteBtnClickHandler);
     }
 }

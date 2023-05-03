@@ -1,14 +1,12 @@
 import FilmListView from "../view/film-list.js";
-/*import SortView from "../view/sort.js";*/
-//import MenuView from "../view/menu.js";
 import EmptyFilmListView from "../view/empty-list.js";
-//import FilmCardView from "../view/film-card.js";//перенос
 import ShowMoreBtnView from "../view/show-more-btn.js";
-//import PopupView from "../view/popup-film.js";//перенос
 import ExtraSectionView from "../view/create-extra-section.js";
 
 import MoviePresenter from "./movie.js";
 import {render, RenderPosition, remove} from "../render.js";
+
+import {updateItem} from "../mock/util.js";
 
 const MAX_FILM_COUNT = 5;
 const FILM_EXTRA_COUNT = 2;
@@ -18,8 +16,9 @@ export default class MovieList {
         this._siteMainContainer = siteContainer;
         this._siteBodyContainer = siteBody;
         this._renderedFilmsCounter = MAX_FILM_COUNT;
-        
 
+        this._moviePresenter = {};
+        
         this._filmListComponent = new FilmListView();
         //this._menuComponent = new MenuView();
         /*this._sortComponent = new SortView();*/
@@ -29,6 +28,8 @@ export default class MovieList {
 
         this._handleShowMoreBtnButton = this._handleShowMoreBtnButton.bind(this);
         this._renderExtraSection = this._renderExtraSection.bind(this);
+
+        this._handleMovieChange = this._handleMovieChange.bind(this);
     }
 
     init(mockFilms) {
@@ -70,60 +71,24 @@ export default class MovieList {
     }
     
     _renderShowMoreBtnButton() {
-        // Метод, куда уйдёт логика по отрисовке компонетов задачи,
+        // Метод, куда уйдёт логика по отрисовке компонетов карточек фильма,
         // текущая функция renderTask в main.js
         render(this._filmListComponent.getElement().querySelector(".films-list"), this._showMoreBtnComponent, RenderPosition.BEFOREEND);
         this._showMoreBtnComponent.setClickHandler(this._handleShowMoreBtnButton);
     }
 
+    _handleMovieChange(updatedMovie) {
+        this._mockFilms = updateItem(this._mockFilms, updatedMovie);
+        this._moviePresenter[updatedMovie.id].init(updatedMovie);
+    } //- Опишем в презентере списка фильмов обработчик изменений в карточке фильма - _handleMovieChange
+    //- После обновления данных повторно инициализируем Movie-презентер уже с новыми данными
+
     _renderFilmCard(filmContainer, filmData) {
-        const moviePresenter = new MoviePresenter(this._siteBodyContainer);
+        const moviePresenter = new MoviePresenter(this._siteBodyContainer, this._handleMovieChange);
+        //Передадим функцию обновления из презентера списка в презентер карточки фильма
         moviePresenter.init(filmContainer, filmData);
-    // Метод, куда уйдёт логика созданию и рендерингу компонетов задачи,
-    // текущая функция renderTask в main.js
-        /*const filmCardComponent = new FilmCardView(filmData);
-        const popupComponent = new PopupView(filmData);
-    
-        const onEscKeyDown = (evt) => {
-            if (evt.key === "Escape" || evt.keyCode === 27) {
-                evt.preventDefault();
-                this._siteBodyContainer.removeChild(popupComponent.getElement());
-                document.removeEventListener("keydown", onEscKeyDown);
-                this._siteBodyContainer.classList.remove("hide-overflow");
-            }
-        };
-
-        const showPopup = () => {
-            this._siteBodyContainer.appendChild(popupComponent.getElement());
-            this._siteBodyContainer.classList.add("hide-overflow");
-            document.addEventListener("keydown", onEscKeyDown);
-        };
-    
-
-        filmCardComponent.setPosterClickHandler(() => {
-            showPopup();
-        });
-
-        filmCardComponent.setTitleMoveHandler(() => {
-            filmCardComponent.getElement().querySelector(".film-card__title").style.cursor = "pointer";
-        });
-
-        filmCardComponent.setTitleClickHandler(() => {
-            showPopup();
-        });
-
-        filmCardComponent.setCommentsClickHandler(() => {
-            showPopup();
-            
-        });
-    
-        popupComponent.setExitBtnClickHandler(() => {
-            this._siteBodyContainer.removeChild(popupComponent.getElement());
-            this._siteBodyContainer.classList.remove("hide-overflow");
-        });
-   
-   
-        render(filmContainer, filmCardComponent, RenderPosition.BEFOREEND);*/
+        
+        this._moviePresenter[filmData.id] = moviePresenter;
     }
  
     _renderExtraSection () {
@@ -161,4 +126,14 @@ export default class MovieList {
             this._renderExtraSection();
         }
     }
+
+    _clearMovieList() {
+        Object
+            .values( this._moviePresenter)
+            .forEach((presenter) => presenter.destroy());
+        this._moviePresenter = {};
+        this._renderedFilmsCounter = MAX_FILM_COUNT;
+        remove(this._showMoreBtnComponent);
+    }
+
 }

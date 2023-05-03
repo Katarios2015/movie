@@ -1,4 +1,5 @@
 import {getRandomArrayElement, getRandomCeilNumber, getRandomNumber, getRandomArray, getTimeFormat} from "./util.js";
+import {nanoid} from 'nanoid';
 const dayjs = require("dayjs");
 
 const COMMENTS_COUNT = 4;
@@ -71,6 +72,7 @@ const generateFilm = () => {
     const idOfComments = getRandomArrayElement(idComments);
     const comments = popupComments;
     return {
+        id: nanoid(),
         poster: getRandomArrayElement(filmPosters),
         title: getRandomArrayElement(filmTitles),
         rate: getRandomNumber(0, 10),
