@@ -18,7 +18,7 @@ export default class MovieList {
         this._renderedFilmsCounter = MAX_FILM_COUNT;
 
         this._moviePresenter = {};
-        
+
         this._filmListComponent = new FilmListView();
         //this._menuComponent = new MenuView();
         /*this._sortComponent = new SortView();*/
@@ -34,10 +34,7 @@ export default class MovieList {
 
     init(mockFilms) {
         this._mockFilms = mockFilms.slice();
-        // Метод для инициализации (начала работы) модуля,
-        // малая часть текущей функции renderBoard в main.js
         render(this._siteMainContainer, this._filmListComponent, RenderPosition.BEFOREEND);
-
         this._renderMovieList();
     }
 
@@ -45,8 +42,23 @@ export default class MovieList {
     // Метод для рендеринга сортировки
     }*/
 
+  _renderEmptyFilmList() {
+      // Метод для рендеринга заглушки
+      render(this._siteMainContainer, this._EmptyFilmListComponent, RenderPosition.BEFOREEND);
+  }
 
-    _renderMovieCards(from, to, container, dataArray) {
+  _handleMovieChange(filmContainer, updatedMovie) {
+    this._mockFilms = updateItem(this._mockFilms, updatedMovie);
+    this._moviePresenter[updatedMovie.id].init(filmContainer, updatedMovie);
+  }
+
+  _renderFilmCard(filmContainer, filmData) {
+    const moviePresenter = new MoviePresenter(this._siteBodyContainer, this._handleMovieChange);
+    moviePresenter.init(filmContainer, filmData);
+    this._moviePresenter[filmData.id] = moviePresenter;
+}
+
+_renderMovieCards(from, to, container, dataArray) {
         dataArray
             .slice(from, to)
             .forEach((filmCard) => {
@@ -54,45 +66,42 @@ export default class MovieList {
             });
     }
 
+    _renderMovieList() {
+      // Метод для инициализации (начала работы) модуля,
+      // бОльшая часть текущей реализации в main.js
+          if (this._mockFilms.length === 0) {
+              this._renderEmptyFilmList();
+          } else {
+              render(this._siteMainContainer, this._filmListComponent, RenderPosition.BEFOREEND);
 
-    _renderEmptyFilmList() {
-        // Метод для рендеринга заглушки
-        render(this._siteMainContainer, this._EmptyFilmListComponent, RenderPosition.BEFOREEND);
-    }
+              this._renderMovieCards(0, Math.min(this._mockFilms.length, MAX_FILM_COUNT), this._filmListComponent.getElement()
+                  .querySelector(".films-list__container"), this._mockFilms);
 
-    _handleShowMoreBtnButton() {
-        this._renderMovieCards(this._renderedFilmsCounter, this._renderedFilmsCounter + MAX_FILM_COUNT, 
-            this._filmListComponent.getElement().querySelector(".films-list__container"), this._mockFilms);
-        this._renderedFilmsCounter += MAX_FILM_COUNT;
-        
-        if(this._renderedFilmsCounter >= this._mockFilms.length) {
-            remove(this._showMoreBtnComponent);
-        }      
-    }
-    
-    _renderShowMoreBtnButton() {
-        // Метод, куда уйдёт логика по отрисовке компонетов карточек фильма,
-        // текущая функция renderTask в main.js
+              if(this._mockFilms.length > MAX_FILM_COUNT) {
+                  this._renderShowMoreBtnButton();
+              }
+
+              this._renderExtraSection();
+          }
+      }
+
+      _renderShowMoreBtnButton() {
         render(this._filmListComponent.getElement().querySelector(".films-list"), this._showMoreBtnComponent, RenderPosition.BEFOREEND);
         this._showMoreBtnComponent.setClickHandler(this._handleShowMoreBtnButton);
     }
 
-    _handleMovieChange(updatedMovie) {
-        this._mockFilms = updateItem(this._mockFilms, updatedMovie);
-        this._moviePresenter[updatedMovie.id].init(updatedMovie);
-    } //- Опишем в презентере списка фильмов обработчик изменений в карточке фильма - _handleMovieChange
-    //- После обновления данных повторно инициализируем Movie-презентер уже с новыми данными
+    _handleShowMoreBtnButton() {
+        this._renderMovieCards(this._renderedFilmsCounter, this._renderedFilmsCounter + MAX_FILM_COUNT,
+            this._filmListComponent.getElement().querySelector(".films-list__container"), this._mockFilms);
+        this._renderedFilmsCounter += MAX_FILM_COUNT;
 
-    _renderFilmCard(filmContainer, filmData) {
-        const moviePresenter = new MoviePresenter(this._siteBodyContainer, this._handleMovieChange);
-        //Передадим функцию обновления из презентера списка в презентер карточки фильма
-        moviePresenter.init(filmContainer, filmData);
-        
-        this._moviePresenter[filmData.id] = moviePresenter;
+        if(this._renderedFilmsCounter >= this._mockFilms.length) {
+            remove(this._showMoreBtnComponent);
+        }
     }
- 
+
     _renderExtraSection () {
-        
+
         render(this._filmListComponent, this._ExtraSectionComponent, RenderPosition.BEFOREEND);
 
         const ratedSection = this._filmListComponent.getElement().querySelector(".films-list--rate");
@@ -108,24 +117,6 @@ export default class MovieList {
         this._renderMovieCards(0, FILM_EXTRA_COUNT, commentedSection.querySelector(".films-list__container"), sortedByCommentsFilms);
     }
 
-    _renderMovieList() {
-    // Метод для инициализации (начала работы) модуля,
-    // бОльшая часть текущей реализации в main.js
-        if (this._mockFilms.length === 0) {
-            this._renderEmptyFilmList();
-        } else {
-            render(this._siteMainContainer, this._filmListComponent, RenderPosition.BEFOREEND);
-
-            this._renderMovieCards(0, Math.min(this._mockFilms.length, MAX_FILM_COUNT), this._filmListComponent.getElement()
-                .querySelector(".films-list__container"), this._mockFilms);
-
-            if(this._mockFilms.length > MAX_FILM_COUNT) {
-                this._renderShowMoreBtnButton();
-            }
-
-            this._renderExtraSection();
-        }
-    }
 
     _clearMovieList() {
         Object

@@ -6,12 +6,13 @@ import {render, RenderPosition, replace, remove} from "../render.js";
 
 export default class Movie {
     constructor (siteBody, changeData) {
-        
+
         this._siteBodyContainer = siteBody;
         this._changeData = changeData;
-        
+
 
         this._filmCardComponent = null;
+        this._popupComponent = null;
 
         this._handleShowPopupClick = this._handleShowPopupClick.bind(this);
         this._onEscKeyDownHandler = this._onEscKeyDownHandler.bind(this);
@@ -27,7 +28,7 @@ export default class Movie {
         this._filmContainer = filmContainer;
         this._filmData = filmData;
 
-        const prevFilmCardComponent = this._filmCardComponent; 
+        const prevFilmCardComponent = this._filmCardComponent;
         const prevPopupComponent = this._popupComponent;
 
         this._filmCardComponent = new FilmCardView(filmData);
@@ -49,27 +50,22 @@ export default class Movie {
         this._popupComponent.setAlreadyWatchedBtnClickHandler(this._handleAddToAlreadyWatchedClick);
         this._popupComponent.setAddToFavoriteBtnClickHandler(this._handleAddToFavoriteClick);
 
-        
-
-
         if (prevFilmCardComponent === null || prevPopupComponent === null) {
             render(this._filmContainer, this._filmCardComponent, RenderPosition.BEFOREEND);
             return;
         }
-      
-        // Проверка на наличие в DOM необходима,
-        // чтобы не пытаться заменить то, что не было отрисовано
-        if (this._filmContainer.getElement().contains(prevFilmCardComponent.getElement())) {
+
+        if (this._filmContainer.contains(prevFilmCardComponent.getElement())) {
             replace(this._filmCardComponent, prevFilmCardComponent);
         }
-      
-        if (this._taskListContainer.getElement().contains(prevPopupComponent.getElement())) {
+
+        if (this._filmContainer.contains(prevPopupComponent.getElement())) {
             replace(this._popupComponent, prevPopupComponent);
         }
-      
+
         remove(prevFilmCardComponent);
         remove(prevPopupComponent);
-        
+
     }
 
     destroy() {
@@ -87,14 +83,11 @@ export default class Movie {
         }
     }
 
-    _handleShowPopupClick(filmData) {
-        this._changeData(filmData);
+    _handleShowPopupClick() {
         this._siteBodyContainer.appendChild(this._popupComponent.getElement());
         this._siteBodyContainer.classList.add("hide-overflow");
         document.addEventListener("keydown", this._onEscKeyDownHandler);
-        
 
-        
     }
 
     _handleMove() {
@@ -107,7 +100,7 @@ export default class Movie {
     }
 
     _handleAddToWatchedListClick() {
-        this._changeData(
+        this._changeData(this._filmContainer,
             Object.assign(
                 {},
                 this._filmData,
@@ -116,11 +109,11 @@ export default class Movie {
                 },
             ),
         );
-        
-    }       
+
+    }
 
     _handleAddToAlreadyWatchedClick() {
-        this._changeData(
+        this._changeData(this._filmContainer,
             Object.assign(
                 {},
                 this._filmData,
@@ -129,11 +122,11 @@ export default class Movie {
                 },
             ),
         );
-        
+
     }
 
     _handleAddToFavoriteClick() {
-        this._changeData(
+        this._changeData(this._filmContainer,
             Object.assign(
                 {},
                 this._filmData,
@@ -142,7 +135,6 @@ export default class Movie {
                 },
             ),
         );
-       
+
     }
 }
- 
