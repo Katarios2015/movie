@@ -67,6 +67,10 @@ export default class Movie {
         }
 
         if (this._mode === Mode.EDITING) {
+          replace(this._filmCardComponent, prevFilmCardComponent);
+        }
+
+        if (this._mode === Mode.EDITING) {
           replace(this._popupComponent, prevPopupComponent);
         }
 
