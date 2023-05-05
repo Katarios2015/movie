@@ -196,26 +196,24 @@ export default class Popup extends AbstractView {
 
     _addToWhatchListBtnClickHandler(evt) {
         evt.preventDefault();
-        // 3. А внутри абстрактного обработчика вызовем колбэк
         this._callback.clickWatchList();
     }
 
     _addToAlreadyWatchedBtnHandler(evt) {
         evt.preventDefault();
-        // 3. А внутри абстрактного обработчика вызовем колбэк
         this._callback.clickToAlready();
     }
 
     _addToFavoriteBtnClickHandler(evt) {
         evt.preventDefault();
-        // 3. А внутри абстрактного обработчика вызовем колбэк
         this._callback.clickToFavorite();
     }
 
 
     setExitBtnClickHandler (callback) {
         this._callback.clickExit = callback;
-        this.getElement().querySelector(".film-details__close-btn").addEventListener("click", this._exitBtnClickHandler);
+        this.getElement().querySelector(".film-details__close-btn")
+        .addEventListener("click", this._exitBtnClickHandler);
     }
 
     setAddToWatchBtnListClickHandler (callback) {

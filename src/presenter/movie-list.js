@@ -29,6 +29,8 @@ export default class MovieList {
         this._handleShowMoreBtnButton = this._handleShowMoreBtnButton.bind(this);
         this._renderExtraSection = this._renderExtraSection.bind(this);
 
+        this._handleModeChange = this._handleModeChange.bind(this);//режим просмотра или редактирования
+
         this._handleMovieChange = this._handleMovieChange.bind(this);
     }
 
@@ -47,18 +49,24 @@ export default class MovieList {
       render(this._siteMainContainer, this._EmptyFilmListComponent, RenderPosition.BEFOREEND);
   }
 
+  _handleModeChange() {
+    Object
+      .values(this._moviePresenter)
+      .forEach((presenter) => presenter.resetView());
+  }
+
   _handleMovieChange(filmContainer, updatedMovie) {
     this._mockFilms = updateItem(this._mockFilms, updatedMovie);
     this._moviePresenter[updatedMovie.id].init(filmContainer, updatedMovie);
   }
 
   _renderFilmCard(filmContainer, filmData) {
-    const moviePresenter = new MoviePresenter(this._siteBodyContainer, this._handleMovieChange);
+    const moviePresenter = new MoviePresenter(this._siteBodyContainer, this._handleMovieChange,  this._handleModeChange);
     moviePresenter.init(filmContainer, filmData);
     this._moviePresenter[filmData.id] = moviePresenter;
 }
 
-_renderMovieCards(from, to, container, dataArray) {
+   _renderMovieCards(from, to, container, dataArray) {
         dataArray
             .slice(from, to)
             .forEach((filmCard) => {
@@ -67,8 +75,6 @@ _renderMovieCards(from, to, container, dataArray) {
     }
 
     _renderMovieList() {
-      // Метод для инициализации (начала работы) модуля,
-      // бОльшая часть текущей реализации в main.js
           if (this._mockFilms.length === 0) {
               this._renderEmptyFilmList();
           } else {
@@ -85,7 +91,7 @@ _renderMovieCards(from, to, container, dataArray) {
           }
       }
 
-      _renderShowMoreBtnButton() {
+    _renderShowMoreBtnButton() {
         render(this._filmListComponent.getElement().querySelector(".films-list"), this._showMoreBtnComponent, RenderPosition.BEFOREEND);
         this._showMoreBtnComponent.setClickHandler(this._handleShowMoreBtnButton);
     }

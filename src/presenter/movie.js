@@ -3,16 +3,23 @@ import PopupView from "../view/popup-film.js";
 
 import {render, RenderPosition, replace, remove} from "../render.js";
 
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
 
 export default class Movie {
-    constructor (siteBody, changeData) {
+    constructor (siteBody, changeData, changeMode) {
 
         this._siteBodyContainer = siteBody;
         this._changeData = changeData;
+        this._changeMode = changeMode;
 
-
+        this._mode = Mode.DEFAULT;
         this._filmCardComponent = null;
         this._popupComponent = null;
+
 
         this._handleShowPopupClick = this._handleShowPopupClick.bind(this);
         this._onEscKeyDownHandler = this._onEscKeyDownHandler.bind(this);
@@ -55,12 +62,12 @@ export default class Movie {
             return;
         }
 
-        if (this._filmContainer.contains(prevFilmCardComponent.getElement())) {
-            replace(this._filmCardComponent, prevFilmCardComponent);
+        if (this._mode === Mode.DEFAULT) {
+          replace(this._filmCardComponent, prevFilmCardComponent);
         }
 
-        if (this._filmContainer.contains(prevPopupComponent.getElement())) {
-            replace(this._popupComponent, prevPopupComponent);
+        if (this._mode === Mode.EDITING) {
+          replace(this._popupComponent, prevPopupComponent);
         }
 
         remove(prevFilmCardComponent);
@@ -73,31 +80,36 @@ export default class Movie {
         remove(this._popupComponent);
     }
 
-
     _onEscKeyDownHandler(evt) {
-        if (evt.key === "Escape" || evt.keyCode === 27) {
-            evt.preventDefault();
-            this._siteBodyContainer.removeChild(this._popupComponent.getElement());
-            document.removeEventListener("keydown", this._onEscKeyDownHandler);
-            this._siteBodyContainer.classList.remove("hide-overflow");
-        }
-    }
+      if (evt.key === "Escape" || evt.keyCode === 27) {
+          evt.preventDefault();
+          this._siteBodyContainer.removeChild(this._popupComponent.getElement());
+          document.removeEventListener("keydown", this._onEscKeyDownHandler);
+          this._siteBodyContainer.classList.remove("hide-overflow");
+      }
+  }
+
+  _handleExitBtnClick() {
+    this._siteBodyContainer.removeChild(this._popupComponent.getElement());
+      this._siteBodyContainer.classList.remove("hide-overflow");
+
+  }
 
     _handleShowPopupClick() {
-        this._siteBodyContainer.appendChild(this._popupComponent.getElement());
-        this._siteBodyContainer.classList.add("hide-overflow");
-        document.addEventListener("keydown", this._onEscKeyDownHandler);
 
-    }
+      this._siteBodyContainer.appendChild(this._popupComponent.getElement());
+      this._siteBodyContainer.classList.add("hide-overflow");
+      document.addEventListener("keydown", this._onEscKeyDownHandler);
+
+      this._mode = Mode.EDITING;
+  }
+
 
     _handleMove() {
         this._filmCardComponent.getElement().querySelector(".film-card__title").style.cursor = "pointer";
     }
 
-    _handleExitBtnClick() {
-        this._siteBodyContainer.removeChild(this._popupComponent.getElement());
-        this._siteBodyContainer.classList.remove("hide-overflow");
-    }
+
 
     _handleAddToWatchedListClick() {
         this._changeData(this._filmContainer,
