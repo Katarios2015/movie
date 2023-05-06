@@ -4,7 +4,7 @@ export const RenderPosition = {
     AFTERBEGIN: "afterbegin",
     BEFOREEND: "beforeend",
 };
-  
+
 export const render = (container, child, place) => {
 //проверяем принадлежит ли классу
     if (container instanceof Abstract) {
@@ -36,18 +36,18 @@ export const renderTemplate = (container, template, place) => {
 export const createElement = (template) => {
     const newElement = document.createElement("div"); // 1
     newElement.innerHTML = template; // 2
-    return newElement.firstChild; 
+    return newElement.firstChild;
     // 3
 };
 // Единственный нюанс, что HTML в строке должен иметь общую обёртку,
 // то есть быть чем-то вроде <nav><a>Link 1</a><a>Link 2</a></nav>,
 // а не просто <a>Link 1</a><a>Link 2</a>
-  
+
 export const remove = (component) => {
     if (!(component instanceof Abstract)) {
         throw new Error("Can remove only components");
     }
-  
+
     component.getElement().remove();
     component.removeElement();
 };
@@ -56,16 +56,29 @@ export const replace = (newChild, oldChild) => {
     if (oldChild instanceof Abstract) {
         oldChild = oldChild.getElement();
     }
-  
+
     if (newChild instanceof Abstract) {
         newChild = newChild.getElement();
     }
-  
+
     const parent = oldChild.parentElement;
-  
+
     if (parent === null || oldChild === null || newChild === null) {
         throw new Error("Can't replace unexisting elements");
     }
-  
+
     parent.replaceChild(newChild, oldChild);
 };
+
+export const rerender = (component) => {
+  const oldElement = component.getElement();
+  const parent = oldElement.parentElement;
+
+  this.removeElement();
+
+  const newElement = component.getElement();
+
+  parent.replaceChild(newElement, oldElement);
+
+  //this.recoveryListeners();
+}

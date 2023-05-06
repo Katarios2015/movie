@@ -1,7 +1,7 @@
 import FilmCardView from "../view/film-card.js";
 import PopupView from "../view/popup-film.js";
 
-import {render, RenderPosition, replace, remove} from "../render.js";
+import {render, RenderPosition, replace, remove, rerender} from "../render.js";
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -20,12 +20,12 @@ export default class Movie {
         this._filmCardComponent = null;
         this._popupComponent = null;
 
-        //this._handleHidePopup = this._handleHidePopup.bind(this);
+        this._handleHidePopup = this._handleHidePopup.bind(this);
 
         this._handleShowPopupClick = this._handleShowPopupClick.bind(this);
         this._onEscKeyDownHandler = this._onEscKeyDownHandler.bind(this);
         this._handleMove = this._handleMove.bind(this);
-        this._handleExitBtnClick = this._handleExitBtnClick.bind(this);
+        //this._handleExitBtnClick = this._handleExitBtnClick.bind(this);
 
         this._handleAddToWatchedListClick = this._handleAddToWatchedListClick.bind(this);
         this._handleAddToAlreadyWatchedClick = this._handleAddToAlreadyWatchedClick.bind(this);
@@ -42,7 +42,7 @@ export default class Movie {
         this._filmCardComponent = new FilmCardView(filmData);
         this._popupComponent = new PopupView(filmData);
 
-        this._popupComponent.setExitBtnClickHandler(this._handleExitBtnClick);
+        this._popupComponent.setExitBtnClickHandler(this._handleHidePopup);
 
         this._filmCardComponent.setPosterClickHandler(this._handleShowPopupClick);
         this._filmCardComponent.setTitleMoveHandler(this._handleMove);
@@ -73,9 +73,11 @@ export default class Movie {
           replace(this._filmCardComponent, prevFilmCardComponent);
         }
 
-        if (this._mode === Mode.EDITING) {
+        if (this._mode === Mode.EDITING || (this._mode === Mode.EDITING && prevPopupComponent === null)) {
           replace(this._popupComponent, prevPopupComponent);
         }
+
+
 
         remove(prevFilmCardComponent);
         remove(prevPopupComponent);
@@ -103,28 +105,39 @@ export default class Movie {
       }
   }
 
-  _handleExitBtnClick() {
+  /*_handleExitBtnClick() {
     this._siteBodyContainer.removeChild(this._popupComponent.getElement());
     this._siteBodyContainer.classList.remove("hide-overflow");
     this._mode = Mode.DEFAULT;
-  }
+  }*/
+
+  _handleShowPopupClick() {
+    this._changeMode();
+    this._renderPopup();
+
+    this._siteBodyContainer.classList.add("hide-overflow");
+    document.addEventListener("keydown", this._onEscKeyDownHandler);
+
+}
+
+
+
+_renderPopup() {
+  this._mode = Mode.EDITING;
+  render(this._siteBodyContainer,this._popupComponent, RenderPosition.BEFOREEND);
+}
 
   _handleHidePopup() {
     remove(this._popupComponent);
     this._mode = Mode.DEFAULT;
+
+    document.removeEventListener("keydown", this._onEscKeyDownHandler);
+    this._siteBodyContainer.classList.remove("hide-overflow");
+
   }
 
-    _handleShowPopupClick() {
 
-      this._siteBodyContainer.appendChild(this._popupComponent.getElement());
-      this._siteBodyContainer.classList.add("hide-overflow");
-      document.addEventListener("keydown", this._onEscKeyDownHandler);
-
-      this._changeMode();
-      this._mode = Mode.EDITING;
-  }
-
-    _handleMove() {
+  _handleMove() {
         this._filmCardComponent.getElement().querySelector(".film-card__title").style.cursor = "pointer";
     }
 

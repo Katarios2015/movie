@@ -126,7 +126,7 @@ export default class MovieList {
 
     _clearMovieList() {
         Object
-            .values( this._moviePresenter)
+            .values(this._moviePresenter)
             .forEach((presenter) => presenter.destroy());
         this._moviePresenter = {};
         this._renderedFilmsCounter = MAX_FILM_COUNT;
