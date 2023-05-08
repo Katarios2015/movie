@@ -70,15 +70,3 @@ export const replace = (newChild, oldChild) => {
     parent.replaceChild(newChild, oldChild);
 };
 
-export const rerender = (component) => {
-  const oldElement = component.getElement();
-  const parent = oldElement.parentElement;
-
-  this.removeElement();
-
-  const newElement = component.getElement();
-
-  parent.replaceChild(newElement, oldElement);
-
-  //this.recoveryListeners();
-}

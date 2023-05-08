@@ -54,8 +54,6 @@ export default class Movie {
         this._filmCardComponent.setAlreadyWatchedClickHandler(this._handleAddToAlreadyWatchedClick);
         this._filmCardComponent.setAddToFavoriteClickHandler(this._handleAddToFavoriteClick);
 
-
-
         this._popupComponent.setAddToWatchBtnListClickHandler(this._handleAddToWatchedListClick);
         this._popupComponent.setAlreadyWatchedBtnClickHandler(this._handleAddToAlreadyWatchedClick);
         this._popupComponent.setAddToFavoriteBtnClickHandler(this._handleAddToFavoriteClick);
@@ -65,6 +63,7 @@ export default class Movie {
             return;
         }
 
+
         if (this._mode === Mode.DEFAULT) {
           replace(this._filmCardComponent, prevFilmCardComponent);
         }
@@ -73,11 +72,9 @@ export default class Movie {
           replace(this._filmCardComponent, prevFilmCardComponent);
         }
 
-        if (this._mode === Mode.EDITING || (this._mode === Mode.EDITING && prevPopupComponent === null)) {
+        if (this._mode === Mode.EDITING) {
           replace(this._popupComponent, prevPopupComponent);
         }
-
-
 
         remove(prevFilmCardComponent);
         remove(prevPopupComponent);
@@ -113,27 +110,27 @@ export default class Movie {
 
   _handleShowPopupClick() {
     this._changeMode();
-    this._renderPopup();
+    render(this._siteBodyContainer, this._popupComponent, RenderPosition.BEFOREEND);
+    this._mode = Mode.EDITING;
+
+
 
     this._siteBodyContainer.classList.add("hide-overflow");
+
+    this._popupComponent.setExitBtnClickHandler(this._handleHidePopup);
+    this._popupComponent.setAddToWatchBtnListClickHandler(this._handleAddToWatchedListClick);
+    this._popupComponent.setAlreadyWatchedBtnClickHandler(this._handleAddToAlreadyWatchedClick);
+    this._popupComponent.setAddToFavoriteBtnClickHandler(this._handleAddToFavoriteClick);
     document.addEventListener("keydown", this._onEscKeyDownHandler);
-
+    console.log(this._mode);
 }
 
-
-
-_renderPopup() {
-  this._mode = Mode.EDITING;
-  render(this._siteBodyContainer,this._popupComponent, RenderPosition.BEFOREEND);
-}
 
   _handleHidePopup() {
     remove(this._popupComponent);
-    this._mode = Mode.DEFAULT;
-
     document.removeEventListener("keydown", this._onEscKeyDownHandler);
     this._siteBodyContainer.classList.remove("hide-overflow");
-
+    this._mode = Mode.DEFAULT;
   }
 
 

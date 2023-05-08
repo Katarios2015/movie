@@ -52,7 +52,9 @@ export default class MovieList {
   _handleModeChange() {
     Object
       .values(this._moviePresenter)
-      .forEach((presenter) => presenter.resetView());
+      .forEach((presenter) => {
+        presenter.resetView();
+      console.log(presenter)});
   }
 
   _handleMovieChange(filmContainer, updatedMovie) {
