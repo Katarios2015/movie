@@ -2,26 +2,32 @@ import FilmListView from "../view/film-list.js";
 import EmptyFilmListView from "../view/empty-list.js";
 import ShowMoreBtnView from "../view/show-more-btn.js";
 import ExtraSectionView from "../view/create-extra-section.js";
+import MenuView from "../view/menu.js";
+import SortView from "../view/sort.js";
+
+
+import {render, RenderPosition, remove} from "../utils/render.js";
+import {updateItem} from "../utils/common.js";
 
 import MoviePresenter from "./movie.js";
-import {render, RenderPosition, remove} from "../render.js";
-
-import {updateItem} from "../mock/util.js";
 
 const MAX_FILM_COUNT = 5;
 const FILM_EXTRA_COUNT = 2;
 
 export default class MovieList {
-    constructor(siteContainer, siteBody) {
+    constructor(siteContainer, siteBody, filter) {
         this._siteMainContainer = siteContainer;
         this._siteBodyContainer = siteBody;
         this._renderedFilmsCounter = MAX_FILM_COUNT;
 
+        this._renderedFilter = filter;
+
         this._moviePresenter = {};
 
+        this._menuComponent = new MenuView(filter);
+
         this._filmListComponent = new FilmListView();
-        //this._menuComponent = new MenuView();
-        /*this._sortComponent = new SortView();*/
+        this._sortComponent = new SortView();
         this._showMoreBtnComponent = new ShowMoreBtnView();
         this._EmptyFilmListComponent = new EmptyFilmListView();
         this._ExtraSectionComponent = new ExtraSectionView();
@@ -38,14 +44,21 @@ export default class MovieList {
         this._mockFilms = mockFilms.slice();
         render(this._siteMainContainer, this._filmListComponent, RenderPosition.BEFOREEND);
         this._renderMovieList();
+        this._renderSort();
+        this._renderMenu();
     }
 
-    /*_renderSort() {
-    // Метод для рендеринга сортировки
-    }*/
+    _renderSort() {
+      render(this._filmListComponent, this._sortComponent, RenderPosition.BEFORE);
+    }
+
+    _renderMenu() {
+      render(this._siteMainContainer, this._menuComponent, RenderPosition.AFTERBEGIN);
+    }
+
+
 
   _renderEmptyFilmList() {
-      // Метод для рендеринга заглушки
       render(this._siteMainContainer, this._EmptyFilmListComponent, RenderPosition.BEFOREEND);
   }
 

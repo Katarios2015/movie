@@ -1,7 +1,8 @@
 import FilmCardView from "../view/film-card.js";
 import PopupView from "../view/popup-film.js";
 
-import {render, RenderPosition, replace, remove, rerender} from "../render.js";
+import {render, RenderPosition, replace, remove} from "../utils/render.js";
+
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -15,7 +16,6 @@ export default class Movie {
         this._siteBodyContainer = siteBody;
         this._changeData = changeData;
         this._changeMode = changeMode;
-
         this._mode = Mode.DEFAULT;
         this._filmCardComponent = null;
         this._popupComponent = null;
@@ -108,22 +108,23 @@ export default class Movie {
     this._mode = Mode.DEFAULT;
   }*/
 
+
   _handleShowPopupClick() {
     this._changeMode();
     render(this._siteBodyContainer, this._popupComponent, RenderPosition.BEFOREEND);
     this._mode = Mode.EDITING;
 
-
-
     this._siteBodyContainer.classList.add("hide-overflow");
-
     this._popupComponent.setExitBtnClickHandler(this._handleHidePopup);
     this._popupComponent.setAddToWatchBtnListClickHandler(this._handleAddToWatchedListClick);
     this._popupComponent.setAlreadyWatchedBtnClickHandler(this._handleAddToAlreadyWatchedClick);
     this._popupComponent.setAddToFavoriteBtnClickHandler(this._handleAddToFavoriteClick);
     document.addEventListener("keydown", this._onEscKeyDownHandler);
+
     console.log(this._mode);
 }
+
+
 
 
   _handleHidePopup() {
