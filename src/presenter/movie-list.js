@@ -1,0 +1,151 @@
+import FilmListView from "../view/film-list.js";
+import EmptyFilmListView from "../view/empty-list.js";
+import ShowMoreBtnView from "../view/show-more-btn.js";
+import ExtraSectionView from "../view/create-extra-section.js";
+import MenuView from "../view/menu.js";
+import SortView from "../view/sort.js";
+
+
+import {render, RenderPosition, remove} from "../utils/render.js";
+import {updateItem} from "../utils/common.js";
+
+import MoviePresenter from "./movie.js";
+
+const MAX_FILM_COUNT = 5;
+const FILM_EXTRA_COUNT = 2;
+
+export default class MovieList {
+    constructor(siteContainer, siteBody, filter) {
+        this._siteMainContainer = siteContainer;
+        this._siteBodyContainer = siteBody;
+        this._renderedFilmsCounter = MAX_FILM_COUNT;
+
+        this._renderedFilter = filter;
+
+        this._moviePresenter = {};
+
+        this._menuComponent = new MenuView(filter);
+
+        this._filmListComponent = new FilmListView();
+        this._sortComponent = new SortView();
+        this._showMoreBtnComponent = new ShowMoreBtnView();
+        this._EmptyFilmListComponent = new EmptyFilmListView();
+        this._ExtraSectionComponent = new ExtraSectionView();
+
+        this._handleShowMoreBtnButton = this._handleShowMoreBtnButton.bind(this);
+        this._renderExtraSection = this._renderExtraSection.bind(this);
+
+        this._handleModeChange = this._handleModeChange.bind(this);//режим просмотра или редактирования
+
+        this._handleMovieChange = this._handleMovieChange.bind(this);
+    }
+
+    init(mockFilms) {
+        this._mockFilms = mockFilms.slice();
+        render(this._siteMainContainer, this._filmListComponent, RenderPosition.BEFOREEND);
+        this._renderMovieList();
+        this._renderSort();
+        this._renderMenu();
+    }
+
+    _renderSort() {
+      render(this._filmListComponent, this._sortComponent, RenderPosition.BEFORE);
+    }
+
+    _renderMenu() {
+      render(this._siteMainContainer, this._menuComponent, RenderPosition.AFTERBEGIN);
+    }
+
+
+
+  _renderEmptyFilmList() {
+      render(this._siteMainContainer, this._EmptyFilmListComponent, RenderPosition.BEFOREEND);
+  }
+
+  _handleModeChange() {
+    Object
+      .values(this._moviePresenter)
+      .forEach((presenter) => {
+        presenter.resetView();
+      console.log(presenter)});
+  }
+
+  _handleMovieChange(filmContainer, updatedMovie) {
+    this._mockFilms = updateItem(this._mockFilms, updatedMovie);
+    this._moviePresenter[updatedMovie.id].init(filmContainer, updatedMovie);
+  }
+
+  _renderFilmCard(filmContainer, filmData) {
+    const moviePresenter = new MoviePresenter(this._siteBodyContainer, this._handleMovieChange,  this._handleModeChange);
+    moviePresenter.init(filmContainer, filmData);
+    this._moviePresenter[filmData.id] = moviePresenter;
+}
+
+   _renderMovieCards(from, to, container, dataArray) {
+        dataArray
+            .slice(from, to)
+            .forEach((filmCard) => {
+                this._renderFilmCard(container, filmCard);
+            });
+    }
+
+    _renderMovieList() {
+          if (this._mockFilms.length === 0) {
+              this._renderEmptyFilmList();
+          } else {
+              render(this._siteMainContainer, this._filmListComponent, RenderPosition.BEFOREEND);
+
+              this._renderMovieCards(0, Math.min(this._mockFilms.length, MAX_FILM_COUNT), this._filmListComponent.getElement()
+                  .querySelector(".films-list__container"), this._mockFilms);
+
+              if(this._mockFilms.length > MAX_FILM_COUNT) {
+                  this._renderShowMoreBtnButton();
+              }
+
+              this._renderExtraSection();
+          }
+      }
+
+    _renderShowMoreBtnButton() {
+        render(this._filmListComponent.getElement().querySelector(".films-list"), this._showMoreBtnComponent, RenderPosition.BEFOREEND);
+        this._showMoreBtnComponent.setClickHandler(this._handleShowMoreBtnButton);
+    }
+
+    _handleShowMoreBtnButton() {
+        this._renderMovieCards(this._renderedFilmsCounter, this._renderedFilmsCounter + MAX_FILM_COUNT,
+            this._filmListComponent.getElement().querySelector(".films-list__container"), this._mockFilms);
+        this._renderedFilmsCounter += MAX_FILM_COUNT;
+
+        if(this._renderedFilmsCounter >= this._mockFilms.length) {
+            remove(this._showMoreBtnComponent);
+        }
+    }
+
+    _renderExtraSection () {
+
+        render(this._filmListComponent, this._ExtraSectionComponent, RenderPosition.BEFOREEND);
+
+        const ratedSection = this._filmListComponent.getElement().querySelector(".films-list--rate");
+        const commentedSection = ratedSection.cloneNode(true);
+        commentedSection.className = ("films-list films-list--extra films-list--comment");
+
+        render(this._filmListComponent, commentedSection, RenderPosition.BEFOREEND);
+        commentedSection.querySelector("h2").innerHTML = "Most commented";
+        const sortedByRateFilms = this._mockFilms.slice().sort((a, b) => b.rate - a.rate);
+        const sortedByCommentsFilms = this._mockFilms.slice().sort((a, b) => b.comments.length - a.comments.length);
+
+        this._renderMovieCards(0, FILM_EXTRA_COUNT, ratedSection.querySelector(".films-list__container"), sortedByRateFilms);
+        this._renderMovieCards(0, FILM_EXTRA_COUNT, commentedSection.querySelector(".films-list__container"), sortedByCommentsFilms);
+    }
+
+
+    _clearMovieList() {
+        Object
+            .values(this._moviePresenter)
+            .forEach((presenter) => presenter.destroy());
+        this._moviePresenter = {};
+        this._renderedFilmsCounter = MAX_FILM_COUNT;
+        remove(this._showMoreBtnComponent);
+    }
+
+}

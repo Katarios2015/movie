@@ -11,21 +11,10 @@ const createFilmListSectionTemplate = () => {
 };
 
 export default class FilmList extends  AbstractView {
-   /* constructor(){
-        super();
-
-    }*/
 
     getTemplate() {
         return createFilmListSectionTemplate();
     }
-
-    /*_extraSetClickHandler(evt) {
-        evt.preventDefault();
-        this._callback.clickExtraFilmCard();
-    }
-
-    set*/
 
 }
 

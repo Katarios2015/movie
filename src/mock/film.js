@@ -1,4 +1,5 @@
-import {getRandomArrayElement, getRandomCeilNumber, getRandomNumber, getRandomArray, getTimeFormat} from "./util.js";
+import {getRandomArrayElement, getRandomCeilNumber, getRandomNumber, getRandomArray, getTimeFormat} from "../utils/common.js";
+import {nanoid} from 'nanoid';
 const dayjs = require("dayjs");
 
 const COMMENTS_COUNT = 4;
@@ -19,11 +20,11 @@ const filmPosters = [
 ];
 
 const filmDescriptions = [
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", 
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
     "Cras aliquet varius magna, non porta ligula feugiat eget.",
-    "Fusce tristique felis at fermentum pharetra.", 
+    "Fusce tristique felis at fermentum pharetra.",
     "Aliquam id orci ut lectus varius viverra." ,
-    "Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.", 
+    "Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.",
     "Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.",
     "Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.",
     "Sed sed nisi sed augue convallis suscipit in sed felis.","Aliquam erat volutpat.",
@@ -36,7 +37,7 @@ const filmDurations = [56, 120, 77, 140, 180];
 
 const idComments = [5, 120, 7, 140, 1];
 
-const directors = ["Anthony Mann", "Guy Ritchie", "David Yates", "Ridley Scott", "Alfred Hitchcock"]; 
+const directors = ["Anthony Mann", "Guy Ritchie", "David Yates", "Ridley Scott", "Alfred Hitchcock"];
 const writers = ["Anne Wigton", "Heinz Herald", "Richard Weil", "Russell Tee", "Noel Adams", "Clemence Dane"];
 const actors = ["Robert De Niro", "Jack Nicholson", "Marlon Brando", "Denzel Washington", "Katharine Hepburn"];
 const releases = ["01 April 1945", "30 March 1945", "30 May 1925", "05 October 2000"];
@@ -71,6 +72,7 @@ const generateFilm = () => {
     const idOfComments = getRandomArrayElement(idComments);
     const comments = popupComments;
     return {
+        id: nanoid(),
         poster: getRandomArrayElement(filmPosters),
         title: getRandomArrayElement(filmTitles),
         rate: getRandomNumber(0, 10),

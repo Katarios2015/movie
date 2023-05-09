@@ -1,4 +1,4 @@
-import {getRandomArrayElement, getRandomCeilNumber} from "./util.js";
+import {getRandomArrayElement, getRandomCeilNumber} from "../utils/common.js";
 
 const ranks = ["novice", "fan", "movie buff"];
 const photosAvatar = ["./images/bitmap@2x.png","./images/bitmap@2x.png"];
@@ -15,12 +15,12 @@ const getUserRank = () => {
         userRank = ranks[2];
     }
     return userRank;
-}; 
+};
 
 ;
 
 const generateUseRank = () => {
-   
+
     return {
         rank: getUserRank(),
         avatar: getRandomArrayElement(photosAvatar)
