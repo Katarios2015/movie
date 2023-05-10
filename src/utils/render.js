@@ -1,4 +1,5 @@
 import Abstract from "../view/abstract.js";
+import {dayjs} from "../utils/common.js";
 
 export const RenderPosition = {
     AFTERBEGIN: "afterbegin",
@@ -23,8 +24,8 @@ export const render = (container, child, place) => {
         container.append(child);
         break;
     case RenderPosition.BEFORE:
-          container.before(child);
-          break;
+        container.before(child);
+        break;
     }
 };
 
@@ -73,3 +74,14 @@ export const replace = (newChild, oldChild) => {
     parent.replaceChild(newChild, oldChild);
 };
 
+export const sortMovieDate = () => {
+  
+    console.log("by the date");
+};
+
+
+
+export const sortMovieRate = () => {
+    console.log("by the rate");
+   
+};

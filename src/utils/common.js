@@ -1,7 +1,20 @@
+export const dayjs = require("dayjs");
+
+const SortType = {
+    DEFAULT: "default",
+    DATE: "date_up",
+    RATE: "rate-up",
+};
+
+const ExtraTitle = {
+    RATED: "Top rated",
+    COMMENTED: "Most commented",
+};
 const getRandomArrayElement = (items) => {
     const randElement = items[Math.floor(Math.random() * items.length)];
     return randElement;
 };
+
 
 
 
@@ -40,11 +53,11 @@ const getTimeFormat = (minutes) => {
 
 export const updateItem = (items, update) => {
     const index = items.findIndex((item) => item.id === update.id);
-  
+
     if (index === -1) {
         return items;
     }
-  
+
     return [
         ...items.slice(0, index),
         update,
@@ -54,4 +67,4 @@ export const updateItem = (items, update) => {
 
 
 
-export {getRandomArrayElement, getRandomCeilNumber, getRandomNumber, getRandomArray, getTimeFormat};
+export {SortType, ExtraTitle, getRandomArrayElement, getRandomCeilNumber, getRandomNumber, getRandomArray, getTimeFormat};
