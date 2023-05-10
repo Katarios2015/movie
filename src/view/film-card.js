@@ -115,25 +115,25 @@ export default class FilmCard extends AbstractView{
     setPosterClickHandler (callback) {
         this._callback.clickPoster = callback;
         this.getElement().querySelector(".film-card__poster")
-        .addEventListener("click", this._filmPosterClickHandler);
+            .addEventListener("click", this._filmPosterClickHandler);
     }
 
     setTitleMoveHandler (callback) {
         this._callback.move = callback;
         this.getElement().querySelector(".film-card__title")
-        .addEventListener("mousemove", this._filmCardMove);
+            .addEventListener("mousemove", this._filmCardMove);
     }
 
     setTitleClickHandler (callback) {
         this._callback.clickTitle = callback;
         this.getElement().querySelector(".film-card__title")
-        .addEventListener("click", this._filmTitleClickHandler);
+            .addEventListener("click", this._filmTitleClickHandler);
     }
 
     setCommentsClickHandler (callback) {
         this._callback.clickComment = callback;
         this.getElement().querySelector(".film-card__comments")
-        .addEventListener("click", this._filmCommentsClickHandler);
+            .addEventListener("click", this._filmCommentsClickHandler);
     }
 
 
@@ -142,19 +142,19 @@ export default class FilmCard extends AbstractView{
     setAddToWatchListClickHandler (callback) {
         this._callback.clickItemWatchList = callback;
         this.getElement().querySelector(".film-card__controls-item--add-to-watchlist")
-        .addEventListener("click", this._addToWhatchListClickHandler);
+            .addEventListener("click", this._addToWhatchListClickHandler);
     }
 
     setAlreadyWatchedClickHandler (callback) {
         this._callback.clickItemToAlready = callback;
         this.getElement().querySelector(".film-card__controls-item--mark-as-watched")
-        .addEventListener("click", this._addToAlreadyWatchedHandler);
+            .addEventListener("click", this._addToAlreadyWatchedHandler);
     }
 
     setAddToFavoriteClickHandler (callback) {
         this._callback.clickItemToFavorite = callback;
         this.getElement().querySelector(".film-card__controls-item--favorite")
-        .addEventListener("click", this._addToFavoriteClickHandler);
+            .addEventListener("click", this._addToFavoriteClickHandler);
     }
 
 }

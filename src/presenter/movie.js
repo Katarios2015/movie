@@ -1,18 +1,13 @@
 import FilmCardView from "../view/film-card.js";
 import PopupView from "../view/popup-film.js";
-
 import {render, RenderPosition, replace, remove} from "../utils/render.js";
 
-
 const Mode = {
-  DEFAULT: 'DEFAULT',
-  EDITING: 'EDITING',
+    DEFAULT: "DEFAULT",
+    EDITING: "EDITING",
 };
-
-
 export default class Movie {
     constructor (siteBody, changeData, changeMode) {
-
         this._siteBodyContainer = siteBody;
         this._changeData = changeData;
         this._changeMode = changeMode;
@@ -65,15 +60,15 @@ export default class Movie {
 
 
         if (this._mode === Mode.DEFAULT) {
-          replace(this._filmCardComponent, prevFilmCardComponent);
+            replace(this._filmCardComponent, prevFilmCardComponent);
         }
 
         if (this._mode === Mode.EDITING) {
-          replace(this._filmCardComponent, prevFilmCardComponent);
+            replace(this._filmCardComponent, prevFilmCardComponent);
         }
 
         if (this._mode === Mode.EDITING) {
-          replace(this._popupComponent, prevPopupComponent);
+            replace(this._popupComponent, prevPopupComponent);
         }
 
         remove(prevFilmCardComponent);
@@ -87,55 +82,55 @@ export default class Movie {
     }
 
     resetView() {
-      if (this._mode !== Mode.DEFAULT) {
-        this._handleHidePopup();
-      }
+        if (this._mode !== Mode.DEFAULT) {
+            this._handleHidePopup();
+        }
     }
 
     _onEscKeyDownHandler(evt) {
-      if (evt.key === "Escape" || evt.keyCode === 27) {
-          evt.preventDefault();
-          this._siteBodyContainer.removeChild(this._popupComponent.getElement());
-          document.removeEventListener("keydown", this._onEscKeyDownHandler);
-          this._siteBodyContainer.classList.remove("hide-overflow");
-          this._mode = Mode.DEFAULT;
-      }
-  }
+        if (evt.key === "Escape" || evt.keyCode === 27) {
+            evt.preventDefault();
+            this._siteBodyContainer.removeChild(this._popupComponent.getElement());
+            document.removeEventListener("keydown", this._onEscKeyDownHandler);
+            this._siteBodyContainer.classList.remove("hide-overflow");
+            this._mode = Mode.DEFAULT;
+        }
+    }
 
-  /*_handleExitBtnClick() {
+    /*_handleExitBtnClick() {
     this._siteBodyContainer.removeChild(this._popupComponent.getElement());
     this._siteBodyContainer.classList.remove("hide-overflow");
     this._mode = Mode.DEFAULT;
   }*/
 
 
-  _handleShowPopupClick() {
-    this._changeMode();
-    render(this._siteBodyContainer, this._popupComponent, RenderPosition.BEFOREEND);
-    this._mode = Mode.EDITING;
+    _handleShowPopupClick() {
+        this._changeMode();
+        render(this._siteBodyContainer, this._popupComponent, RenderPosition.BEFOREEND);
+        this._mode = Mode.EDITING;
 
-    this._siteBodyContainer.classList.add("hide-overflow");
-    this._popupComponent.setExitBtnClickHandler(this._handleHidePopup);
-    this._popupComponent.setAddToWatchBtnListClickHandler(this._handleAddToWatchedListClick);
-    this._popupComponent.setAlreadyWatchedBtnClickHandler(this._handleAddToAlreadyWatchedClick);
-    this._popupComponent.setAddToFavoriteBtnClickHandler(this._handleAddToFavoriteClick);
-    document.addEventListener("keydown", this._onEscKeyDownHandler);
+        this._siteBodyContainer.classList.add("hide-overflow");
+        this._popupComponent.setExitBtnClickHandler(this._handleHidePopup);
+        this._popupComponent.setAddToWatchBtnListClickHandler(this._handleAddToWatchedListClick);
+        this._popupComponent.setAlreadyWatchedBtnClickHandler(this._handleAddToAlreadyWatchedClick);
+        this._popupComponent.setAddToFavoriteBtnClickHandler(this._handleAddToFavoriteClick);
+        document.addEventListener("keydown", this._onEscKeyDownHandler);
 
-    console.log(this._mode);
-}
-
-
+        console.log(this._mode);
+    }
 
 
-  _handleHidePopup() {
-    remove(this._popupComponent);
-    document.removeEventListener("keydown", this._onEscKeyDownHandler);
-    this._siteBodyContainer.classList.remove("hide-overflow");
-    this._mode = Mode.DEFAULT;
-  }
 
 
-  _handleMove() {
+    _handleHidePopup() {
+        remove(this._popupComponent);
+        document.removeEventListener("keydown", this._onEscKeyDownHandler);
+        this._siteBodyContainer.classList.remove("hide-overflow");
+        this._mode = Mode.DEFAULT;
+    }
+
+
+    _handleMove() {
         this._filmCardComponent.getElement().querySelector(".film-card__title").style.cursor = "pointer";
     }
 

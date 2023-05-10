@@ -1,6 +1,6 @@
 import {getRandomArrayElement, getRandomCeilNumber, getRandomNumber, getRandomArray, getTimeFormat} from "../utils/common.js";
-import {nanoid} from 'nanoid';
-const dayjs = require("dayjs");
+import {nanoid} from "nanoid";
+import {dayjs} from "../utils/common.js";
 
 const COMMENTS_COUNT = 4;
 

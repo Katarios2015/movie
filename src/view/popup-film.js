@@ -213,24 +213,24 @@ export default class Popup extends AbstractView {
     setExitBtnClickHandler (callback) {
         this._callback.clickExit = callback;
         this.getElement().querySelector(".film-details__close-btn")
-        .addEventListener("click", this._exitBtnClickHandler);
+            .addEventListener("click", this._exitBtnClickHandler);
     }
 
     setAddToWatchBtnListClickHandler (callback) {
         this._callback.clickWatchList = callback;
         this.getElement().querySelector(".film-details__control-button--watchlist")
-        .addEventListener("click", this._addToWhatchListBtnClickHandler);
+            .addEventListener("click", this._addToWhatchListBtnClickHandler);
     }
 
     setAlreadyWatchedBtnClickHandler (callback) {
         this._callback.clickToAlready = callback;
         this.getElement().querySelector(".film-details__control-button--watched")
-        .addEventListener("click", this._addToAlreadyWatchedBtnHandler);
+            .addEventListener("click", this._addToAlreadyWatchedBtnHandler);
     }
 
     setAddToFavoriteBtnClickHandler (callback) {
         this._callback.clickToFavorite = callback;
         this.getElement().querySelector(".film-details__control-button--favorite")
-        .addEventListener("click", this._addToFavoriteBtnClickHandler);
+            .addEventListener("click", this._addToFavoriteBtnClickHandler);
     }
 }
