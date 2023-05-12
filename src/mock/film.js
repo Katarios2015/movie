@@ -81,6 +81,7 @@ const generateFilm = () => {
         genres:  getRandomArray(filmGenres, 0, 3),
         description: getRandomArray(filmDescriptions, 0, 5),
         comments: selectCommentsDependOfID(idOfComments, comments),
+        
         isWatchList: Boolean(getRandomCeilNumber(0, 1)),
         isWatched: Boolean(getRandomCeilNumber(0, 1)),
         isFavorite: Boolean(getRandomCeilNumber(0, 1)),
