@@ -18,7 +18,7 @@ const createFilmsControls = (film) => {
     <button class="film-card__controls-item ${watchedClass}" type="button">Mark as watched</button>
     <button class="film-card__controls-item ${favoriteClass}" type="button">Mark as favorite</button>`
     );
-
+    
 };
 
 

@@ -74,14 +74,15 @@ export const replace = (newChild, oldChild) => {
     parent.replaceChild(newChild, oldChild);
 };
 
-export const sortMovieDate = () => {
-  
+export const sortMovieDate = (a,b) => {
     console.log("by the date");
+    //return dayjs(b.year).diff(dayjs(a.year));
+    return (b.year - a.year);
 };
 
 
 
-export const sortMovieRate = () => {
+export const sortMovieRate = (a,b) => {
     console.log("by the rate");
-   
+    return (b.rate - a.rate);
 };

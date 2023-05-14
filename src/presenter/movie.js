@@ -119,16 +119,12 @@ export default class Movie {
         console.log(this._mode);
     }
 
-
-
-
     _handleHidePopup() {
         remove(this._popupComponent);
         document.removeEventListener("keydown", this._onEscKeyDownHandler);
         this._siteBodyContainer.classList.remove("hide-overflow");
         this._mode = Mode.DEFAULT;
     }
-
 
     _handleMove() {
         this._filmCardComponent.getElement().querySelector(".film-card__title").style.cursor = "pointer";
