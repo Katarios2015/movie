@@ -46,6 +46,7 @@ export default class MovieList {
         this._handleMovieChange = this._handleMovieChange.bind(this);
         this._handleMovieExtraChange = this._handleMovieExtraChange.bind(this);
         this._handleSortTypeChange = this._handleSortTypeChange.bind(this);//сортировка
+
     }
 
     init(mockFilms) {
@@ -113,52 +114,42 @@ export default class MovieList {
         // 2. Этот исходный массив задач необходим,
         // потому что для сортировки мы будем мутировать
         // массив в свойстве _boardTasks
-        const btn = this._sortComponent.getElement().querySelector("date_up");
         switch (sortType) {
         case SortType.DATE:
             this._mockFilms.sort(sortMovieDate);
-            btn.classList.add("sort__button--active");
             break;
         case SortType.RATE:
             this._mockFilms.sort(sortMovieRate);
             break;
         default:
+
             // 3. А когда пользователь захочет "вернуть всё, как было",
             // мы просто запишем в исходный массив
             this._mockFilms = this._sourcedMovies.slice();
+
         }
     
-        this._currentSortType = sortType;
+        this._currentSortType = sortType;      
+       
     }
 
 
     _handleSortTypeChange(sortType) {
         if (this._currentSortType ===  sortType) {
             return;
-        }
-        const btns = this._sortComponent.getElement().querySelector(".sort__button");
-        
-       /* btns.forEach((btn) => {
-            if(btn.classList.contains("sort__button--active")){
-                btn.classList.remove("sort__button--active");
-            }
-            else {
-                btn.classList.add("sort__button--active");
-            }
-            
-        });*/
-        //console.log(btns);
+        }      
+
         this._sortMovies(sortType);
-        
-        //debugger;
-        this._clearMovieList();
+    
+
+        this._clearMovieList(true);
         this._clearRatedFilms();
         this._clearCommentedFilms();
 
         this._renderMovieList();
-        this._renderExtraSection();
         
     }
+
 
     _renderFilmCard(filmContainer, filmData) {
         const moviePresenter = new MoviePresenter(this._siteBodyContainer, this._handleMovieChange,  this._handleModeChange);
@@ -248,24 +239,34 @@ export default class MovieList {
 
     
     
-    _clearMovieList() {
+    _clearMovieList(resetRenderedFilmCount = false) {
         Object.values(this._moviePresenter).forEach((presenter) => {presenter.destroy();});
+        remove(this._filmListComponent);
+
         this._moviePresenter = {};
         this._renderedFilmsCounter = MAX_FILM_COUNT;
-        
         remove(this._showMoreBtnComponent);
+
+        if (resetRenderedFilmCount) {
+            this._renderedFilmsCounter = MAX_FILM_COUNT;
+        } else {
+            this._renderedFilmsCounter = Math.min(this._mockFilms.length, this._renderedFilmsCounter);
+        }
     }
 
     _clearRatedFilms() {
         Object.values(this._moviePresenterExtra).forEach((presenter) => {presenter.destroy();});
-        remove(this._ratedComponent);
+        
         this._moviePresenterExtra = {};
+        remove(this._ratedComponent);
     }
 
     _clearCommentedFilms() {
         Object.values(this._moviePresenterExtra).forEach((presenter) => {presenter.destroy();});
-        remove(this._commentsComponent);
+       
         this._moviePresenterExtra = {};
+
+        remove(this._commentsComponent);
     }
 
 }
