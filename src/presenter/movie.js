@@ -141,7 +141,6 @@ export default class Movie {
                 },
             ),
         );
-
     }
 
     _handleAddToAlreadyWatchedClick() {
@@ -154,7 +153,6 @@ export default class Movie {
                 },
             ),
         );
-
     }
 
     _handleAddToFavoriteClick() {
@@ -167,6 +165,5 @@ export default class Movie {
                 },
             ),
         );
-
     }
 }

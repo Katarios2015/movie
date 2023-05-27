@@ -35,7 +35,7 @@ const filmGenres = ["Musical", "Comedy", "Drama", "Documental", "Historical"];
 
 const filmDurations = [56, 120, 77, 140, 180];
 
-const idComments = [5, 120, 7, 140, 1];
+const commentIds = [5, 120, 7, 140, 1];
 
 const directors = ["Anthony Mann", "Guy Ritchie", "David Yates", "Ridley Scott", "Alfred Hitchcock"];
 const writers = ["Anne Wigton", "Heinz Herald", "Richard Weil", "Russell Tee", "Noel Adams", "Clemence Dane"];
@@ -54,7 +54,7 @@ const commentEmotions = [
 
 const generatePopupComment = () => {
     return {
-        id: getRandomArrayElement(idComments),
+        id: getRandomArrayElement(commentIds),
         author: getRandomArrayElement(commentAthors),
         commentText: getRandomArray(filmDescriptions, 0, 5),
         date: dayjs(getRandomArrayElement(commentDates)).format("YYYY/MM/DD  hh:mm"),
@@ -69,7 +69,7 @@ const selectCommentsDependOfID = (id, comments) => {
 };
 
 const generateFilm = () => {
-    const idOfComments = getRandomArrayElement(idComments);
+    const idOfComments = getRandomArrayElement(commentIds);
     const comments = popupComments;
     return {
         id: nanoid(),
