@@ -1,6 +1,8 @@
 import {getRandomArrayElement, getRandomCeilNumber, getRandomNumber, getRandomArray, getTimeFormat} from "../utils/common.js";
 import {nanoid} from "nanoid";
 import {dayjs} from "../utils/common.js";
+import {relativeTime} from "../utils/common.js";
+import {utc} from "../utils/common.js";
 
 const COMMENTS_COUNT = 4;
 
@@ -35,16 +37,17 @@ const filmGenres = ["Musical", "Comedy", "Drama", "Documental", "Historical"];
 
 const filmDurations = [56, 120, 77, 140, 180];
 
-const idComments = [5, 120, 7, 140, 1];
+const commentIds = [5, 120, 7, 140, 1];
 
 const directors = ["Anthony Mann", "Guy Ritchie", "David Yates", "Ridley Scott", "Alfred Hitchcock"];
 const writers = ["Anne Wigton", "Heinz Herald", "Richard Weil", "Russell Tee", "Noel Adams", "Clemence Dane"];
 const actors = ["Robert De Niro", "Jack Nicholson", "Marlon Brando", "Denzel Washington", "Katharine Hepburn"];
-const releases = ["01 April 1945", "30 March 1945", "30 May 1925", "05 October 2000"];
+const releases = ["2019-05-11T00:00:00.000Z", "2019-05-11T00:00:00.000Z", "2019-05-11T00:00:00.000Z", "2019-05-11T00:00:00.000Z"];
 const countryes = ["USA","Great Britain", "Russia"];
 
 const commentAthors = ["Ivan Pypkov", "Kate Ritchie", "David", "Roman Scott", "Alfred"];
 const commentDates = ["2019-05-11T16:12:32.554Z", "2020-10-11T16:12:32.554Z", "2009-11-11T16:12:32.554Z", "2023-01-11T16:12:32.554Z"];
+
 const commentEmotions = [
     "./images/emoji/angry.png",
     "./images/emoji/puke.png",
@@ -52,12 +55,19 @@ const commentEmotions = [
     "./images/emoji/smile.png"
 ];
 
+dayjs.extend(utc);
+dayjs.extend(relativeTime);
+//const dateCommentFormat = dayjs(getRandomArrayElement(commentDates)).format("YYYY/MM/DD  hh:mm:ss");
+
 const generatePopupComment = () => {
+    const commentInFormatDates = commentDates.map((el)=> dayjs.utc(el).format("YYYY/MM/DD  HH:mm:ss"));
+    console.log(commentInFormatDates);
     return {
-        id: getRandomArrayElement(idComments),
+        id: getRandomArrayElement(commentIds),
         author: getRandomArrayElement(commentAthors),
         commentText: getRandomArray(filmDescriptions, 0, 5),
-        date: dayjs(getRandomArrayElement(commentDates)).format("YYYY/MM/DD  hh:mm"),
+        //date: dayjs(getRandomArrayElement(commentDates)).format("YYYY/MM/DD  hh:mm"),//по общему тз
+        date: dayjs(getRandomArrayElement(commentInFormatDates)).fromNow(),//по доп заданию
         emotion: getRandomArrayElement(commentEmotions),
     };
 };
@@ -69,7 +79,7 @@ const selectCommentsDependOfID = (id, comments) => {
 };
 
 const generateFilm = () => {
-    const idOfComments = getRandomArrayElement(idComments);
+    const idOfComments = getRandomArrayElement(commentIds);
     const comments = popupComments;
     return {
         id: nanoid(),

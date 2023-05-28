@@ -197,6 +197,8 @@ export default class MovieList {
             if(this._mockFilms.length > MAX_FILM_COUNT) {
                 this._renderShowMoreBtnButton();
             }
+
+
             this._renderExtraSection();
         }
     }
@@ -227,13 +229,13 @@ export default class MovieList {
         
         this._commentsComponent.getElement().className = ("films-list films-list--extra films-list--comment");
         this._ratedComponent.getElement().className = ("films-list films-list--extra films-list--rate");
-
-
-        this._sortedByRateFilms = this._mockFilms.sort((a, b) => b.rate - a.rate).slice(0, FILM_EXTRA_COUNT);
-        const sortedByCommentsFilms = this._mockFilms.sort((a, b) => b.comments.length - a.comments.length).slice(0, FILM_EXTRA_COUNT);
+        const slicedFilms = this._mockFilms.slice();
+        
+        const sortedByRateFilms = slicedFilms.sort((a, b) => b.rate - a.rate).slice(0, FILM_EXTRA_COUNT);
+        const sortedByCommentsFilms = slicedFilms.sort((a, b) => b.comments.length - a.comments.length).slice(0, FILM_EXTRA_COUNT);
 
        
-        this._renderExtraMovieCards(0, FILM_EXTRA_COUNT, this._ratedComponent.getElement().querySelector(".films-list__container"), this._sortedByRateFilms);
+        this._renderExtraMovieCards(0, FILM_EXTRA_COUNT, this._ratedComponent.getElement().querySelector(".films-list__container"), sortedByRateFilms);
         this._renderExtraMovieCards(0, FILM_EXTRA_COUNT, this._commentsComponent.getElement().querySelector(".films-list__container"), sortedByCommentsFilms);
     }
 
