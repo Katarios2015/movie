@@ -24,7 +24,7 @@ export default class Smart extends AbstractView {
         parent.replaceChild(newElement, prevElement);//поместить новый элемент вместо старого;
         
         newElement.scrollTop = scrollTop;
-        this._restoreHandlers(); //восстановить обработчики событий, вызвав restoreHandlers.
+        this.restoreHandlers(); //восстановить обработчики событий, вызвав restoreHandlers.
     }
 
     updateData (update, justDataUpdating = false) {

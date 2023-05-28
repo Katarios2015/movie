@@ -90,10 +90,12 @@ export default class Movie {
     _onEscKeyDownHandler(evt) {
         if (evt.key === "Escape" || evt.keyCode === 27) {
             evt.preventDefault();
+            this._popupComponent.reset(this._filmData);
             this._siteBodyContainer.removeChild(this._popupComponent.getElement());
             document.removeEventListener("keydown", this._onEscKeyDownHandler);
             this._siteBodyContainer.classList.remove("hide-overflow");
             this._mode = Mode.DEFAULT;
+           
         }
     }
 
@@ -116,14 +118,16 @@ export default class Movie {
         this._popupComponent.setAddToFavoriteBtnClickHandler(this._handleAddToFavoriteClick);
         document.addEventListener("keydown", this._onEscKeyDownHandler);
 
-        console.log(this._mode);
+        // console.log(this._mode);
     }
 
     _handleHidePopup() {
         remove(this._popupComponent);
+        this._popupComponent.reset(this._filmData);
         document.removeEventListener("keydown", this._onEscKeyDownHandler);
         this._siteBodyContainer.classList.remove("hide-overflow");
         this._mode = Mode.DEFAULT;
+        
     }
 
     _handleMove() {
