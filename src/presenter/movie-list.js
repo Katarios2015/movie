@@ -14,7 +14,8 @@ const MAX_FILM_COUNT = 5;
 const FILM_EXTRA_COUNT = 2;
 
 export default class MovieList {
-    constructor(siteContainer, siteBody, filter) {
+    constructor(siteContainer, siteBody, filter, moviesModel) {
+        this._moviesModel = moviesModel;
         this._siteMainContainer = siteContainer;
         this._siteBodyContainer = siteBody;
         this._renderedFilmsCounter = MAX_FILM_COUNT;
@@ -49,17 +50,36 @@ export default class MovieList {
 
     }
 
-    init(mockFilms) {
-        this._mockFilms = mockFilms.slice();
+    init() {
+        /*this._mockFilms = mockFilms.slice();
         // 1. В отличии от сортировки по любому параметру,
         // исходный порядок можно сохранить только одним способом -
         // сохранив исходный массив:
         this._sourcedMovies = mockFilms.slice();
-        this._sourcedMoviesTwo = mockFilms.slice();
+        this._sourcedMoviesTwo = mockFilms.slice();*/
         render(this._siteMainContainer, this._filmListComponent, RenderPosition.BEFOREEND);
         this._renderMovieList();
         this._renderSort();
         this._renderMenu();
+    }
+
+    _getMovies() {
+        switch (this._currentSortType) {
+        case SortType.DATE:
+            this._moviesModel.sort(sortMovieDate);
+            break;
+        case SortType.RATE:
+            this._moviesModel.sort(sortMovieRate);
+            break;
+        default:
+    
+            // 3. А когда пользователь захочет "вернуть всё, как было",
+            // мы просто запишем в исходный массив
+           // this._mockFilms = this._sourcedMovies.slice();
+    
+        }
+        
+        return this._moviesModel.getMovies();
     }
 
     _renderSort() {
@@ -93,24 +113,27 @@ export default class MovieList {
     }
 
     _handleMovieChange(filmContainer, updatedMovie) {
-        this._mockFilms = updateItem(this._mockFilms, updatedMovie);
+        //this._mockFilms = updateItem(this._mockFilms, updatedMovie);
         this._moviePresenter[updatedMovie.id].init(filmContainer, updatedMovie);
 
-        this._sourcedMovies = updateItem(this._sourcedMovies, updatedMovie);
+// Здесь будем вызывать обновление модели
+
+       // this._sourcedMovies = updateItem(this._sourcedMovies, updatedMovie);
         console.log(this._sourcedMovies);
     }
 
     _handleMovieExtraChange(filmContainer, updatedMovie) {
-        this._mockFilms = updateItem(this._mockFilms, updatedMovie);
-        console.log(this._mockFilms);
+        //this._mockFilms = updateItem(this._mockFilms, updatedMovie);
+        //console.log(this._mockFilms);
+        // Здесь будем вызывать обновление модели
         this._moviePresenterExtra[updatedMovie.id].init(filmContainer, updatedMovie);
-        this._sourcedMoviesTwo = updateItem(this._sourcedMoviesTwo, updatedMovie);
+       // this._sourcedMoviesTwo = updateItem(this._sourcedMoviesTwo, updatedMovie);
         
 
         
     }
 
-    _sortMovies(sortType) {
+    /*_sortMovies(sortType) {
         // 2. Этот исходный массив задач необходим,
         // потому что для сортировки мы будем мутировать
         // массив в свойстве _boardTasks
@@ -131,7 +154,7 @@ export default class MovieList {
     
         this._currentSortType = sortType;      
        
-    }
+    }*/
 
 
     _handleSortTypeChange(sortType) {
@@ -139,8 +162,8 @@ export default class MovieList {
             return;
         }      
 
-        this._sortMovies(sortType);
-    
+        //this._sortMovies(sortType);
+        this._currentSortType = sortType;
 
         this._clearMovieList(true);
         this._clearRatedFilms();
@@ -165,9 +188,8 @@ export default class MovieList {
        
     }
 
-    _renderMovieCards(from, to, container, dataArray) {
+    _renderMovieCards(container, dataArray) {
         dataArray
-            .slice(from, to)
             .forEach((filmCard) => {
                 this._renderFilmCard(container, filmCard);
             });
@@ -184,17 +206,17 @@ export default class MovieList {
     }
 
     _renderMovieList() {
-        if (this._mockFilms.length === 0) {
+        if (this._getMovies().length === 0) {
             this._renderEmptyFilmList();
         } else {
             render(this._siteMainContainer, this._filmListComponent, RenderPosition.BEFOREEND);
 
-            this._renderMovieCards(0, Math.min(this._mockFilms.length, this._renderedFilmsCounter), 
-                this._filmListComponent.getElement().querySelector(".films-list__container"), this._mockFilms, this._MainComponentS);
+            this._renderMovieCards(0, Math.min(this._getMovies().length, this._renderedFilmsCounter), 
+                this._filmListComponent.getElement().querySelector(".films-list__container"), this._getMovies(), this._MainComponentS);
 
    
 
-            if(this._mockFilms.length > MAX_FILM_COUNT) {
+            if(this._getMovies().length > MAX_FILM_COUNT) {
                 this._renderShowMoreBtnButton();
             }
 
@@ -210,10 +232,10 @@ export default class MovieList {
 
     _handleShowMoreBtnButton() {
         this._renderMovieCards(this._renderedFilmsCounter, this._renderedFilmsCounter + MAX_FILM_COUNT,
-            this._filmListComponent.getElement().querySelector(".films-list__container"), this._mockFilms);
+            this._filmListComponent.getElement().querySelector(".films-list__container"), this._getMovies());
         this._renderedFilmsCounter += MAX_FILM_COUNT;
 
-        if(this._renderedFilmsCounter >= this._mockFilms.length) {
+        if(this._renderedFilmsCounter >= this._getMovies().length) {
             remove(this._showMoreBtnComponent);
         }
     }
@@ -229,7 +251,7 @@ export default class MovieList {
         
         this._commentsComponent.getElement().className = ("films-list films-list--extra films-list--comment");
         this._ratedComponent.getElement().className = ("films-list films-list--extra films-list--rate");
-        const slicedFilms = this._mockFilms.slice();
+        const slicedFilms = this._getMovies().slice();
         
         const sortedByRateFilms = slicedFilms.sort((a, b) => b.rate - a.rate).slice(0, FILM_EXTRA_COUNT);
         const sortedByCommentsFilms = slicedFilms.sort((a, b) => b.comments.length - a.comments.length).slice(0, FILM_EXTRA_COUNT);
@@ -252,7 +274,7 @@ export default class MovieList {
         if (resetRenderedFilmCount) {
             this._renderedFilmsCounter = MAX_FILM_COUNT;
         } else {
-            this._renderedFilmsCounter = Math.min(this._mockFilms.length, this._renderedFilmsCounter);
+            this._renderedFilmsCounter = Math.min(this._getMovies().length, this._renderedFilmsCounter);
         }
     }
 

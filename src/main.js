@@ -10,6 +10,7 @@ import {generateUseRank} from "./mock/rank.js";
 
 import MovieListPresenter from "./presenter/movie-list.js";
 
+import MoviesModel from "./model/movies.js";
 
 
 const MOCK_FILMS_COUNT = 20;
@@ -26,6 +27,9 @@ const footerStat = siteFooter.querySelector(".footer__statistics");
 const mockFilms = new Array(MOCK_FILMS_COUNT).fill().map(generateFilm);
 const filmFilters = generateFilter(mockFilms);
 
+const moviesModel = new MoviesModel();
+
+moviesModel.setMovies(mockFilms);
 
 console.log(mockFilms);
 
@@ -36,6 +40,6 @@ render(siteHeader, new UserRank(generateUseRank()), RenderPosition.BEFOREEND);
 
 renderTemplate (footerStat, `<p>${MOCK_FILMS_COUNT} movies inside</p>`, RenderPosition.BEFOREEND);
 
-const movieListPresenter = new MovieListPresenter(siteMainContainer, siteBody, filmFilters);
-movieListPresenter.init(mockFilms);
+const movieListPresenter = new MovieListPresenter(siteMainContainer, siteBody, filmFilters, moviesModel);
+movieListPresenter.init();
 

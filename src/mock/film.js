@@ -61,13 +61,12 @@ dayjs.extend(relativeTime);
 
 const generatePopupComment = () => {
     const commentInFormatDates = commentDates.map((el)=> dayjs.utc(el).format("YYYY/MM/DD  HH:mm:ss"));
-    console.log(commentInFormatDates);
     return {
         id: getRandomArrayElement(commentIds),
         author: getRandomArrayElement(commentAthors),
         commentText: getRandomArray(filmDescriptions, 0, 5),
         //date: dayjs(getRandomArrayElement(commentDates)).format("YYYY/MM/DD  hh:mm"),//по общему тз
-        date: dayjs(getRandomArrayElement(commentInFormatDates)).fromNow(),//по доп заданию
+        date: dayjs(getRandomArrayElement(commentInFormatDates)).fromNow(),//по доп заданию в тз
         emotion: getRandomArrayElement(commentEmotions),
     };
 };
