@@ -2,6 +2,9 @@ import FilmCardView from "../view/film-card.js";
 import PopupView from "../view/popup-film.js";
 import {render, RenderPosition, replace, remove} from "../utils/render.js";
 
+import  UserAction from "../utils/constants.js";
+import  UpdateType from "../utils/constants.js";
+
 const Mode = {
     DEFAULT: "DEFAULT",
     EDITING: "EDITING",
