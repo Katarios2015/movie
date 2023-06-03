@@ -7,6 +7,20 @@ import SortView from "../view/sort.js";
 
 import {sortMovieDate, sortMovieRate, render, RenderPosition, remove} from "../utils/render.js";
 import {updateItem,ExtraTitle, SortType} from "../utils/common.js";
+//import  UserAction from "../utils/constants.js";
+//import  UpdateType from "../utils/constants.js";
+
+const UserAction = {
+    UPDATE_MOVIE: "UPDATE_MOVIE",
+    ADD_COMMENT: "ADD_COMMENT",
+    DELETE_COMMENT: "DELETE_COMMENT",
+};
+  
+const UpdateType = {
+    PATCH: "PATCH",
+    MINOR: "MINOR",
+    MAJOR: "MAJOR",
+};
 
 import MoviePresenter from "./movie.js";
 
@@ -45,8 +59,8 @@ export default class MovieList {
         this._renderExtraSection = this._renderExtraSection.bind(this);
         this._handleModeChange = this._handleModeChange.bind(this);//режим просмотра или редактирования
         this._handleModeChangeExtra = this._handleModeChangeExtra.bind(this);
-        this._handleMovieChange = this._handleMovieChange.bind(this);
-        this._handleMovieExtraChange = this._handleMovieExtraChange.bind(this);
+        //this._handleMovieChange = this._handleMovieChange.bind(this);
+        //this._handleMovieExtraChange = this._handleMovieExtraChange.bind(this);
         this._handleSortTypeChange = this._handleSortTypeChange.bind(this);//сортировка
 
         this._handleViewAction = this._handleViewAction.bind(this);
@@ -70,28 +84,43 @@ export default class MovieList {
     }
 
     _handleViewAction(actionType, updateType, update) {
-        console.log(actionType, updateType, update);
+        switch (actionType) {
+        case UserAction.UPDATE_MOVIE:
+            this._moviesModel.updateMovie(updateType, update);
+            break;
+        case UserAction.ADD_COMMENT:
+            this._moviesModel.addComment(updateType, update);
+            break;
+        case UserAction.DELETE_COMMENT:
+            this._moviesModel.deleteComment(updateType, update);
+            break;
+        }
         // Здесь будем вызывать обновление модели.
         // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
         // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
         // update - обновленные данные
     }
     
-    _handleModelEvent(updateType, data) {
-        console.log(updateType, data);
-        // В зависимости от типа изменений решаем, что делать:
-        // - обновить часть списка (например, когда поменялось описание)
-        // - обновить список (например, когда задача ушла в архив)
-        // - обновить всю доску (например, при переключении фильтра)
+    _handleModelEvent(updateType, data, filmContainer) {
+        switch (updateType) {
+        case UpdateType.PATCH:
+            // - обновить часть списка (например, когда удалили/добавили коммент)
+            this._moviePresenter[data.id].init(filmContainer, data);
+            break;
+        case UpdateType.MINOR:
+            this._moviePresenter[data.id].init(filmContainer, data);
+            /*this._clearMovieList();
+            this._renderMovieList(); // - обновить список (без сброса сортировки и фильтров)*/
+           
+            break;
+        case UpdateType.MAJOR:
+            // - обновить весь список (например, при переключении фильтра),сбрасываем сортировку и фильтры
+            this._clearMovieList({resetRenderedFilmCount: true, resetSortType: true});
+            this._renderMovieList();
+            break;
+        }
     }
 
-    _handleViewExtraAction(actionType, updateType, update) {
-        console.log(actionType, updateType, update);
-        // Здесь будем вызывать обновление модели.
-        // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
-        // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
-        // update - обновленные данные
-    }
 
     _getMovies() {
         switch (this._currentSortType) {
@@ -100,13 +129,7 @@ export default class MovieList {
             break;
         case SortType.RATE:
             this._moviesModel.sort(sortMovieRate);
-            break;
-        default:
-    
-            // 3. А когда пользователь захочет "вернуть всё, как было",
-            // мы просто запишем в исходный массив
-           // this._mockFilms = this._sourcedMovies.slice();
-    
+            break;    
         }
         
         return this._moviesModel.getMovies();
@@ -142,7 +165,7 @@ export default class MovieList {
                 console.log(presenter);});
     }
 
-    _handleMovieChange(filmContainer, updatedMovie) {
+    /*_handleMovieChange(filmContainer, updatedMovie) {
         //this._mockFilms = updateItem(this._mockFilms, updatedMovie);
         this._moviePresenter[updatedMovie.id].init(filmContainer, updatedMovie);
 
@@ -150,40 +173,15 @@ export default class MovieList {
 
         // this._sourcedMovies = updateItem(this._sourcedMovies, updatedMovie);
         console.log(this._sourcedMovies);
-    }
+    }*/
 
-    _handleMovieExtraChange(filmContainer, updatedMovie) {
+    /*_handleMovieExtraChange(filmContainer, updatedMovie) {
         //this._mockFilms = updateItem(this._mockFilms, updatedMovie);
         //console.log(this._mockFilms);
         // Здесь будем вызывать обновление модели
         this._moviePresenterExtra[updatedMovie.id].init(filmContainer, updatedMovie);
         // this._sourcedMoviesTwo = updateItem(this._sourcedMoviesTwo, updatedMovie);
         
-
-        
-    }
-
-    /*_sortMovies(sortType) {
-        // 2. Этот исходный массив задач необходим,
-        // потому что для сортировки мы будем мутировать
-        // массив в свойстве _boardTasks
-        switch (sortType) {
-        case SortType.DATE:
-            this._mockFilms.sort(sortMovieDate);
-            break;
-        case SortType.RATE:
-            this._mockFilms.sort(sortMovieRate);
-            break;
-        default:
-
-            // 3. А когда пользователь захочет "вернуть всё, как было",
-            // мы просто запишем в исходный массив
-            this._mockFilms = this._sourcedMovies.slice();
-
-        }
-    
-        this._currentSortType = sortType;      
-       
     }*/
 
 
@@ -195,11 +193,12 @@ export default class MovieList {
         //this._sortMovies(sortType);
         this._currentSortType = sortType;
 
-        this._clearMovieList(true);
+        this._clearMovieList({resetRenderedFilmCount: true});
+        this._renderMovieList();
+        
         this._clearRatedFilms();
         this._clearCommentedFilms();
-
-        this._renderMovieList();
+        this._renderExtraSection();
         
     }
 
@@ -212,7 +211,7 @@ export default class MovieList {
 
     _renderFilmCardExtra(filmContainer, filmData) {
         
-        const moviePresenterExtra = new MoviePresenter(this._siteBodyContainer, this._handleViewExtraAction,  this._handleModeChangeExtra);
+        const moviePresenterExtra = new MoviePresenter(this._siteBodyContainer, this._handleViewAction,  this._handleModeChangeExtra);
         moviePresenterExtra.init(filmContainer, filmData);
         this._moviePresenterExtra[filmData.id] = moviePresenterExtra;
        
@@ -243,7 +242,11 @@ export default class MovieList {
 
             this._renderMovieCards(this._filmListComponent.getElement().querySelector(".films-list__container"), movies);
 
-            if(moviesCount > MAX_FILM_COUNT) {
+            // Теперь, когда _renderBoard рендерит доску не только на старте,
+            // но и по ходу работы приложения, нужно заменить
+            // константу MAX_FILM_COUNT на свойство ._renderedFilmsCounter,
+            // чтобы в случае перерисовки сохранить N-показанных карточек
+            if(moviesCount > this._renderedFilmsCounter) {
                 this._renderShowMoreBtnButton();
             }
 
@@ -292,7 +295,7 @@ export default class MovieList {
 
     
     
-    _clearMovieList(resetRenderedFilmCount = false) {
+    _clearMovieList({resetRenderedFilmCount = false, resetSortType = false} = {}) {
         Object.values(this._moviePresenter).forEach((presenter) => {presenter.destroy();});
         remove(this._filmListComponent);
 
@@ -303,7 +306,14 @@ export default class MovieList {
         if (resetRenderedFilmCount) {
             this._renderedFilmsCounter = MAX_FILM_COUNT;
         } else {
+            // На случай, если перерисовка доски вызвана
+            // уменьшением количества задач (например, удаление или перенос в архив)
+            // нужно скорректировать число показанных задач
             this._renderedFilmsCounter = Math.min(this._getMovies().length, this._renderedFilmsCounter);
+        }
+        
+        if (resetSortType) {
+            this._currentSortType = SortType.DEFAULT;
         }
     }
 
