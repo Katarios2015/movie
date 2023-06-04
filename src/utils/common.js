@@ -12,6 +12,7 @@ const ExtraTitle = {
     RATED: "Top rated",
     COMMENTED: "Most commented",
 };
+
 const getRandomArrayElement = (items) => {
     const randElement = items[Math.floor(Math.random() * items.length)];
     return randElement;
@@ -53,7 +54,7 @@ const getTimeFormat = (minutes) => {
     return timeFormat;
 };
 
-export const updateItem = (items, update) => {
+/*export const updateItem = (items, update) => {
     const index = items.findIndex((item) => item.id === update.id);
 
     if (index === -1) {
@@ -65,7 +66,25 @@ export const updateItem = (items, update) => {
         update,
         ...items.slice(index + 1),
     ];
-};
+};*/
+
+export default class Observer {
+    constructor() {
+        this._observers = [];
+    }
+  
+    addObserver(observer) {
+        this._observers.push(observer);
+    }
+  
+    removeObserver(observer) {
+        this._observers = this._observers.filter((existedObserver) => existedObserver !== observer);
+    }
+  
+    _notify(event, payload) {
+        this._observers.forEach((observer) => observer(event, payload));
+    }
+}
 
 
 

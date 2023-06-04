@@ -2,10 +2,26 @@ import FilmCardView from "../view/film-card.js";
 import PopupView from "../view/popup-film.js";
 import {render, RenderPosition, replace, remove} from "../utils/render.js";
 
+//import  UserAction from "../utils/constants.js";
+//import  UpdateType from "../utils/constants.js";
+
+export const UserAction = {
+    UPDATE_MOVIE: "UPDATE_MOVIE",
+    ADD_COMMENT: "ADD_COMMENT",
+    DELETE_COMMENT: "DELETE_COMMENT",
+};
+  
+export const UpdateType = {
+    PATCH: "PATCH",
+    MINOR: "MINOR",
+    MAJOR: "MAJOR",
+};
+
 const Mode = {
     DEFAULT: "DEFAULT",
     EDITING: "EDITING",
 };
+
 export default class Movie {
     constructor (siteBody, changeData, changeMode) {
         this._siteBodyContainer = siteBody;
@@ -136,7 +152,9 @@ export default class Movie {
 
 
     _handleAddToWatchedListClick() {
-        this._changeData(this._filmContainer,
+        this._changeData(
+            UserAction.UPDATE_MOVIE,
+            UpdateType.MINOR,
             Object.assign(
                 {},
                 this._filmData,
@@ -148,7 +166,9 @@ export default class Movie {
     }
 
     _handleAddToAlreadyWatchedClick() {
-        this._changeData(this._filmContainer,
+        this._changeData(
+            UserAction.UPDATE_MOVIE,
+            UpdateType.MINOR,
             Object.assign(
                 {},
                 this._filmData,
@@ -160,7 +180,9 @@ export default class Movie {
     }
 
     _handleAddToFavoriteClick() {
-        this._changeData(this._filmContainer,
+        this._changeData(
+            UserAction.UPDATE_MOVIE,
+            UpdateType.MINOR,
             Object.assign(
                 {},
                 this._filmData,
