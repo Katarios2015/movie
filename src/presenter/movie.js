@@ -41,6 +41,8 @@ export default class Movie {
         this._handleAddToWatchedListClick = this._handleAddToWatchedListClick.bind(this);
         this._handleAddToAlreadyWatchedClick = this._handleAddToAlreadyWatchedClick.bind(this);
         this._handleAddToFavoriteClick = this._handleAddToFavoriteClick.bind(this);
+
+        this._handleDeleteCommentClick = this._handleDeleteCommentClick.bind(this);
     }
 
     init(filmContainer, filmData) {
@@ -68,6 +70,8 @@ export default class Movie {
         this._popupComponent.setAddToWatchBtnListClickHandler(this._handleAddToWatchedListClick);
         this._popupComponent.setAlreadyWatchedBtnClickHandler(this._handleAddToAlreadyWatchedClick);
         this._popupComponent.setAddToFavoriteBtnClickHandler(this._handleAddToFavoriteClick);
+
+        this._popupComponent.setDeleteCommentClickHandler(this._handleDeleteCommentClick);
 
         if (prevFilmCardComponent === null || prevPopupComponent === null) {
             render(this._filmContainer, this._filmCardComponent, RenderPosition.BEFOREEND);
@@ -154,7 +158,7 @@ export default class Movie {
     _handleAddToWatchedListClick() {
         this._changeData(
             UserAction.UPDATE_MOVIE,
-            UpdateType.MINOR,
+            UpdateType.PATCH,
             Object.assign(
                 {},
                 this._filmData,
@@ -168,7 +172,7 @@ export default class Movie {
     _handleAddToAlreadyWatchedClick() {
         this._changeData(
             UserAction.UPDATE_MOVIE,
-            UpdateType.MINOR,
+            UpdateType.PATCH,
             Object.assign(
                 {},
                 this._filmData,
@@ -182,7 +186,7 @@ export default class Movie {
     _handleAddToFavoriteClick() {
         this._changeData(
             UserAction.UPDATE_MOVIE,
-            UpdateType.MINOR,
+            UpdateType.PATCH,
             Object.assign(
                 {},
                 this._filmData,
@@ -190,6 +194,15 @@ export default class Movie {
                     isFavorite: !this._filmData.isFavorite,
                 },
             ),
+        );
+    }
+
+    _handleDeleteCommentClick(filmData) {
+        this._changeData(
+            UserAction.DELETE_COMMENT,
+            UpdateType.PATCH,
+            filmData
+           
         );
     }
 }

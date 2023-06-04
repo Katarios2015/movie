@@ -7,11 +7,11 @@ export default class Comments extends Observer{
         this._comments = [];
     }
 
-    setMovies (comments) {
+    setComments (comments) {
         this._comments = comments.slice();
     }
 
-    getMovies () {
+    getComments () {
         return this._comments;
     }
 
@@ -32,10 +32,10 @@ export default class Comments extends Observer{
         const index = this._comments.findIndex((comment) => comment.id === update.id);
     
         if (index === -1) {
-            throw new Error("Can't delete unexisting task");
+            throw new Error("Can't delete unexisting movie");
         }
     
-        this._tasks = [
+        this._comments = [
             ...this._comments.slice(0, index),
             ...this._comments.slice(index + 1),
         ];

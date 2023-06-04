@@ -182,9 +182,10 @@ export default class Popup extends SmartView {
         this._addToWhatchListBtnClickHandler = this._addToWhatchListBtnClickHandler.bind(this);
         this._addToAlreadyWatchedBtnHandler = this._addToAlreadyWatchedBtnHandler.bind(this);
         this._addToFavoriteBtnClickHandler = this._addToFavoriteBtnClickHandler.bind(this);
+        
+        this._deleteClickHandler = this._deleteClickHandler.bind(this);
 
         this._parseFilmToData = this._parseFilmToData.bind(this);
-
         this._addEmojiHandler = this._addEmojiHandler.bind(this);
 
         this._setInnerHandlers();
@@ -201,6 +202,7 @@ export default class Popup extends SmartView {
             }
         );
     }
+
 
     reset(popupFilm) {
         this.updateData(
@@ -243,6 +245,11 @@ export default class Popup extends SmartView {
         });
     }
 
+    _deleteClickHandler(evt) {
+        evt.preventDefault();
+        this._callback.deleteClick(this._parseFilmToData(this._data));
+    }
+
 
     setExitBtnClickHandler (callback) {
         this._callback.clickExit = callback;
@@ -268,6 +275,14 @@ export default class Popup extends SmartView {
             .addEventListener("click", this._addToFavoriteBtnClickHandler);
     }
 
+  
+    setDeleteCommentClickHandler (callback) {
+        this._callback.deleteClick = callback;
+        this.getElement().querySelectorAll(".film-details__comment-delete")
+            .forEach((item) => item.addEventListener("click", this._deleteClickHandler));
+            
+    }
+
     _setInnerHandlers () {
         
         this.getElement().querySelector(".film-details__emoji-list")
@@ -284,5 +299,7 @@ export default class Popup extends SmartView {
         this.setAlreadyWatchedBtnClickHandler(this._callback.clickToAlready);
         this.setAddToFavoriteBtnClickHandler(this._callback.clickToFavorite);
         this.setExitBtnClickHandler(this._callback.clickExit);
+
+        this.setDeleteCommentClickHandler(this._callback.deleteClick);
     }
 }
