@@ -35,8 +35,6 @@ export default class MovieList {
         this._siteBodyContainer = siteBody;
         this._renderedFilmsCounter = MAX_FILM_COUNT;
 
-        //this._showedMovieControllers = [];
-
         this._ratedComponent = null;
         this._commentsComponent = null;
 
@@ -51,11 +49,11 @@ export default class MovieList {
         this._menuComponent = new MenuView(filter);
         this._filmListComponent = new FilmListView();
 
-        this._sortComponent = new SortView();
-        this._showMoreBtnComponent = new ShowMoreBtnView();
+        this._sortComponent = null;
+        this._showMoreBtnComponent = null;
         this._EmptyFilmListComponent = new EmptyFilmListView();
         
-        this._handleShowMoreBtnButton = this._handleShowMoreBtnButton.bind(this);
+        this._handleShowMoreBtn = this._handleShowMoreBtn.bind(this);
         this._renderExtraSection = this._renderExtraSection.bind(this);
         this._handleModeChange = this._handleModeChange.bind(this);//режим просмотра или редактирования
         this._handleModeChangeExtra = this._handleModeChangeExtra.bind(this);
@@ -79,7 +77,7 @@ export default class MovieList {
         this._sourcedMoviesTwo = mockFilms.slice();*/
         render(this._siteMainContainer, this._filmListComponent, RenderPosition.BEFOREEND);
         this._renderMovieList();
-        this._renderSort();
+        
         this._renderMenu();
     }
 
@@ -123,21 +121,26 @@ export default class MovieList {
 
 
     _getMovies() {
+        //const slicedMovies = this._moviesModel.getMovies().slice();
         switch (this._currentSortType) {
         case SortType.DATE:
-            this._moviesModel.sort(sortMovieDate);
-            break;
+            return this._moviesModel.getMovies().slice().sort(sortMovieDate);
         case SortType.RATE:
-            this._moviesModel.sort(sortMovieRate);
-            break;    
+            return this._moviesModel.getMovies().slice().sort(sortMovieRate);
         }
-        
         return this._moviesModel.getMovies();
+        
     }
 
     _renderSort() {
-        render(this._filmListComponent, this._sortComponent, RenderPosition.BEFORE);
+        if (this._sortComponent !== null) {
+            this._sortComponent = null;
+        }
+      
+        this._sortComponent = new SortView(this._currentSortType);
         this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
+        render(this._filmListComponent, this._sortComponent, RenderPosition.BEFORE);
+        
     }
 
     _renderMenu() {
@@ -196,9 +199,9 @@ export default class MovieList {
         this._clearMovieList({resetRenderedFilmCount: true});
         this._renderMovieList();
         
-        this._clearRatedFilms();
-        this._clearCommentedFilms();
-        this._renderExtraSection();
+        // this._clearRatedFilms();
+        //this._clearCommentedFilms();
+        //this._renderExtraSection();
         
     }
 
@@ -232,9 +235,11 @@ export default class MovieList {
     }
 
     _renderMovieList() {
+        
         if (this._getMovies().length === 0) {
             this._renderEmptyFilmList();
         } else {
+            
             const moviesCount = this._getMovies().length;
             const movies = this._getMovies().slice(0, Math.min(moviesCount, this._renderedFilmsCounter));
 
@@ -247,20 +252,24 @@ export default class MovieList {
             // константу MAX_FILM_COUNT на свойство ._renderedFilmsCounter,
             // чтобы в случае перерисовки сохранить N-показанных карточек
             if(moviesCount > this._renderedFilmsCounter) {
-                this._renderShowMoreBtnButton();
+                this._renderShowMoreBtn();
             }
 
-
+            this._renderSort();
             this._renderExtraSection();
         }
     }
 
-    _renderShowMoreBtnButton() {
+    _renderShowMoreBtn() {
+        if (this._showMoreBtnComponent !== null) {
+            this._showMoreBtnComponent = null;
+        }
+        this._showMoreBtnComponent = new ShowMoreBtnView();
+        this._showMoreBtnComponent.setClickHandler(this._handleShowMoreBtn);
         render(this._filmListComponent.getElement().querySelector(".films-list"), this._showMoreBtnComponent, RenderPosition.BEFOREEND);
-        this._showMoreBtnComponent.setClickHandler(this._handleShowMoreBtnButton);
     }
 
-    _handleShowMoreBtnButton() {
+    _handleShowMoreBtn() {
         const moviesCount = this._getMovies().length;
         const newRenderedMovieCount = Math.min(moviesCount, this._renderedFilmsCounter + MAX_FILM_COUNT);
         const movies = this._getMovies().slice(this._renderedFilmsCounter, newRenderedMovieCount);
@@ -296,12 +305,16 @@ export default class MovieList {
     
     
     _clearMovieList({resetRenderedFilmCount = false, resetSortType = false} = {}) {
-        Object.values(this._moviePresenter).forEach((presenter) => {presenter.destroy();});
-        remove(this._filmListComponent);
-
+        Object
+            .values(this._moviePresenter)
+            .forEach((presenter) => {presenter.destroy();});
         this._moviePresenter = {};
-        this._renderedFilmsCounter = MAX_FILM_COUNT;
+        remove(this._filmListComponent);
         remove(this._showMoreBtnComponent);
+        remove(this._sortComponent);
+        
+        //this._renderedFilmsCounter = MAX_FILM_COUNT;
+       
 
         if (resetRenderedFilmCount) {
             this._renderedFilmsCounter = MAX_FILM_COUNT;

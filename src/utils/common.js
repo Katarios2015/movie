@@ -12,6 +12,7 @@ const ExtraTitle = {
     RATED: "Top rated",
     COMMENTED: "Most commented",
 };
+
 const getRandomArrayElement = (items) => {
     const randElement = items[Math.floor(Math.random() * items.length)];
     return randElement;
