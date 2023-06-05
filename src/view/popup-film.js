@@ -188,6 +188,7 @@ export default class Popup extends SmartView {
         this._parseFilmToData = this._parseFilmToData.bind(this);
         this._addEmojiHandler = this._addEmojiHandler.bind(this);
 
+        //this._parseDataToFilm = this._parseDataToFilm.bind(this);
         this._setInnerHandlers();
 
     }
@@ -202,6 +203,14 @@ export default class Popup extends SmartView {
             }
         );
     }
+
+    /*_parseDataToFilm(data) {
+        data = Object.assign(
+            {},
+            data
+        );
+        return data;
+    }*/
 
 
     reset(popupFilm) {
@@ -247,7 +256,8 @@ export default class Popup extends SmartView {
 
     _deleteClickHandler(evt) {
         evt.preventDefault();
-        this._callback.deleteClick(this._parseFilmToData(this._data));
+        this._data.deletedCommentId = evt.target.dataset.id;
+        this._callback.deleteClick(this._data.id, this._data.deletedCommentId);
     }
 
 

@@ -197,11 +197,14 @@ export default class Movie {
         );
     }
 
-    _handleDeleteCommentClick(filmData) {
+    _handleDeleteCommentClick(filmId, commentId) {
         this._changeData(
             UserAction.DELETE_COMMENT,
             UpdateType.PATCH,
-            filmData
+            {
+                id: filmId,
+                commentId
+            }
            
         );
     }
