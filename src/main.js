@@ -43,6 +43,6 @@ render(siteHeader, new UserRank(generateUseRank()), RenderPosition.BEFOREEND);
 
 renderTemplate (footerStat, `<p>${MOCK_FILMS_COUNT} movies inside</p>`, RenderPosition.BEFOREEND);
 
-const movieListPresenter = new MovieListPresenter(siteMainContainer, siteBody, filmFilters, moviesModel, commentsModel);
+const movieListPresenter = new MovieListPresenter(siteMainContainer, siteBody, filmFilters, moviesModel);
 movieListPresenter.init();
 

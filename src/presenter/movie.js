@@ -23,13 +23,15 @@ const Mode = {
 };
 
 export default class Movie {
-    constructor (siteBody, changeData, changeMode) {
+    constructor (siteBody, changeData, changeMode, commentsModel) {
         this._siteBodyContainer = siteBody;
         this._changeData = changeData;
         this._changeMode = changeMode;
         this._mode = Mode.DEFAULT;
         this._filmCardComponent = null;
         this._popupComponent = null;
+
+        this._commentsModel = commentsModel;
 
         this._handleHidePopup = this._handleHidePopup.bind(this);
 
@@ -43,6 +45,8 @@ export default class Movie {
         this._handleAddToFavoriteClick = this._handleAddToFavoriteClick.bind(this);
 
         this._handleDeleteCommentClick = this._handleDeleteCommentClick.bind(this);
+       
+        this._handleModelEvent = this._handleModelEvent.bind(this);
     }
 
     init(filmContainer, filmData) {
@@ -128,6 +132,7 @@ export default class Movie {
 
     _handleShowPopupClick() {
         this._changeMode();
+        this._commentsModel.addObserver(this._handleModelEvent);
         render(this._siteBodyContainer, this._popupComponent, RenderPosition.BEFOREEND);
         this._mode = Mode.EDITING;
 
@@ -136,6 +141,7 @@ export default class Movie {
         this._popupComponent.setAddToWatchBtnListClickHandler(this._handleAddToWatchedListClick);
         this._popupComponent.setAlreadyWatchedBtnClickHandler(this._handleAddToAlreadyWatchedClick);
         this._popupComponent.setAddToFavoriteBtnClickHandler(this._handleAddToFavoriteClick);
+        this._popupComponent.setDeleteCommentClickHandler(this._handleDeleteCommentClick);
         document.addEventListener("keydown", this._onEscKeyDownHandler);
 
         // console.log(this._mode);
@@ -197,14 +203,17 @@ export default class Movie {
         );
     }
 
-    _handleDeleteCommentClick(filmId, commentId) {
+    _handleDeleteCommentClick() {
         this._changeData(
             UserAction.DELETE_COMMENT,
             UpdateType.PATCH,
-            {
-                id: filmId,
-                commentId
-            }
+            Object.assign(
+                {},
+                this._filmData,
+                {
+                    comments: ),
+                },
+            ),
            
         );
     }

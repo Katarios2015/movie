@@ -29,9 +29,9 @@ const FILM_EXTRA_COUNT = 2;
 
 
 export default class MovieList {
-    constructor(siteContainer, siteBody, filter, moviesModel, commentsModel) {
+    constructor(siteContainer, siteBody, filter, moviesModel) {
         this._moviesModel = moviesModel;
-        this._commentsModel = commentsModel;
+       
         this._siteMainContainer = siteContainer;
         this._siteBodyContainer = siteBody;
         this._renderedFilmsCounter = MAX_FILM_COUNT;
@@ -68,7 +68,7 @@ export default class MovieList {
         
 
         this._moviesModel.addObserver(this._handleModelEvent);
-        this._commentsModel.addObserver(this._handleModelEvent);
+       
     }
 
     init() {
@@ -107,6 +107,7 @@ export default class MovieList {
         case UpdateType.PATCH:
             // - обновить часть списка (например, когда удалили/добавили коммент)
             this._moviePresenter[data.id].init(filmContainer, data);
+            //this._moviePresenterExtra[data.id].init(filmContainer, data); добвавить условие
             break;
         case UpdateType.MINOR:
             this._clearMovieList();
@@ -209,7 +210,7 @@ export default class MovieList {
 
 
     _renderFilmCard(filmContainer, filmData) {
-        const moviePresenter = new MoviePresenter(this._siteBodyContainer, this._handleViewAction,  this._handleModeChange);
+        const moviePresenter = new MoviePresenter(this._siteBodyContainer, this._handleViewAction,  this._handleModeChange, this._commentsModel);
         moviePresenter.init(filmContainer, filmData);
         this._moviePresenter[filmData.id] = moviePresenter;
     }
