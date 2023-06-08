@@ -41,7 +41,7 @@ const createPopupControls = (data) => {
 };
 
 const createCommentTemplate = (comments) => {
-    return (`${comments.map(({author, commentText, date, emotion}) => `<li class="film-details__comment">
+    return (`${comments.map(({id, author, commentText, date, emotion}) => `<li class="film-details__comment">
 <span class="film-details__comment-emoji">
   <img src="${emotion}" width="55" height="55" alt="emoji-smile">
 </span>
@@ -50,7 +50,7 @@ const createCommentTemplate = (comments) => {
   <p class="film-details__comment-info">
     <span class="film-details__comment-author">${author}</span>
     <span class="film-details__comment-day">${date}</span>
-    <button class="film-details__comment-delete">Delete</button>
+    <button class="film-details__comment-delete" data-id="${id}">Delete</button>
   </p>
 </div>
 </li>`).join("")}`);
@@ -219,6 +219,11 @@ export default class Popup extends SmartView {
         );
     }
 
+    update(comments) {
+        this._comments = comments.slice();
+        this.updateElement();
+    }
+
     getTemplate() {
         return createPopupTemplate(this._data);
     }
@@ -256,8 +261,8 @@ export default class Popup extends SmartView {
 
     _deleteClickHandler(evt) {
         evt.preventDefault();
-        this._data.deletedCommentId = evt.target.dataset.id;
-        this._callback.deleteClick(this._data.id, this._data.deletedCommentId);
+        const deletedCommentId = evt.target.dataset.id;
+        this._callback.deleteClick(deletedCommentId);
     }
 
 

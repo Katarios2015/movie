@@ -132,9 +132,10 @@ export default class Movie {
 
     _handleShowPopupClick() {
         this._changeMode();
-        this._commentsModel.addObserver(this._handleModelEvent);
+       
         render(this._siteBodyContainer, this._popupComponent, RenderPosition.BEFOREEND);
         this._mode = Mode.EDITING;
+        this._commentsModel.addObserver(this._handleModelEvent);
 
         this._siteBodyContainer.classList.add("hide-overflow");
         this._popupComponent.setExitBtnClickHandler(this._handleHidePopup);
@@ -149,6 +150,7 @@ export default class Movie {
 
     _handleHidePopup() {
         remove(this._popupComponent);
+        this._commentsModel.removeObserver(this._handleModelEvent);
         this._popupComponent.reset(this._filmData);
         document.removeEventListener("keydown", this._onEscKeyDownHandler);
         this._siteBodyContainer.classList.remove("hide-overflow");
@@ -203,18 +205,32 @@ export default class Movie {
         );
     }
 
-    _handleDeleteCommentClick() {
+    _handleDeleteCommentClick(id) {
         this._changeData(
             UserAction.DELETE_COMMENT,
-            UpdateType.PATCH,
-            Object.assign(
-                {},
-                this._filmData,
-                {
-                    comments: ),
-                },
-            ),
-           
+            UpdateType.PATCH,            
+            id
+                    
         );
+    }
+
+    _handleModelEvent(updateType, data) {
+        switch (updateType) {
+        case UpdateType.PATCH:
+            // - обновить часть списка (например, когда удалили/добавили коммент)
+            this._popupComponent.update(this._commentsModel.getComments(data.id));
+            //this._moviePresenterExtra[data.id].init(filmContainer, data); добвавить условие
+            break;
+        case UpdateType.MINOR:
+            this._clearMovieList();
+            this._renderMovieList(); // - обновить список (без сброса сортировки и фильтров)*/
+           
+            break;
+        case UpdateType.MAJOR:
+            // - обновить весь список (например, при переключении фильтра),сбрасываем сортировку и фильтры
+            this._clearMovieList({resetRenderedFilmCount: true, resetSortType: true});
+            this._renderMovieList();
+            break;
+        }
     }
 }

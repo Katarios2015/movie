@@ -29,9 +29,10 @@ const FILM_EXTRA_COUNT = 2;
 
 
 export default class MovieList {
-    constructor(siteContainer, siteBody, filter, moviesModel) {
+    constructor(siteContainer, siteBody, filter, moviesModel, commentsModel) {
         this._moviesModel = moviesModel;
-       
+        this._commentsModel = commentsModel;
+
         this._siteMainContainer = siteContainer;
         this._siteBodyContainer = siteBody;
         this._renderedFilmsCounter = MAX_FILM_COUNT;
