@@ -71,7 +71,7 @@ const generatePopupComment = () => {
     };
 };
 
-const popupComments = new Array(COMMENTS_COUNT).fill().map(generatePopupComment);
+export const popupComments = new Array(COMMENTS_COUNT).fill().map(generatePopupComment);
 
 const selectCommentsDependOfID = (id, comments) => {
     return comments.filter((item) => item.id === id);

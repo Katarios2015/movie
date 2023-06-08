@@ -4,7 +4,7 @@ import {generateFilter} from "./mock/filter.js";
 
 import UserRank from "./view/user-rank.js";
 
-import {generateFilm} from "./mock/film.js";
+import {generateFilm, popupComments} from "./mock/film.js";
 
 import {generateUseRank} from "./mock/rank.js";
 
@@ -31,10 +31,9 @@ const filmFilters = generateFilter(mockFilms);
 const moviesModel = new MoviesModel();
 const commentsModel = new CommentsModel();
 
-moviesModel.setMovies(mockFilms);
+//const comments = popupComments;
 commentsModel.setComments(mockFilms);
-
-console.log(mockFilms);
+moviesModel.setMovies(mockFilms);
 
 
 //render(siteMainContainer, new Menu(filmFilters), RenderPosition.AFTERBEGIN);

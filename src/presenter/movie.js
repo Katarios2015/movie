@@ -53,11 +53,12 @@ export default class Movie {
         this._filmContainer = filmContainer;
         this._filmData = filmData;
 
+
         const prevFilmCardComponent = this._filmCardComponent;
         const prevPopupComponent = this._popupComponent;
 
         this._filmCardComponent = new FilmCardView(filmData);
-        this._popupComponent = new PopupView(filmData);
+        this._popupComponent = new PopupView(filmData, this._commentsModel.getComments());
 
         this._popupComponent.setExitBtnClickHandler(this._handleHidePopup);
 
@@ -209,7 +210,7 @@ export default class Movie {
         this._changeData(
             UserAction.DELETE_COMMENT,
             UpdateType.PATCH,            
-            id
+            {comments: comments.find((comment) => comment.id === id)}
                     
         );
     }

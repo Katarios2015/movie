@@ -40,8 +40,9 @@ const createPopupControls = (data) => {
 
 };
 
-const createCommentTemplate = (comments) => {
-    return (`${comments.map(({id, author, commentText, date, emotion}) => `<li class="film-details__comment">
+const createCommentTemplate = (dataComments, comments) => {
+    const compareIds =  comments.filter((item) => item.id === dataComments.id);
+    return (`${compareIds.slice().map(({id, author, commentText, date, emotion}) => `<li class="film-details__comment">
 <span class="film-details__comment-emoji">
   <img src="${emotion}" width="55" height="55" alt="emoji-smile">
 </span>
@@ -86,11 +87,12 @@ const createNewCommentTemplate = (isChecked, imgSrc) => {
   </div>`);
 };
 
-const createPopupTemplate = (data) => {
+const createPopupTemplate = (data, comments) => {
     const {poster, title, originalTitle,
         director, writers, actors,
         rate, ageRate, release,
-        duration, country, description, comments, isChecked, imgSrc} = data;
+        duration, country, description, isChecked, imgSrc} = data;
+    
 
     return `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
@@ -160,10 +162,12 @@ const createPopupTemplate = (data) => {
 
       <div class="film-details__bottom-container">
         <section class="film-details__comments-wrap">
-          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
+          <h3 class="film-details__comments-title">
+          Comments <span class="film-details__comments-count">${data.comments.length}</span>
+          </h3>
 
           <ul class="film-details__comments-list">
-           ${createCommentTemplate(comments)}
+           ${createCommentTemplate(data.comments, comments)}
           </ul>
           ${createNewCommentTemplate(isChecked, imgSrc)}
         </section>
@@ -173,9 +177,10 @@ const createPopupTemplate = (data) => {
 };
 
 export default class Popup extends SmartView {
-    constructor (popupFilm) {
+    constructor (popupFilm, comments) {
         super();
         this._data = this._parseFilmToData(popupFilm);
+        this._comments = comments;
 
         this._exitBtnClickHandler = this._exitBtnClickHandler.bind(this);
 
@@ -225,7 +230,7 @@ export default class Popup extends SmartView {
     }
 
     getTemplate() {
-        return createPopupTemplate(this._data);
+        return createPopupTemplate(this._data, this._comments);
     }
 
     _exitBtnClickHandler(evt) {
