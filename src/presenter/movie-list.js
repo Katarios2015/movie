@@ -113,7 +113,7 @@ export default class MovieList {
         case UpdateType.MINOR:
             this._clearMovieList();
             this._renderMovieList(); // - обновить список (без сброса сортировки и фильтров)*/
-           
+            
             break;
         case UpdateType.MAJOR:
             // - обновить весь список (например, при переключении фильтра),сбрасываем сортировку и фильтры
@@ -161,7 +161,7 @@ export default class MovieList {
             .values(this._moviePresenter)
             .forEach((presenter) => {
                 presenter.resetView();
-                console.log(presenter);});
+            });
     }
 
     _handleModeChangeExtra() {
@@ -169,7 +169,7 @@ export default class MovieList {
             .values(this._moviePresenterExtra)
             .forEach((presenter) => {
                 presenter.resetView();
-                console.log(presenter);});
+            });
     }
 
     /*_handleMovieChange(filmContainer, updatedMovie) {
@@ -218,7 +218,7 @@ export default class MovieList {
 
     _renderFilmCardExtra(filmContainer, filmData) {
         
-        const moviePresenterExtra = new MoviePresenter(this._siteBodyContainer, this._handleViewAction,  this._handleModeChangeExtra);
+        const moviePresenterExtra = new MoviePresenter(this._siteBodyContainer, this._handleViewAction,  this._handleModeChangeExtra, this._commentsModel);
         moviePresenterExtra.init(filmContainer, filmData);
         this._moviePresenterExtra[filmData.id] = moviePresenterExtra;
        

@@ -58,6 +58,7 @@ export default class Movie {
         const prevPopupComponent = this._popupComponent;
 
         this._filmCardComponent = new FilmCardView(filmData);
+        
         this._popupComponent = new PopupView(filmData, this._commentsModel.getComments());
 
         this._popupComponent.setExitBtnClickHandler(this._handleHidePopup);
@@ -206,12 +207,45 @@ export default class Movie {
         );
     }
 
-    _handleDeleteCommentClick(id) {
+    _handleDeleteCommentClick(deletedId) {
         this._changeData(
             UserAction.DELETE_COMMENT,
             UpdateType.PATCH,            
-            {comments: comments.find((comment) => comment.id === id)}
-                    
+            this._commentsModel.getComments().find((comment) => comment.id === deletedId),
+            //console.log(this._commentsModel.getComments().find((comment) => comment.id === deletedId))
+        );
+
+        this._changeData(
+            UserAction.UPDATE_MOVIE,
+            UpdateType.PATCH,
+            Object.assign(
+                {},
+                this._filmData,
+                {
+                    comments: this._filmData.comments.filter((comment) => comment !== deletedId),
+                },
+            ),
+        );
+    }
+
+    _handleAddComment(newComment) {
+        this._changeData(
+            UserAction.ADD_COMMENT,
+            UpdateType.PATCH,            
+            newComment,
+            //console.log(this._commentsModel.getComments().find((comment) => comment.id === deletedId))
+        );
+
+        this._changeData(
+            UserAction.UPDATE_MOVIE,
+            UpdateType.PATCH,
+            Object.assign(
+                {},
+                this._filmData,
+                {
+                    comments: this._filmData.comments.push(newComment.id),
+                },
+            ),
         );
     }
 
@@ -219,12 +253,14 @@ export default class Movie {
         switch (updateType) {
         case UpdateType.PATCH:
             // - обновить часть списка (например, когда удалили/добавили коммент)
-            this._popupComponent.update(this._commentsModel.getComments(data.id));
-            //this._moviePresenterExtra[data.id].init(filmContainer, data); добвавить условие
+            //this._moviePresenter[data.id].init(filmContainer, data);
             break;
         case UpdateType.MINOR:
             this._clearMovieList();
             this._renderMovieList(); // - обновить список (без сброса сортировки и фильтров)*/
+            /*if (this._mode === Mode.EDITING) {
+                this._handleShowPopupClick();
+            }*/
            
             break;
         case UpdateType.MAJOR:

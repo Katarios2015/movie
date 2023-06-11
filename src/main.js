@@ -25,15 +25,18 @@ const siteFooter = document.querySelector(".footer");
 
 const footerStat = siteFooter.querySelector(".footer__statistics");
 
-const mockFilms = new Array(MOCK_FILMS_COUNT).fill().map(generateFilm);
+const comments = popupComments;
+const mockFilms = new Array(MOCK_FILMS_COUNT).fill().map(() => generateFilm(comments));
+
 const filmFilters = generateFilter(mockFilms);
 
-const moviesModel = new MoviesModel();
 const commentsModel = new CommentsModel();
+commentsModel.setComments(comments);
 
-//const comments = popupComments;
-commentsModel.setComments(mockFilms);
+const moviesModel = new MoviesModel();
 moviesModel.setMovies(mockFilms);
+
+
 
 
 //render(siteMainContainer, new Menu(filmFilters), RenderPosition.AFTERBEGIN);
@@ -44,4 +47,3 @@ renderTemplate (footerStat, `<p>${MOCK_FILMS_COUNT} movies inside</p>`, RenderPo
 
 const movieListPresenter = new MovieListPresenter(siteMainContainer, siteBody, filmFilters, moviesModel, commentsModel);
 movieListPresenter.init();
-

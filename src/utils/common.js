@@ -88,4 +88,5 @@ export default class Observer {
 
 
 
+
 export {SortType, ExtraTitle, getRandomArrayElement, getRandomCeilNumber, getRandomNumber, getRandomArray, getTimeFormat};
