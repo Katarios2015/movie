@@ -1,5 +1,5 @@
 import SmartView from "./smart.js";
-
+import he from "he";
 
 const createGenreTemplate = (data) => {
     const {genres} = data;
@@ -77,11 +77,7 @@ const Emoji = {
 
 const createNewCommentTemplate = (isChecked, imgSrc, commentText) => {
     const emojiValues = Object.values(Emoji);
-    const text = commentText ?
-        `<textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${commentText}</textarea>`
-        : 
-        "<textarea class=\"film-details__comment-input\" placeholder=\"Select reaction below and write comment here\" name=\"comment\"></textarea>";
- 
+   
     const emojiImg = isChecked ?
         `<img src="images/emoji/${imgSrc}.png" width="55" height="55" alt="emoji-smile">` : "";
 
@@ -89,7 +85,7 @@ const createNewCommentTemplate = (isChecked, imgSrc, commentText) => {
     <div class="film-details__add-emoji-label">${emojiImg}</div>
   
     <label class="film-details__comment-label">
-      ${text}
+    <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${commentText}</textarea>
     </label>
   
     <div class="film-details__emoji-list">
@@ -196,6 +192,8 @@ export default class Popup extends SmartView {
         this._data = this._parseFilmToData(popupFilm);
         this._comments = comments;
 
+        
+
         this._exitBtnClickHandler = this._exitBtnClickHandler.bind(this);
 
         this._addToWhatchListBtnClickHandler = this._addToWhatchListBtnClickHandler.bind(this);
@@ -204,7 +202,7 @@ export default class Popup extends SmartView {
         
         this._deleteClickHandler = this._deleteClickHandler.bind(this);
 
-        this._addCommentEnterHandler = this._addCommentEnterHandler.bind(this);
+        //this._addCommentEnterHandler = this._addCommentEnterHandler.bind(this);
 
         this._parseFilmToData = this._parseFilmToData.bind(this);
         this._addEmojiHandler = this._addEmojiHandler.bind(this);
@@ -223,9 +221,11 @@ export default class Popup extends SmartView {
             {
                 isChecked: "",
                 imgSrc: "",
+                commentText: ""
             }
         );
     }
+
 
     /*_parseDataToFilm(data) {
         data = Object.assign(
@@ -286,7 +286,9 @@ export default class Popup extends SmartView {
         evt.preventDefault();
         this.updateData({
             commentText: evt.target.value,
-        });
+            
+        }, true);
+        
     }
 
     _deleteClickHandler(evt) {
@@ -295,7 +297,7 @@ export default class Popup extends SmartView {
         this._callback.deleteClick(deletedCommentId);
     }
     
-    _addCommentEnterHandler(evt) {
+    /*_addCommentEnterHandler(evt) {
         evt.preventDefault();
         if (evt.ctrlKey && evt.key === "Enter") {
             if (this._data.commentText === "" || this._data.emojiIcon === "") {
@@ -311,7 +313,7 @@ export default class Popup extends SmartView {
     
             this._callback.addCommentEnter(newComment);
         }
-    }
+    }*/
 
     setExitBtnClickHandler (callback) {
         this._callback.clickExit = callback;
@@ -358,7 +360,7 @@ export default class Popup extends SmartView {
             .addEventListener("change", this._addEmojiHandler);
         
         this.getElement().querySelector(".film-details__comment-input")
-            .addEventListener("input", this._addEmojiHandler);
+            .addEventListener("input", this._inputCommentTextHandler);
     }
 
     
@@ -374,7 +376,7 @@ export default class Popup extends SmartView {
         this.setAddToFavoriteBtnClickHandler(this._callback.clickToFavorite);
         this.setExitBtnClickHandler(this._callback.clickExit);
 
-        this.setAddCommentClickHandler(this._callback.addCommentClick);
+        this.setAddCommentClickHandler(this._callback.addCommentEnter);
         this.setDeleteCommentClickHandler(this._callback.deleteClick);
     }
 }

@@ -45,6 +45,7 @@ export default class Movie {
         this._handleAddToFavoriteClick = this._handleAddToFavoriteClick.bind(this);
 
         this._handleDeleteCommentClick = this._handleDeleteCommentClick.bind(this);
+        this._handleAddComment = this._handleAddComment.bind(this);
        
         this._handleModelEvent = this._handleModelEvent.bind(this);
     }
@@ -78,6 +79,7 @@ export default class Movie {
         this._popupComponent.setAddToFavoriteBtnClickHandler(this._handleAddToFavoriteClick);
 
         this._popupComponent.setDeleteCommentClickHandler(this._handleDeleteCommentClick);
+        this._popupComponent.setAddCommentClickHandler(this._handleAddComment);
 
         if (prevFilmCardComponent === null || prevPopupComponent === null) {
             render(this._filmContainer, this._filmCardComponent, RenderPosition.BEFOREEND);
@@ -145,6 +147,9 @@ export default class Movie {
         this._popupComponent.setAlreadyWatchedBtnClickHandler(this._handleAddToAlreadyWatchedClick);
         this._popupComponent.setAddToFavoriteBtnClickHandler(this._handleAddToFavoriteClick);
         this._popupComponent.setDeleteCommentClickHandler(this._handleDeleteCommentClick);
+
+        this._popupComponent.setAddCommentClickHandler(this._handleAddComment);
+
         document.addEventListener("keydown", this._onEscKeyDownHandler);
 
         // console.log(this._mode);
