@@ -202,7 +202,7 @@ export default class Popup extends SmartView {
         
         this._deleteClickHandler = this._deleteClickHandler.bind(this);
 
-        //this._addCommentEnterHandler = this._addCommentEnterHandler.bind(this);
+        this._addCommentEnterHandler = this._addCommentEnterHandler.bind(this);
 
         this._parseFilmToData = this._parseFilmToData.bind(this);
         this._addEmojiHandler = this._addEmojiHandler.bind(this);
@@ -285,8 +285,7 @@ export default class Popup extends SmartView {
     _inputCommentTextHandler(evt) {
         evt.preventDefault();
         this.updateData({
-            commentText: evt.target.value,
-            
+            commentText: evt.target.value,     
         }, true);
         
     }
@@ -297,15 +296,14 @@ export default class Popup extends SmartView {
         this._callback.deleteClick(deletedCommentId);
     }
     
-    /*_addCommentEnterHandler(evt) {
-        evt.preventDefault();
+    _addCommentEnterHandler(evt) {
         if (evt.ctrlKey && evt.key === "Enter") {
             if (this._data.commentText === "" || this._data.emojiIcon === "") {
                 return;
             }
 
             const newComment = {
-                id: 0,
+                id:"0",
                 commentText: this._data.commentText,
                 emotion: this._data.emojiIcon,
                 date: new Date()
@@ -313,7 +311,7 @@ export default class Popup extends SmartView {
     
             this._callback.addCommentEnter(newComment);
         }
-    }*/
+    }
 
     setExitBtnClickHandler (callback) {
         this._callback.clickExit = callback;

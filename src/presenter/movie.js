@@ -234,11 +234,11 @@ export default class Movie {
     }
 
     _handleAddComment(newComment) {
+      
         this._changeData(
             UserAction.ADD_COMMENT,
             UpdateType.PATCH,            
             newComment,
-            //console.log(this._commentsModel.getComments().find((comment) => comment.id === deletedId))
         );
 
         this._changeData(
@@ -254,19 +254,17 @@ export default class Movie {
         );
     }
 
-    _handleModelEvent(updateType, data) {
+    _handleModelEvent(updateType, data,filmContainer) {
         switch (updateType) {
         case UpdateType.PATCH:
             // - обновить часть списка (например, когда удалили/добавили коммент)
             //this._moviePresenter[data.id].init(filmContainer, data);
+            console.log("hf");
             break;
         case UpdateType.MINOR:
             this._clearMovieList();
-            this._renderMovieList(); // - обновить список (без сброса сортировки и фильтров)*/
-            /*if (this._mode === Mode.EDITING) {
-                this._handleShowPopupClick();
-            }*/
-           
+            this._renderMovieList(); // - обновить список (без сброса сортировки и фильтров)
+            
             break;
         case UpdateType.MAJOR:
             // - обновить весь список (например, при переключении фильтра),сбрасываем сортировку и фильтры
