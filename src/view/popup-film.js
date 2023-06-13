@@ -85,11 +85,13 @@ const createNewCommentTemplate = (isChecked, imgSrc, commentText) => {
     <div class="film-details__add-emoji-label">${emojiImg}</div>
   
     <label class="film-details__comment-label">
-    <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${commentText}</textarea>
+    <textarea class="film-details__comment-input"
+    placeholder="Select reaction below and write comment here" name="comment">${commentText}</textarea>
     </label>
   
     <div class="film-details__emoji-list">
-      ${emojiValues.map((emotion) => `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emotion}" value="${emotion}">
+      ${emojiValues.map((emotion) => `
+      <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emotion}" value="${emotion}">
       <label class="film-details__emoji-label" for="emoji-${emotion}">
         <img src="./images/emoji/${emotion}.png" width="30" height="30" alt="${emotion}">
       </label>`).join("")}
@@ -245,7 +247,10 @@ export default class Popup extends SmartView {
     update(comments) {
         this._comments = comments.slice();
         this.updateElement();
+        const scrollTop = this.getElement().scrollTop;
+        this.getElement().scrollTop = scrollTop;
     }
+
 
     getTemplate() {
         return createPopupTemplate(this._data, this._comments);
@@ -360,6 +365,8 @@ export default class Popup extends SmartView {
         this.getElement().querySelector(".film-details__comment-input")
             .addEventListener("input", this._inputCommentTextHandler);
     }
+    
+
 
     
 

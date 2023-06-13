@@ -237,7 +237,7 @@ export default class Movie {
       
         this._changeData(
             UserAction.ADD_COMMENT,
-            UpdateType.PATCH,            
+            UpdateType.MINOR,
             newComment,
         );
 
@@ -254,22 +254,14 @@ export default class Movie {
         );
     }
 
-    _handleModelEvent(updateType, data,filmContainer) {
+    _handleModelEvent(updateType, data) {
         switch (updateType) {
         case UpdateType.PATCH:
             // - обновить часть списка (например, когда удалили/добавили коммент)
-            //this._moviePresenter[data.id].init(filmContainer, data);
-            console.log("hf");
             break;
         case UpdateType.MINOR:
-            this._clearMovieList();
-            this._renderMovieList(); // - обновить список (без сброса сортировки и фильтров)
-            
-            break;
-        case UpdateType.MAJOR:
-            // - обновить весь список (например, при переключении фильтра),сбрасываем сортировку и фильтры
-            this._clearMovieList({resetRenderedFilmCount: true, resetSortType: true});
-            this._renderMovieList();
+            this._popupComponent.update(this._commentsModel.getComments(data));
+            console.log("gh");
             break;
         }
     }
