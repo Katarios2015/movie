@@ -1,6 +1,7 @@
 export const dayjs = require("dayjs");
 export const relativeTime = require("dayjs/plugin/relativeTime");
 export const utc = require("dayjs/plugin/utc");
+//export const he = require('he');
 
 const SortType = {
     DEFAULT: "default",
@@ -85,6 +86,7 @@ export default class Observer {
         this._observers.forEach((observer) => observer(event, payload));
     }
 }
+
 
 
 

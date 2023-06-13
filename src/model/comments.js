@@ -1,23 +1,19 @@
 
 import Observer from "../utils/common.js" ;
 
-export default class Comments extends Observer{
+export default class Comments extends Observer {
     constructor () {
         super();
         this._comments = [];
     }
 
-    setMovies (comments) {
+    setComments (comments) {
         this._comments = comments.slice();
     }
 
-    getMovies () {
+    getComments () {
         return this._comments;
     }
-
-    /*updateComment () {
-
-    }*/
  
     addComment(updateType, update) {
         this._comments = [
@@ -32,14 +28,14 @@ export default class Comments extends Observer{
         const index = this._comments.findIndex((comment) => comment.id === update.id);
     
         if (index === -1) {
-            throw new Error("Can't delete unexisting task");
+            throw new Error("Can't delete unexisting comment");
         }
     
-        this._tasks = [
+        this._comments = [
             ...this._comments.slice(0, index),
             ...this._comments.slice(index + 1),
         ];
     
-        this._notify(updateType);
+        this._notify(updateType, update);
     }
 }

@@ -4,7 +4,7 @@ import {dayjs} from "../utils/common.js";
 import {relativeTime} from "../utils/common.js";
 import {utc} from "../utils/common.js";
 
-const COMMENTS_COUNT = 4;
+const MAX_COMMENTS_COUNT = 5;
 
 const filmTitles = [
     "The Dance of Life", "Sagebrush Trail","The Man with the Golden Arm",
@@ -62,7 +62,7 @@ dayjs.extend(relativeTime);
 const generatePopupComment = () => {
     const commentInFormatDates = commentDates.map((el)=> dayjs.utc(el).format("YYYY/MM/DD  HH:mm:ss"));
     return {
-        id: getRandomArrayElement(commentIds),
+        id: getRandomArrayElement(commentIds).toString(),
         author: getRandomArrayElement(commentAthors),
         commentText: getRandomArray(filmDescriptions, 0, 5),
         //date: dayjs(getRandomArrayElement(commentDates)).format("YYYY/MM/DD  hh:mm"),//по общему тз
@@ -71,15 +71,20 @@ const generatePopupComment = () => {
     };
 };
 
-const popupComments = new Array(COMMENTS_COUNT).fill().map(generatePopupComment);
 
-const selectCommentsDependOfID = (id, comments) => {
-    return comments.filter((item) => item.id === id);
+const popupComments = new Array(MAX_COMMENTS_COUNT).fill().map(generatePopupComment);
+
+
+const getCommentsId = () => {
+    const newPopupComments = popupComments.slice();
+    newPopupComments.length = getRandomCeilNumber(0, MAX_COMMENTS_COUNT);
+    return newPopupComments.map((comment) => comment.id);
+
 };
 
+
 const generateFilm = () => {
-    const idOfComments = getRandomArrayElement(commentIds);
-    const comments = popupComments;
+    //const idOfComments = getRandomArrayElement(commentIds);
     return {
         id: nanoid(),
         poster: getRandomArrayElement(filmPosters),
@@ -89,7 +94,7 @@ const generateFilm = () => {
         duration: getTimeFormat(getRandomArrayElement(filmDurations)),
         genres:  getRandomArray(filmGenres, 0, 3),
         description: getRandomArray(filmDescriptions, 0, 5),
-        comments: selectCommentsDependOfID(idOfComments, comments),
+        comments: getCommentsId(),
         
         isWatchList: Boolean(getRandomCeilNumber(0, 1)),
         isWatched: Boolean(getRandomCeilNumber(0, 1)),
@@ -105,4 +110,6 @@ const generateFilm = () => {
     };
 };
 
-export {generateFilm};
+
+
+export {generateFilm, popupComments};

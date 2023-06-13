@@ -29,8 +29,10 @@ const FILM_EXTRA_COUNT = 2;
 
 
 export default class MovieList {
-    constructor(siteContainer, siteBody, filter, moviesModel) {
+    constructor(siteContainer, siteBody, filter, moviesModel, commentsModel) {
         this._moviesModel = moviesModel;
+        this._commentsModel = commentsModel;
+
         this._siteMainContainer = siteContainer;
         this._siteBodyContainer = siteBody;
         this._renderedFilmsCounter = MAX_FILM_COUNT;
@@ -64,8 +66,10 @@ export default class MovieList {
         this._handleViewAction = this._handleViewAction.bind(this);
         this._handleModelEvent = this._handleModelEvent.bind(this);
 
-        this._moviesModel.addObserver(this._handleModelEvent);
+        
 
+        this._moviesModel.addObserver(this._handleModelEvent);
+       
     }
 
     init() {
@@ -87,10 +91,10 @@ export default class MovieList {
             this._moviesModel.updateMovie(updateType, update);
             break;
         case UserAction.ADD_COMMENT:
-            this._moviesModel.addComment(updateType, update);
+            this._commentsModel.addComment(updateType, update);
             break;
         case UserAction.DELETE_COMMENT:
-            this._moviesModel.deleteComment(updateType, update);
+            this._commentsModel.deleteComment(updateType, update);
             break;
         }
         // Здесь будем вызывать обновление модели.
@@ -104,12 +108,12 @@ export default class MovieList {
         case UpdateType.PATCH:
             // - обновить часть списка (например, когда удалили/добавили коммент)
             this._moviePresenter[data.id].init(filmContainer, data);
+            //this._moviePresenterExtra[data.id].init(filmContainer, data); добвавить условие
             break;
         case UpdateType.MINOR:
-            this._moviePresenter[data.id].init(filmContainer, data);
-            /*this._clearMovieList();
+            this._clearMovieList();
             this._renderMovieList(); // - обновить список (без сброса сортировки и фильтров)*/
-           
+            
             break;
         case UpdateType.MAJOR:
             // - обновить весь список (например, при переключении фильтра),сбрасываем сортировку и фильтры
@@ -157,7 +161,7 @@ export default class MovieList {
             .values(this._moviePresenter)
             .forEach((presenter) => {
                 presenter.resetView();
-                console.log(presenter);});
+            });
     }
 
     _handleModeChangeExtra() {
@@ -165,7 +169,7 @@ export default class MovieList {
             .values(this._moviePresenterExtra)
             .forEach((presenter) => {
                 presenter.resetView();
-                console.log(presenter);});
+            });
     }
 
     /*_handleMovieChange(filmContainer, updatedMovie) {
@@ -207,14 +211,14 @@ export default class MovieList {
 
 
     _renderFilmCard(filmContainer, filmData) {
-        const moviePresenter = new MoviePresenter(this._siteBodyContainer, this._handleViewAction,  this._handleModeChange);
+        const moviePresenter = new MoviePresenter(this._siteBodyContainer, this._handleViewAction,  this._handleModeChange, this._commentsModel);
         moviePresenter.init(filmContainer, filmData);
         this._moviePresenter[filmData.id] = moviePresenter;
     }
 
     _renderFilmCardExtra(filmContainer, filmData) {
         
-        const moviePresenterExtra = new MoviePresenter(this._siteBodyContainer, this._handleViewAction,  this._handleModeChangeExtra);
+        const moviePresenterExtra = new MoviePresenter(this._siteBodyContainer, this._handleViewAction,  this._handleModeChangeExtra, this._commentsModel);
         moviePresenterExtra.init(filmContainer, filmData);
         this._moviePresenterExtra[filmData.id] = moviePresenterExtra;
        

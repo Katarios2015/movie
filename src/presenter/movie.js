@@ -23,13 +23,15 @@ const Mode = {
 };
 
 export default class Movie {
-    constructor (siteBody, changeData, changeMode) {
+    constructor (siteBody, changeData, changeMode, commentsModel) {
         this._siteBodyContainer = siteBody;
         this._changeData = changeData;
         this._changeMode = changeMode;
         this._mode = Mode.DEFAULT;
         this._filmCardComponent = null;
         this._popupComponent = null;
+
+        this._commentsModel = commentsModel;
 
         this._handleHidePopup = this._handleHidePopup.bind(this);
 
@@ -41,17 +43,24 @@ export default class Movie {
         this._handleAddToWatchedListClick = this._handleAddToWatchedListClick.bind(this);
         this._handleAddToAlreadyWatchedClick = this._handleAddToAlreadyWatchedClick.bind(this);
         this._handleAddToFavoriteClick = this._handleAddToFavoriteClick.bind(this);
+
+        this._handleDeleteCommentClick = this._handleDeleteCommentClick.bind(this);
+        this._handleAddComment = this._handleAddComment.bind(this);
+       
+        this._handleModelEvent = this._handleModelEvent.bind(this);
     }
 
     init(filmContainer, filmData) {
         this._filmContainer = filmContainer;
         this._filmData = filmData;
 
+
         const prevFilmCardComponent = this._filmCardComponent;
         const prevPopupComponent = this._popupComponent;
 
         this._filmCardComponent = new FilmCardView(filmData);
-        this._popupComponent = new PopupView(filmData);
+        
+        this._popupComponent = new PopupView(filmData, this._commentsModel.getComments());
 
         this._popupComponent.setExitBtnClickHandler(this._handleHidePopup);
 
@@ -68,6 +77,9 @@ export default class Movie {
         this._popupComponent.setAddToWatchBtnListClickHandler(this._handleAddToWatchedListClick);
         this._popupComponent.setAlreadyWatchedBtnClickHandler(this._handleAddToAlreadyWatchedClick);
         this._popupComponent.setAddToFavoriteBtnClickHandler(this._handleAddToFavoriteClick);
+
+        this._popupComponent.setDeleteCommentClickHandler(this._handleDeleteCommentClick);
+        this._popupComponent.setAddCommentClickHandler(this._handleAddComment);
 
         if (prevFilmCardComponent === null || prevPopupComponent === null) {
             render(this._filmContainer, this._filmCardComponent, RenderPosition.BEFOREEND);
@@ -124,14 +136,20 @@ export default class Movie {
 
     _handleShowPopupClick() {
         this._changeMode();
+       
         render(this._siteBodyContainer, this._popupComponent, RenderPosition.BEFOREEND);
         this._mode = Mode.EDITING;
+        this._commentsModel.addObserver(this._handleModelEvent);
 
         this._siteBodyContainer.classList.add("hide-overflow");
         this._popupComponent.setExitBtnClickHandler(this._handleHidePopup);
         this._popupComponent.setAddToWatchBtnListClickHandler(this._handleAddToWatchedListClick);
         this._popupComponent.setAlreadyWatchedBtnClickHandler(this._handleAddToAlreadyWatchedClick);
         this._popupComponent.setAddToFavoriteBtnClickHandler(this._handleAddToFavoriteClick);
+        this._popupComponent.setDeleteCommentClickHandler(this._handleDeleteCommentClick);
+
+        this._popupComponent.setAddCommentClickHandler(this._handleAddComment);
+
         document.addEventListener("keydown", this._onEscKeyDownHandler);
 
         // console.log(this._mode);
@@ -139,6 +157,7 @@ export default class Movie {
 
     _handleHidePopup() {
         remove(this._popupComponent);
+        this._commentsModel.removeObserver(this._handleModelEvent);
         this._popupComponent.reset(this._filmData);
         document.removeEventListener("keydown", this._onEscKeyDownHandler);
         this._siteBodyContainer.classList.remove("hide-overflow");
@@ -154,7 +173,7 @@ export default class Movie {
     _handleAddToWatchedListClick() {
         this._changeData(
             UserAction.UPDATE_MOVIE,
-            UpdateType.MINOR,
+            UpdateType.PATCH,
             Object.assign(
                 {},
                 this._filmData,
@@ -168,7 +187,7 @@ export default class Movie {
     _handleAddToAlreadyWatchedClick() {
         this._changeData(
             UserAction.UPDATE_MOVIE,
-            UpdateType.MINOR,
+            UpdateType.PATCH,
             Object.assign(
                 {},
                 this._filmData,
@@ -182,7 +201,7 @@ export default class Movie {
     _handleAddToFavoriteClick() {
         this._changeData(
             UserAction.UPDATE_MOVIE,
-            UpdateType.MINOR,
+            UpdateType.PATCH,
             Object.assign(
                 {},
                 this._filmData,
@@ -191,5 +210,59 @@ export default class Movie {
                 },
             ),
         );
+    }
+
+    _handleDeleteCommentClick(deletedId) {
+        this._changeData(
+            UserAction.DELETE_COMMENT,
+            UpdateType.PATCH,            
+            this._commentsModel.getComments().find((comment) => comment.id === deletedId),
+            //console.log(this._commentsModel.getComments().find((comment) => comment.id === deletedId))
+        );
+
+        this._changeData(
+            UserAction.UPDATE_MOVIE,
+            UpdateType.PATCH,
+            Object.assign(
+                {},
+                this._filmData,
+                {
+                    comments: this._filmData.comments.filter((comment) => comment !== deletedId),
+                },
+            ),
+        );
+    }
+
+    _handleAddComment(newComment) {
+      
+        this._changeData(
+            UserAction.ADD_COMMENT,
+            UpdateType.MINOR,
+            newComment,
+        );
+
+        this._changeData(
+            UserAction.UPDATE_MOVIE,
+            UpdateType.PATCH,
+            Object.assign(
+                {},
+                this._filmData,
+                {
+                    comments: this._filmData.comments.push(newComment.id),
+                },
+            ),
+        );
+    }
+
+    _handleModelEvent(updateType, data) {
+        switch (updateType) {
+        case UpdateType.PATCH:
+            // - обновить часть списка (например, когда удалили/добавили коммент)
+            break;
+        case UpdateType.MINOR:
+            this._popupComponent.update(this._commentsModel.getComments(data));
+            console.log("gh");
+            break;
+        }
     }
 }
