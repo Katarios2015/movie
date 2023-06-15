@@ -1,7 +1,7 @@
 export const dayjs = require("dayjs");
 export const relativeTime = require("dayjs/plugin/relativeTime");
 export const utc = require("dayjs/plugin/utc");
-//export const he = require('he');
+export const he = require('he');
 
 const SortType = {
     DEFAULT: "default",

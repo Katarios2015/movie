@@ -1,5 +1,6 @@
 import SmartView from "./smart.js";
-import he from "he";
+import {he} from "../utils/common.js";
+import {dayjs} from "../utils/common.js";
 
 const createGenreTemplate = (data) => {
     const {genres} = data;
@@ -86,7 +87,7 @@ const createNewCommentTemplate = (isChecked, imgSrc, commentText) => {
   
     <label class="film-details__comment-label">
     <textarea class="film-details__comment-input"
-    placeholder="Select reaction below and write comment here" name="comment">${commentText}</textarea>
+    placeholder="Select reaction below and write comment here" name="comment">${he.encode(commentText)}</textarea>
     </label>
   
     <div class="film-details__emoji-list">
@@ -249,6 +250,7 @@ export default class Popup extends SmartView {
         this.updateElement();
         const scrollTop = this.getElement().scrollTop;
         this.getElement().scrollTop = scrollTop;
+        //console.log(this._comments);
     }
 
 
@@ -303,20 +305,21 @@ export default class Popup extends SmartView {
     
     _addCommentEnterHandler(evt) {
         if (evt.ctrlKey && evt.key === "Enter") {
-            if (this._data.commentText === "" || this._data.emojiIcon === "") {
+            if (this._data.commentText === "" || this._data.imgSrc === "") {
                 return;
             }
-
             const newComment = {
                 id:"0",
                 commentText: this._data.commentText,
-                emotion: this._data.emojiIcon,
-                date: new Date()
+                emotion: `./images/emoji/${this._data.imgSrc}.png`,
+                date: dayjs(new Date()).fromNow(), 
+                author: "Kate",
             };
     
             this._callback.addCommentEnter(newComment);
         }
     }
+    
 
     setExitBtnClickHandler (callback) {
         this._callback.clickExit = callback;
