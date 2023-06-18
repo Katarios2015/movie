@@ -2,25 +2,13 @@ import FilmListView from "../view/film-list.js";
 import EmptyFilmListView from "../view/empty-list.js";
 import ShowMoreBtnView from "../view/show-more-btn.js";
 import ExtraSectionView from "../view/create-extra-section.js";
-import MenuView from "../view/menu.js";
+import {siteFilterMap} from "../utils/filter.js";
 import SortView from "../view/sort.js";
-
+import {UserAction, UpdateType} from "../utils/constants.js";
 import {sortMovieDate, sortMovieRate, render, RenderPosition, remove} from "../utils/render.js";
-import {updateItem,ExtraTitle, SortType} from "../utils/common.js";
+import {ExtraTitle, SortType} from "../utils/common.js";
 //import  UserAction from "../utils/constants.js";
 //import  UpdateType from "../utils/constants.js";
-
-const UserAction = {
-    UPDATE_MOVIE: "UPDATE_MOVIE",
-    ADD_COMMENT: "ADD_COMMENT",
-    DELETE_COMMENT: "DELETE_COMMENT",
-};
-  
-const UpdateType = {
-    PATCH: "PATCH",
-    MINOR: "MINOR",
-    MAJOR: "MAJOR",
-};
 
 import MoviePresenter from "./movie.js";
 
@@ -29,9 +17,11 @@ const FILM_EXTRA_COUNT = 2;
 
 
 export default class MovieList {
-    constructor(siteContainer, siteBody, filter, moviesModel, commentsModel) {
+    constructor(siteContainer, siteBody, moviesModel, commentsModel, filterModel) {
         this._moviesModel = moviesModel;
         this._commentsModel = commentsModel;
+        this._filterModel = filterModel;
+
 
         this._siteMainContainer = siteContainer;
         this._siteBodyContainer = siteBody;
@@ -40,15 +30,11 @@ export default class MovieList {
         this._ratedComponent = null;
         this._commentsComponent = null;
 
-        this._renderedFilter = filter;
-
-
         this._moviePresenter = {};
         this._moviePresenterExtra = {};
 
         this._currentSortType = SortType.DEFAULT;
-
-        this._menuComponent = new MenuView(filter);
+        
         this._filmListComponent = new FilmListView();
 
         this._sortComponent = null;
@@ -69,6 +55,7 @@ export default class MovieList {
         
 
         this._moviesModel.addObserver(this._handleModelEvent);
+        this._filterModel.addObserver(this._handleModelEvent);
        
     }
 
@@ -82,7 +69,7 @@ export default class MovieList {
         render(this._siteMainContainer, this._filmListComponent, RenderPosition.BEFOREEND);
         this._renderMovieList();
         
-        this._renderMenu();
+        //this._renderMenu();
     }
 
     _handleViewAction(actionType, updateType, update) {
@@ -125,15 +112,18 @@ export default class MovieList {
 
 
     _getMovies() {
-        //const slicedMovies = this._moviesModel.getMovies().slice();
+        
+        const filterType = this._filterModel.getFilter();
+        const movies = this._moviesModel.getMovies();
+       
+        const filtredMovies = siteFilterMap[filterType](movies);
         switch (this._currentSortType) {
         case SortType.DATE:
-            return this._moviesModel.getMovies().slice().sort(sortMovieDate);
+            return filtredMovies.sort(sortMovieDate);
         case SortType.RATE:
-            return this._moviesModel.getMovies().slice().sort(sortMovieRate);
+            return filtredMovies.sort(sortMovieRate);
         }
-        return this._moviesModel.getMovies();
-        
+        return filtredMovies;
     }
 
     _renderSort() {
@@ -147,9 +137,9 @@ export default class MovieList {
         
     }
 
-    _renderMenu() {
+    /*_renderMenu() {
         render(this._siteMainContainer, this._menuComponent, RenderPosition.AFTERBEGIN);
-    }
+    }*/
 
 
     _renderEmptyFilmList() {
@@ -211,14 +201,16 @@ export default class MovieList {
 
 
     _renderFilmCard(filmContainer, filmData) {
-        const moviePresenter = new MoviePresenter(this._siteBodyContainer, this._handleViewAction,  this._handleModeChange, this._commentsModel);
+        const moviePresenter = new MoviePresenter(this._siteBodyContainer, 
+            this._handleViewAction,  this._handleModeChange, this._commentsModel);
         moviePresenter.init(filmContainer, filmData);
         this._moviePresenter[filmData.id] = moviePresenter;
     }
 
     _renderFilmCardExtra(filmContainer, filmData) {
         
-        const moviePresenterExtra = new MoviePresenter(this._siteBodyContainer, this._handleViewAction,  this._handleModeChangeExtra, this._commentsModel);
+        const moviePresenterExtra = new MoviePresenter(this._siteBodyContainer, 
+            this._handleViewAction,  this._handleModeChangeExtra, this._commentsModel);
         moviePresenterExtra.init(filmContainer, filmData);
         this._moviePresenterExtra[filmData.id] = moviePresenterExtra;
        
@@ -249,7 +241,8 @@ export default class MovieList {
 
             render(this._siteMainContainer, this._filmListComponent, RenderPosition.BEFOREEND);
 
-            this._renderMovieCards(this._filmListComponent.getElement().querySelector(".films-list__container"), movies);
+            this._renderMovieCards(this._filmListComponent.getElement()
+                .querySelector(".films-list__container"), movies);
 
             // Теперь, когда _renderBoard рендерит доску не только на старте,
             // но и по ходу работы приложения, нужно заменить
@@ -270,7 +263,8 @@ export default class MovieList {
         }
         this._showMoreBtnComponent = new ShowMoreBtnView();
         this._showMoreBtnComponent.setClickHandler(this._handleShowMoreBtn);
-        render(this._filmListComponent.getElement().querySelector(".films-list"), this._showMoreBtnComponent, RenderPosition.BEFOREEND);
+        render(this._filmListComponent.getElement().querySelector(".films-list"), 
+            this._showMoreBtnComponent, RenderPosition.BEFOREEND);
     }
 
     _handleShowMoreBtn() {
@@ -318,14 +312,13 @@ export default class MovieList {
         remove(this._sortComponent);
         
         //this._renderedFilmsCounter = MAX_FILM_COUNT;
-       
 
         if (resetRenderedFilmCount) {
             this._renderedFilmsCounter = MAX_FILM_COUNT;
         } else {
-            // На случай, если перерисовка доски вызвана
-            // уменьшением количества задач (например, удаление или перенос в архив)
-            // нужно скорректировать число показанных задач
+            // На случай, если перерисовка списка вызвана
+            // уменьшением количества фильмов (например, удаление или перенос в архив)
+            // нужно скорректировать число показанных фильмов
             this._renderedFilmsCounter = Math.min(this._getMovies().length, this._renderedFilmsCounter);
         }
         

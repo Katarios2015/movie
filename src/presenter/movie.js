@@ -4,18 +4,7 @@ import {render, RenderPosition, replace, remove} from "../utils/render.js";
 
 //import  UserAction from "../utils/constants.js";
 //import  UpdateType from "../utils/constants.js";
-
-export const UserAction = {
-    UPDATE_MOVIE: "UPDATE_MOVIE",
-    ADD_COMMENT: "ADD_COMMENT",
-    DELETE_COMMENT: "DELETE_COMMENT",
-};
-  
-export const UpdateType = {
-    PATCH: "PATCH",
-    MINOR: "MINOR",
-    MAJOR: "MAJOR",
-};
+import {UserAction, UpdateType} from "../utils/constants.js";
 
 const Mode = {
     DEFAULT: "DEFAULT",
