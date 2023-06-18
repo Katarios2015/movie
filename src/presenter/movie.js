@@ -248,7 +248,7 @@ export default class Movie {
                 {},
                 this._filmData,
                 {
-                    comments: [...this._filmData.comments, (newComment.id)],//data превращается в число здесь
+                    comments: [...this._filmData.comments, (newComment.id)],
                 },
             ),
         );
