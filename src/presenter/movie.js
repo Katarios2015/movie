@@ -248,7 +248,7 @@ export default class Movie {
                 {},
                 this._filmData,
                 {
-                    comments: this._filmData.comments.push(newComment.id),
+                    comments: [...this._filmData.comments, (newComment.id)],
                 },
             ),
         );
@@ -260,8 +260,7 @@ export default class Movie {
             // - обновить часть списка (например, когда удалили/добавили коммент)
             break;
         case UpdateType.MINOR:
-            this._popupComponent.update(this._commentsModel.getComments(data));
-            console.log("gh");
+            this._popupComponent.update(this._commentsModel.getComments(data.id));
             break;
         }
     }
