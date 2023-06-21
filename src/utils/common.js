@@ -3,16 +3,8 @@ export const relativeTime = require("dayjs/plugin/relativeTime");
 export const utc = require("dayjs/plugin/utc");
 export const he = require('he');
 
-const SortType = {
-    DEFAULT: "default",
-    DATE: "date_up",
-    RATE: "rate-up",
-};
 
-const ExtraTitle = {
-    RATED: "Top rated",
-    COMMENTED: "Most commented",
-};
+
 
 const getRandomArrayElement = (items) => {
     const randElement = items[Math.floor(Math.random() * items.length)];
@@ -76,4 +68,4 @@ export default class Observer {
 
 
 
-export {SortType, ExtraTitle, getRandomArrayElement, getRandomCeilNumber, getRandomNumber, getRandomArray, getTimeFormat};
+export {getRandomArrayElement, getRandomCeilNumber, getRandomNumber, getRandomArray, getTimeFormat};

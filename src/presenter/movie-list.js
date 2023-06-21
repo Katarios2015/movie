@@ -4,11 +4,9 @@ import ShowMoreBtnView from "../view/show-more-btn.js";
 import ExtraSectionView from "../view/create-extra-section.js";
 import {siteFilterMap} from "../utils/filter.js";
 import SortView from "../view/sort.js";
-import {UserAction, UpdateType} from "../utils/constants.js";
+import {UserAction, UpdateType, SortType, ExtraTitle} from "../utils/constants.js";
 import {sortMovieDate, sortMovieRate, render, RenderPosition, remove} from "../utils/render.js";
-import {ExtraTitle, SortType} from "../utils/common.js";
-//import  UserAction from "../utils/constants.js";
-//import  UpdateType from "../utils/constants.js";
+
 
 import MoviePresenter from "./movie.js";
 
@@ -54,8 +52,7 @@ export default class MovieList {
 
         
 
-        this._moviesModel.addObserver(this._handleModelEvent);
-        this._filterModel.addObserver(this._handleModelEvent);
+
        
     }
 
@@ -66,10 +63,30 @@ export default class MovieList {
         // сохранив исходный массив:
         this._sourcedMovies = mockFilms.slice();
         this._sourcedMoviesTwo = mockFilms.slice();*/
+        this._moviesModel.addObserver(this._handleModelEvent);
+        this._filterModel.addObserver(this._handleModelEvent);
+
         render(this._siteMainContainer, this._filmListComponent, RenderPosition.BEFOREEND);
         this._renderMovieList();
-        
-        //this._renderMenu();
+    }
+
+    hide() {
+        this._filmListComponent.getElement().classList.add("visually-hidden");
+        this._sortComponent.getElement().classList.add("visually-hidden");
+    }
+
+    show() {
+        this._filmListComponent.getElement().classList.remove("visually-hidden");
+        this._sortComponent.getElement().classList.remove("visually-hidden");
+    }
+
+    destroy() {
+        this._clearMovieList({resetRenderedFilmCount: true, resetSortType: true});
+    
+        remove(this._filmListComponent);
+    
+        this._moviesModel.removeObserver(this._handleModelEvent);
+        this._filterModel.removeObserver(this._handleModelEvent);
     }
 
     _handleViewAction(actionType, updateType, update) {

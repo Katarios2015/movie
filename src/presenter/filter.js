@@ -1,4 +1,4 @@
-import MenuFilterView from "../view/menu.js";
+import MenuFilterView from "../view/filters-menu.js";
 import {render, RenderPosition, replace, remove} from "../utils/render.js";
 import {siteFilterMap} from "../utils/filter.js";
 import {FilterType, UpdateType} from "../utils/constants.js";
@@ -6,8 +6,8 @@ import {FilterType, UpdateType} from "../utils/constants.js";
 
 
 export default class Filter {
-    constructor(siteMainContainer, filterModel, moviesModel) {
-        this._siteMainContainer = siteMainContainer;
+    constructor(mainNavContainer, filterModel, moviesModel) {
+        this._mainNavContainer = mainNavContainer;
         this._filterModel = filterModel;
         this._moviesModel = moviesModel;
 
@@ -28,7 +28,7 @@ export default class Filter {
         this._menuFilterComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
 
         if (prevMenuFilterComponent === null) {
-            render(this._siteMainContainer, this._menuFilterComponent, RenderPosition.BEFOREEND);
+            render(this._mainNavContainer, this._menuFilterComponent, RenderPosition.BEFORE);
             return;
         }
 

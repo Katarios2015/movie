@@ -1,8 +1,10 @@
-import {renderTemplate, render, RenderPosition} from "./utils/render.js";
+import {renderTemplate, render, RenderPosition, remove} from "./utils/render.js";
+import {FilterMenuItem, UpdateType, FilterType} from "./utils/constants.js";
 
-//import {generateFilter} from "./mock/filter.js";
-//import {siteFilterMap} from "./utils/filter.js";
+import MainNavView from "./view/main-navigation.js";
+
 import UserRank from "./view/user-rank.js";
+import StatsView from "./view/statistic.js";
 
 import {generateFilm, popupComments} from "./mock/film.js";
 
@@ -17,9 +19,11 @@ import FilterModel from "./model/filter.js";
 
 const MOCK_FILMS_COUNT = 20;
 
+const mainNavComponent = new MainNavView ();
 
 const siteBody = document.querySelector("body");
 const siteMainContainer = document.querySelector(".main");
+const mainNavContainer = mainNavComponent.getElement().querySelector(".main-navigation__additional");
 
 const siteHeader = document.querySelector(".header");
 const siteFooter = document.querySelector(".footer");
@@ -29,7 +33,6 @@ const footerStat = siteFooter.querySelector(".footer__statistics");
 const comments = popupComments;
 const mockFilms = new Array(MOCK_FILMS_COUNT).fill().map(() => generateFilm(comments));
 
-
 const commentsModel = new CommentsModel();
 commentsModel.setComments(comments);
 
@@ -37,16 +40,43 @@ const moviesModel = new MoviesModel();
 moviesModel.setMovies(mockFilms);
 
 const filterModel = new FilterModel();
+const statsComponent = new StatsView();
 
 //FilterModel.setFilters(mockFilms);
 
 //render(siteMainContainer, new Menu(filmFilters), RenderPosition.AFTERBEGIN);
 
+const handleFilterMenuClick = (menuItem) => {
+    const menuItemData = menuItem.dataset.itemType;
+    const activeItem = document.querySelector(".main-navigation__item--active");
+    switch (menuItemData) {
+    case FilterType.ALL:
+    case FilterType.WATCHLIST:
+    case FilterType.HISTORY:
+    case FilterType.FAVORITES:
+        remove(statsComponent);// Скрыть статистику
+        movieListPresenter.destroy();
+        movieListPresenter.init();// Показать список фильмов
+        mainNavContainer.classList.remove("main-navigation__item--active");
+        break;
+    case FilterType.STATISTICS:
+        movieListPresenter.destroy();// Скрыть список фильмов
+        activeItem.classList.remove("main-navigation__item--active");
+        render(siteMainContainer, statsComponent, RenderPosition.BEFOREEND);
+        mainNavContainer.classList.add("main-navigation__item--active");// Показать статистику
+        break;
+    }
+};
+  
+mainNavComponent.setMenuClickHandler(handleFilterMenuClick);
+
 render(siteHeader, new UserRank(generateUseRank()), RenderPosition.BEFOREEND);
+render(siteMainContainer, mainNavComponent, RenderPosition.AFTERBEGIN);
+
 
 renderTemplate (footerStat, `<p>${MOCK_FILMS_COUNT} movies inside</p>`, RenderPosition.BEFOREEND);
 
-const filterPresenter = new MenuFilterPresenter (siteMainContainer, filterModel, moviesModel);
+const filterPresenter = new MenuFilterPresenter (mainNavContainer, filterModel, moviesModel);
 const movieListPresenter = new MovieListPresenter(siteMainContainer, siteBody, moviesModel, commentsModel, filterModel);
 filterPresenter.init();
 movieListPresenter.init();

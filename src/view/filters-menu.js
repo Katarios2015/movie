@@ -1,30 +1,27 @@
 import AbstractView from "./abstract.js";
 
-
-const createFilterItemTemplate = (filter, currentFilterType)=> {
+export const createFilterItemTemplate = (filter, currentFilterType)=> {
     const {type, name, count} = filter;
     if (name === "All movies") {
-        return `<a href="#${name}" id = "${type}" class="main-navigation__item ${type === currentFilterType 
-            ? "main-navigation__item--active" : ""}">${name}</a>`;
+        return `<a href="#${name}" data-item-type="${type}" 
+        class="main-navigation__item ${type === currentFilterType 
+        ? "main-navigation__item--active" : ""}">${name}</a>`;
     }
     return (
-        `<a href="#${name}" id = "${type}" class="main-navigation__item ${type === currentFilterType 
+        `<a href="#${name}" data-item-type="${type}" class="main-navigation__item 
+        ${type === currentFilterType 
             ? "main-navigation__item--active" : ""}">${name}
             <span class="main-navigation__item-count">${count}</span>
         </a>`
     );
 };
 
-const createMenuTemplate = (filterItems, currentFilterType) => {
+const createFiltersMenuTemplate = (filterItems, currentFilterType) => {
     const filterItemsTemplate = filterItems
         .filter((film) => film.name)
         .map((filter) => createFilterItemTemplate(filter, currentFilterType)).join("");
-    return `<nav class="main-navigation">
-    <div class="main-navigation__items">
-    ${filterItemsTemplate}
-    </div>
-    <a href="#stats" class="main-navigation__additional">Stats</a>
-  </nav>`;
+    return `<div class="main-navigation__items">
+    ${filterItemsTemplate}</div>`;
 };
 
 
@@ -38,12 +35,12 @@ export default class Menu extends AbstractView {
     }
 
     getTemplate () {
-        return createMenuTemplate(this._filterItems, this._currentFilter);
+        return createFiltersMenuTemplate(this._filterItems, this._currentFilter);
     }
 
     _filterTypeChangeHandler(evt) {
         evt.preventDefault();
-        this._callback.filterTypeChange(evt.target.id);
+        this._callback.filterTypeChange(evt.target.dataset.itemType);
     }
     
     setFilterTypeChangeHandler(callback) {

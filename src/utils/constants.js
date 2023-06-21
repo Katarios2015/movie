@@ -15,4 +15,22 @@ export const FilterType = {
     WATCHLIST: "whatchlist",
     HISTORY: "history",
     FAVORITES: "favorites",
+    STATISTICS: "statistics"
+};
+
+export const FilterMenuItem = {
+    MOVIES: "MOVIES",
+    STATISTICS: "STATISTICS",
+};
+
+export const SortType = {
+    DEFAULT: "default",
+    DATE: "date_up",
+    RATE: "rate-up",
+};
+
+
+export const ExtraTitle = {
+    RATED: "Top rated",
+    COMMENTED: "Most commented",
 };
