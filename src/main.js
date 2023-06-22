@@ -1,5 +1,5 @@
 import {renderTemplate, render, RenderPosition, remove} from "./utils/render.js";
-import {FilterMenuItem, UpdateType, FilterType} from "./utils/constants.js";
+import {UpdateType, FilterType} from "./utils/constants.js";
 
 import MainNavView from "./view/main-navigation.js";
 
@@ -40,7 +40,7 @@ const moviesModel = new MoviesModel();
 moviesModel.setMovies(mockFilms);
 
 const filterModel = new FilterModel();
-const statsComponent = new StatsView();
+const statsComponent = new StatsView(moviesModel.getMovies());
 
 //FilterModel.setFilters(mockFilms);
 
@@ -57,6 +57,7 @@ const handleFilterMenuClick = (menuItem) => {
         remove(statsComponent);// Скрыть статистику
         movieListPresenter.destroy();
         movieListPresenter.init();// Показать список фильмов
+        menuItem.classList.add("main-navigation__item--active");
         mainNavContainer.classList.remove("main-navigation__item--active");
         break;
     case FilterType.STATISTICS:

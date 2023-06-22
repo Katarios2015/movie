@@ -132,7 +132,7 @@ export default class MovieList {
         
         const filterType = this._filterModel.getFilter();
         const movies = this._moviesModel.getMovies();
-       
+        
         const filtredMovies = siteFilterMap[filterType](movies);
         switch (this._currentSortType) {
         case SortType.DATE:
