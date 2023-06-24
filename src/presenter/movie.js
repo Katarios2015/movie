@@ -206,7 +206,6 @@ export default class Movie {
             UserAction.DELETE_COMMENT,
             UpdateType.PATCH,            
             this._commentsModel.getComments().find((comment) => comment.id === deletedId),
-            //console.log(this._commentsModel.getComments().find((comment) => comment.id === deletedId))
         );
 
         this._changeData(

@@ -18,7 +18,7 @@ export const createFilterItemTemplate = (filter, currentFilterType)=> {
 
 const createFiltersMenuTemplate = (filterItems, currentFilterType) => {
     const filterItemsTemplate = filterItems
-        .filter((film) => film.name)
+        .filter((item) => item.name)
         .map((filter) => createFilterItemTemplate(filter, currentFilterType)).join("");
     return `<div class="main-navigation__items">
     ${filterItemsTemplate}</div>`;

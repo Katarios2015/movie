@@ -1,5 +1,6 @@
 import {renderTemplate, render, RenderPosition, remove} from "./utils/render.js";
 import {UpdateType, FilterType} from "./utils/constants.js";
+import {siteFilterMap} from "./utils/filter.js";
 
 import MainNavView from "./view/main-navigation.js";
 
@@ -41,7 +42,7 @@ moviesModel.setMovies(mockFilms);
 
 const filterModel = new FilterModel();
 const statsComponent = new StatsView(moviesModel.getMovies());
-
+const allWhatchedFilms = siteFilterMap[FilterType.HISTORY](mockFilms).length;
 //FilterModel.setFilters(mockFilms);
 
 //render(siteMainContainer, new Menu(filmFilters), RenderPosition.AFTERBEGIN);
@@ -71,7 +72,7 @@ const handleFilterMenuClick = (menuItem) => {
   
 mainNavComponent.setMenuClickHandler(handleFilterMenuClick);
 
-render(siteHeader, new UserRank(generateUseRank()), RenderPosition.BEFOREEND);
+
 render(siteMainContainer, mainNavComponent, RenderPosition.AFTERBEGIN);
 
 
@@ -79,5 +80,6 @@ renderTemplate (footerStat, `<p>${MOCK_FILMS_COUNT} movies inside</p>`, RenderPo
 
 const filterPresenter = new MenuFilterPresenter (mainNavContainer, filterModel, moviesModel);
 const movieListPresenter = new MovieListPresenter(siteMainContainer, siteBody, moviesModel, commentsModel, filterModel);
+render(siteHeader, new UserRank(generateUseRank(allWhatchedFilms)), RenderPosition.BEFOREEND);
 filterPresenter.init();
 movieListPresenter.init();

@@ -72,6 +72,7 @@ const generatePopupComment = () => {
 };
 
 
+
 const popupComments = new Array(MAX_COMMENTS_COUNT).fill().map(generatePopupComment);
 
 
@@ -91,7 +92,7 @@ const generateFilm = () => {
         title: getRandomArrayElement(filmTitles),
         rate: getRandomNumber(0, 10),
         year: getRandomCeilNumber(1921, 2005),
-        duration: getTimeFormat(getRandomArrayElement(filmDurations)),
+        duration: getRandomArrayElement(filmDurations),
         genres:  getRandomArray(filmGenres, 0, 3),
         description: getRandomArray(filmDescriptions, 0, 5),
         comments: getCommentsId(),
