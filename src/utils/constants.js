@@ -34,3 +34,23 @@ export const ExtraTitle = {
     RATED: "Top rated",
     COMMENTED: "Most commented",
 };
+
+
+export const InputType = {
+    ALL_TIME: "All time",
+    TODAY: "Today",
+    WEEK: "Week",
+    MONTH: "Month",
+    YEAR: "Year"
+};
+
+export const TIME_PERIOD = {
+    WEEK: 7,
+    MONTH: 1,
+    YEAR: 1
+};
+
+
+
+
+

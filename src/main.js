@@ -33,6 +33,7 @@ const footerStat = siteFooter.querySelector(".footer__statistics");
 
 const comments = popupComments;
 const mockFilms = new Array(MOCK_FILMS_COUNT).fill().map(() => generateFilm(comments));
+console.log(mockFilms);
 
 const commentsModel = new CommentsModel();
 commentsModel.setComments(comments);
@@ -65,6 +66,7 @@ const handleFilterMenuClick = (menuItem) => {
         movieListPresenter.destroy();// Скрыть список фильмов
         activeItem.classList.remove("main-navigation__item--active");
         render(siteMainContainer, statsComponent, RenderPosition.BEFOREEND);
+        statsComponent.setCharts(moviesModel.getMovies());
         mainNavContainer.classList.add("main-navigation__item--active");// Показать статистику
         break;
     }

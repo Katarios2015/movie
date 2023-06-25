@@ -1,26 +1,68 @@
+import dayjs from "dayjs";
 import Chart from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import SmartView from "./smart.js";
-import {siteFilterMap} from "../utils/filter.js";
-import {FilterType} from "../utils/constants.js";
+//import {siteFilterMap} from "../utils/filter.js";
+import {InputType} from "../utils/constants.js";
+import {getSortedGenreObject, getDurationTotal, getTopGenre, getWatchedArray, siteInputMap} from "../utils/statistic.js";
 import {getTimeFormatHours, getTimeFormatMinutes, getUserRank, getUpperCase} from "../utils/common.js";
 
+/*const createInputTemplate = (filter, currentFilterType)=> {
+    const {type, name, count} = filter;
+    if (name === "All movies") {
+        return `<a href="#${name}" data-item-type="${type}" 
+        class="main-navigation__item ${type === currentFilterType 
+        ? "main-navigation__item--active" : ""}">${name}</a>`;
+    }
+    return (
+        `<a href="#${name}" data-item-type="${type}" class="main-navigation__item 
+        ${type === currentFilterType 
+            ? "main-navigation__item--active" : ""}">${name}
+            <span class="main-navigation__item-count">${count}</span>
+        </a>`
+    );
+};
+
+const createFiltersMenuTemplate = (filterItems, currentFilterType) => {
+    const filterItemsTemplate = filterItems
+        .filter((item) => item.name)
+        .map((filter) => createFilterItemTemplate(filter, currentFilterType)).join("");
+    return `<div class="main-navigation__items">
+    ${filterItemsTemplate}</div>`;
+};*/
 
 
-const renderGenresChart = (statisticCtx, movies) => {
-    const BAR_HEIGHT = 50;
-    const statisticCtxTest = document.querySelector(".statistic__chart");
-    console.log(statisticCtxTest);
+
+const renderGenresChart = (statisticCtx, data) => {
+    const BAR_HEIGHT = 50; //вынести в файл констант
+    const whatchedArray = getWatchedArray(data);
+    
+    if (whatchedArray === 0) {
+        return "";
+    }
+
+    const genreObject = getSortedGenreObject(whatchedArray);
+    console.log(genreObject);
+    const arrayOfObgectGenres = Object.entries(genreObject).sort((a,b)=>b[1]-a[1]);
+    console.log(arrayOfObgectGenres);
+    let generKeys = [];
+    let genres = [];
+
+    arrayOfObgectGenres.forEach(([name,count]) => {
+        genres = [...genres, name];
+        generKeys = [...generKeys, count];
+    });
+ 
     // Обязательно рассчитайте высоту canvas, она зависит от количества элементов диаграммы
-    //statisticCtx.height = BAR_HEIGHT * 5;
+    statisticCtx.height = BAR_HEIGHT * arrayOfObgectGenres.length;
     // Функция для отрисовки диаграммы(количество просмотренных фильмов в разрезе жанров)
-    const myChart = new Chart(statisticCtx, {
+    return new Chart(statisticCtx, {
         plugins: [ChartDataLabels],
         type: "horizontalBar",
         data: {
-            labels: ["Sci-Fi", "Animation", "Fantasy", "Comedy", "TV Series"],
+            labels: genres,
             datasets: [{
-                data: [11, 8, 7, 4, 3],
+                data: generKeys,
                 backgroundColor: "#ffe800",
                 hoverBackgroundColor: "#ffe800",
                 anchor: "start",
@@ -70,99 +112,25 @@ const renderGenresChart = (statisticCtx, movies) => {
             },
         },
     });
-    return myChart;
+     
     
 }; 
 
-const sortObject = (obj) => {
-    Object.keys(obj).sort().forEach((key) => {
-        var value = obj[key];
-        delete obj[key];
-        obj[key] = value;
-        console.log( obj[key]);
-    });
-};
-
-const duplicates = (arr) => arr.filter((number, index, numbers) => {
-    //console.log(number); // number - элемент массива
-    //console.log(index); // index - индекс элемента массива
-    //console.log(numbers.indexOf(number)); // numbers - представление массива values
-    console.log(numbers.indexOf(number) !== index);
-    return numbers.indexOf(number) !== index;
-});
 
 const createStatsTemplate = (data) => {
-    const allWhatchedFilms = siteFilterMap[FilterType.HISTORY](data).length;
-    const whatchedArray = siteFilterMap[FilterType.HISTORY](data);
-
-    const getTopGenre = () => {
-        let watchedGenres = [];
-        let topGenre = "";
-        let swap = 0;
-        
-        whatchedArray.forEach((item) => {
-            watchedGenres = watchedGenres.concat(item.genres).sort();
-              
-            let result = {};
-            for (let i = 0; i < watchedGenres.length; i++)
-            {
-                const item = watchedGenres[i];
-                if (result[item] != undefined){
-                    result[item] +=1;
-                }
-                    
-                else {
-                    result[item] = 1;
-                }
-                   
-            }
-
-            for(const key in result) {
-                if (result[key] > swap){
-                    swap = result[key];
-                    topGenre = key;
-                    console.log(swap + " "+ topGenre); 
-                }
-                console.log( "genre " + key + " here "+ result[key] + " times"); 
-                
-            }
-            //let count = {};
-   
-            /* const reduseTest = watchedGenres.forEach((item)=> {
-                if (count[item]){
-                    count[item] +=1;
-                } else {
-                    count[item] = 1;
-                }
-
-                console.log(count);
-        });*/
-        });
-        return topGenre;
-    };
-
-
-    //Метод indexOf() возвращает первый индекс, по которому данный элемент может быть найден в массиве.
-    //Соответственно, фильтруем значения, индекс которых не равен индексу, который вернул метод indexOf().
-    
-    console.log(getTopGenre());
-
-    const getDurationTotal = () => {
-        let total = 0;
-        whatchedArray.map((item) =>  {
-            total+=item.duration;
-        });
-        return total; 
-    };
-
-    const totalDurationHour = getTimeFormatHours(getDurationTotal());
-    const totalDurationMinute = getTimeFormatMinutes(getDurationTotal());
+    const whatchedArray = getWatchedArray(data);
+    const allWhatchedFilmLength = whatchedArray.length;
+    const genreObject = getSortedGenreObject(whatchedArray);
+    //console.log();
+    const TopGenre = getTopGenre(genreObject);
+    const totalDurationHour = getTimeFormatHours(getDurationTotal(whatchedArray));
+    const totalDurationMinute = getTimeFormatMinutes(getDurationTotal(whatchedArray));
    
     return `<section class="statistic">
     <p class="statistic__rank">
       Your rank
       <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-      <span class="statistic__rank-label">${getUpperCase(getUserRank(allWhatchedFilms))}</span>
+      <span class="statistic__rank-label">${getUpperCase(getUserRank(allWhatchedFilmLength))}</span>
     </p>
 
     <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
@@ -187,16 +155,17 @@ const createStatsTemplate = (data) => {
     <ul class="statistic__text-list">
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">You watched</h4>
-        <p class="statistic__item-text">${allWhatchedFilms} <span class="statistic__item-description">movies</span></p>
+        <p class="statistic__item-text">${allWhatchedFilmLength}<span class="statistic__item-description">movies</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>
-        <p class="statistic__item-text"> ${totalDurationHour}<span class="statistic__item-description">h</span> 
-        ${totalDurationMinute}<span class="statistic__item-description">m</span></p>
+        <p class="statistic__item-text">${totalDurationHour}<span class="statistic__item-description">h</span> 
+        ${totalDurationMinute}
+        <span class="statistic__item-description">m</span></p>
       </li>
       <li class="statistic_text-item">
         <h4 class="statistic__item-title">Top genre</h4>
-        <p class="statistic__item-text">${getTopGenre()}</p>
+        <p class="statistic__item-text">${TopGenre}</p>
       </li>
     </ul>
 
@@ -216,7 +185,7 @@ export default class Stats extends SmartView {
 
         this._genresChart = null;
 
-        this._setCharts();
+        //this._setCharts();
     }
 
     getTemplate () {
@@ -224,7 +193,7 @@ export default class Stats extends SmartView {
     }
 
     restoreHandlers() {
-        this._setCharts();
+        this.setCharts();
     }
 
     /*show () {
@@ -238,14 +207,61 @@ export default class Stats extends SmartView {
             .classList.add("visually-hidden");
     }*/
 
-    _setCharts() {
+    setCharts() {
         // Нужно отрисовать диаграмму
         if (this._genresChart !== null) {
             this._genresChart = null;
         }
-        const {movies} = this._data;
-        const statisticCtx = this.getElement().querySelector(".statistic__chart");
-        this._genresChart = renderGenresChart(statisticCtx, movies);
+        const statisticCtx = document.querySelector(".statistic__chart");
+        //console.log(statisticCtx);
+        this._genresChart = renderGenresChart(statisticCtx, this._data);
+    }
+
+    /* _filterTypeChangeHandler(evt) {
+        if (evt.target.tagName !== "A") {
+            return;
+        }
+        evt.preventDefault();
+        this._callback.filterTypeChange(evt.target.dataset.itemType);
+    }
+    
+    setFilterTypeChangeHandler(callback) {
+        this._callback.filterTypeChange = callback;
+        this.getElement().addEventListener("change", this._filterTypeChangeHandler);
+        
+    }*/
+
+    _getInputs() {
+
+        return [
+            {
+                type: InputType.ALL_TIME,
+                name: "All time",
+                //count: siteInputMap[InputType.ALL_TIME](movies).length,
+            },
+            {
+                type: InputType.TODAY,
+                name: "Today",
+                //count: siteInputMap[InputType.TODAY](movies).length,
+            },
+            {
+                type: InputType.WEEK,
+                name: "Week",
+                //count: siteInputMap[InputType.WEEK](movies).length,
+            },
+            {
+                type: InputType.MONTH,
+                name: "Month",
+                //count: siteInputMap[InputType.MONTH](movies).length,
+            },
+            {
+                type: InputType.YEAR,
+                name: "Year",
+                //count: siteInputMap[InputType.YEAR](movies).length,
+            },
+  
+        ];
     }
 
 }
+
