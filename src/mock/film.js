@@ -48,7 +48,7 @@ const countryes = ["USA","Great Britain", "Russia"];
 
 const commentAthors = ["Ivan Pypkov", "Kate Ritchie", "David", "Roman Scott", "Alfred"];
 const commentDates = ["2019-05-11T16:12:32.554Z", "2020-10-11T16:12:32.554Z", "2009-11-11T16:12:32.554Z", "2023-01-11T16:12:32.554Z"];
-const watchingDates = ["2022-06-11T16:12:32.554Z", "2022-10-11T16:12:32.554Z", "2023-06-18T16:12:32.554Z", "2023-05-11T16:12:32.554Z"];
+const watchingDates = ["2023-06-26T12:58:32.554Z", "2023-06-26T12:58:32.554Z", "2022-06-26T12:12:32.554Z", "2021-06-26T12:12:32.554Z"];
 const watchingInFormatDates = watchingDates.map((el)=> dayjs.utc(el).toDate());
 
 const commentEmotions = [

@@ -33,7 +33,7 @@ const footerStat = siteFooter.querySelector(".footer__statistics");
 
 const comments = popupComments;
 const mockFilms = new Array(MOCK_FILMS_COUNT).fill().map(() => generateFilm(comments));
-console.log(mockFilms);
+//console.log(mockFilms);
 
 const commentsModel = new CommentsModel();
 commentsModel.setComments(comments);

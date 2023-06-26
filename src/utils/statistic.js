@@ -1,9 +1,11 @@
 import {siteFilterMap} from "./filter.js";
 import {FilterType, InputType, TIME_PERIOD} from "./constants.js";
 
-import dayjs from 'dayjs';
-import isBetween from 'dayjs/plugin/isBetween';
+import dayjs from "dayjs";
+import isBetween from "dayjs/plugin/isBetween";
+var isToday = require('dayjs/plugin/isToday');
 dayjs.extend(isBetween);
+dayjs.extend(isToday);
 
 export const getSortedGenreObject = (whatchedArray) => {
     
@@ -45,7 +47,6 @@ export const getTopGenre = (genreObj) => {
 };
 
 
-
 export const getDurationTotal = (whatchedArray) => {
     let total = 0;
     whatchedArray.map((item) =>  {
@@ -60,22 +61,33 @@ export const getWatchedArray = (data) => {
 };
 
 const today = new Date();
+console.log("today " + today);
 const lastWeekDate = dayjs(today).subtract(TIME_PERIOD.WEEK, "day").toDate();
+console.log("lastWeekDate " + lastWeekDate);
 const lastMonthDate = dayjs(today).subtract(TIME_PERIOD.MONTH, "month").toDate();
+console.log("lastMonthDate " + lastMonthDate);
 const lastYearDate = dayjs(today).subtract(TIME_PERIOD.YEAR, "year").toDate();
+console.log("lastYearDate " + lastYearDate);
+
 
 export const siteInputMap = {
-     
     [InputType.ALL_TIME]: (mockFilms) => mockFilms.filter((film) => film.isWatched),
-    [InputType.TODAY]: (mockFilms) => mockFilms.filter((film) => film.isWatched && dayjs(film.watchingDate).isSame(today)),
-    [InputType.WEEK]:  (mockFilms) => mockFilms.filter((film) => film.isWatched && dayjs(film.watchingDate).isBetween(today, dayjs(lastWeekDate), "day", "[]")),
-    [InputType.MONTH]:  (mockFilms) => mockFilms.filter((film) => film.isWatched && dayjs(film.watchingDate).isBetween(today, dayjs(lastMonthDate), "month", "[]")),
-    [InputType.YEAR]:  (mockFilms) => mockFilms.filter((film) => film.isWatched && dayjs(film.watchingDate).isBetween(today, dayjs(lastYearDate), "year", "[]")),
+    [InputType.TODAY]: (mockFilms) => mockFilms.filter((film) => 
+        film.isWatched && dayjs(film.watchingDate).isToday()),
+    [InputType.WEEK]:  (mockFilms) => mockFilms.filter((film) => 
+        film.isWatched && dayjs(film.watchingDate)
+            .isBetween(today, dayjs(lastWeekDate), "day", "[]")),
+    [InputType.MONTH]:  (mockFilms) => mockFilms.filter((film) => 
+        film.isWatched && dayjs(film.watchingDate)
+            .isBetween(today, dayjs(lastMonthDate), "month", "[]")),
+    [InputType.YEAR]:  (mockFilms) => mockFilms.filter((film) => 
+        film.isWatched && dayjs(film.watchingDate)
+            .isBetween(today, dayjs(lastYearDate), "year", "[]")),
 };
 
 //let count = {};
 
-    /* const reduseTest = watchedGenres.forEach((item)=> {
+/* const reduseTest = watchedGenres.forEach((item)=> {
             if (count[item]){
                 count[item] +=1;
             } else {

@@ -7,29 +7,25 @@ import {InputType} from "../utils/constants.js";
 import {getSortedGenreObject, getDurationTotal, getTopGenre, getWatchedArray, siteInputMap} from "../utils/statistic.js";
 import {getTimeFormatHours, getTimeFormatMinutes, getUserRank, getUpperCase} from "../utils/common.js";
 
-/*const createInputTemplate = (filter, currentFilterType)=> {
-    const {type, name, count} = filter;
-    if (name === "All movies") {
-        return `<a href="#${name}" data-item-type="${type}" 
-        class="main-navigation__item ${type === currentFilterType 
-        ? "main-navigation__item--active" : ""}">${name}</a>`;
-    }
+/*<input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" checked>
+      <label for="statistic-all-time" class="statistic__filters-label">All time</label>*/
+
+const createInputTemplate = (input, currentInput)=> {
+    const {type, name} = input;
+    const checkedInput = type === currentInput ? "checked" :"";
     return (
-        `<a href="#${name}" data-item-type="${type}" class="main-navigation__item 
-        ${type === currentFilterType 
-            ? "main-navigation__item--active" : ""}">${name}
-            <span class="main-navigation__item-count">${count}</span>
-        </a>`
+        `<input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-${type}" value="${type}" ${checkedInput}>
+        <label for="statistic-${type}" class="statistic__filters-label">${name}</label>`
     );
 };
 
-const createFiltersMenuTemplate = (filterItems, currentFilterType) => {
-    const filterItemsTemplate = filterItems
-        .filter((item) => item.name)
-        .map((filter) => createFilterItemTemplate(filter, currentFilterType)).join("");
-    return `<div class="main-navigation__items">
-    ${filterItemsTemplate}</div>`;
-};*/
+const createStatsMenuTemplate = (inputs, currentInput) => {
+    const inputTemplate = inputs
+        .map((input) => createInputTemplate(input,currentInput)).join("");
+    return ` <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
+    <p class="statistic__filters-description">Show stats:</p>
+    ${inputTemplate}</form>`;
+};
 
 
 
@@ -37,7 +33,7 @@ const renderGenresChart = (statisticCtx, data) => {
     const BAR_HEIGHT = 50; //вынести в файл констант
     const whatchedArray = getWatchedArray(data);
     
-    if (whatchedArray === 0) {
+    if (whatchedArray === []) {
         return "";
     }
 
@@ -117,45 +113,28 @@ const renderGenresChart = (statisticCtx, data) => {
 }; 
 
 
-const createStatsTemplate = (data) => {
-    const whatchedArray = getWatchedArray(data);
-    const allWhatchedFilmLength = whatchedArray.length;
-    const genreObject = getSortedGenreObject(whatchedArray);
-    //console.log();
+const createStatsTemplate = (data, inputs, currentInput, whatchedArray) => {
+   // const whatchedArray = getWatchedArray(data);
+    //const allWhatchedFilmLength = whatchedArray.length;
+   
+    const genreObject = getSortedGenreObject(data);
+    
     const TopGenre = getTopGenre(genreObject);
-    const totalDurationHour = getTimeFormatHours(getDurationTotal(whatchedArray));
-    const totalDurationMinute = getTimeFormatMinutes(getDurationTotal(whatchedArray));
+    const totalDurationHour = getTimeFormatHours(getDurationTotal(data));
+    const totalDurationMinute = getTimeFormatMinutes(getDurationTotal(data));
    
     return `<section class="statistic">
     <p class="statistic__rank">
       Your rank
       <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-      <span class="statistic__rank-label">${getUpperCase(getUserRank(allWhatchedFilmLength))}</span>
+      <span class="statistic__rank-label">${getUpperCase(getUserRank(whatchedArray.length))}</span>
     </p>
-
-    <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
-      <p class="statistic__filters-description">Show stats:</p>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" checked>
-      <label for="statistic-all-time" class="statistic__filters-label">All time</label>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" value="today">
-      <label for="statistic-today" class="statistic__filters-label">Today</label>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-week" value="week">
-      <label for="statistic-week" class="statistic__filters-label">Week</label>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-month" value="month">
-      <label for="statistic-month" class="statistic__filters-label">Month</label>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-year" value="year">
-      <label for="statistic-year" class="statistic__filters-label">Year</label>
-    </form>
+    ${createStatsMenuTemplate(inputs, currentInput)}
 
     <ul class="statistic__text-list">
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">You watched</h4>
-        <p class="statistic__item-text">${allWhatchedFilmLength}<span class="statistic__item-description">movies</span></p>
+        <p class="statistic__item-text">${data.length}<span class="statistic__item-description">movies</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>
@@ -177,35 +156,36 @@ const createStatsTemplate = (data) => {
 };
 
 
+    //this.#data = filmsToFilterMap[this.#currentFilter](this.#watchedFilms);
 
 export default class Stats extends SmartView {
     constructor(movies) {
         super();
-        this._data = movies;
-
+        this._movies = movies;        
         this._genresChart = null;
-
+        this._inputs = this._getInputs();
+        this._currentInput =  InputType.ALL_TIME;
+        
+        this._whatchedArray = getWatchedArray(this._movies);
+        this._whatchedArray.forEach((item) => console.log(item.watchingDate));
+        
+        this._data = siteInputMap[this._currentInput](this._movies);
         //this._setCharts();
+        this._inputTypeChangeHandler = this._inputTypeChangeHandler.bind(this);
+        this.setInputTypeChangeHandler(this._inputTypeChangeHandler);
+        
     }
 
     getTemplate () {
-        return createStatsTemplate(this._data);
+        
+        return createStatsTemplate(this._data, this._inputs, this._currentInput, this._whatchedArray);
     }
 
     restoreHandlers() {
         this.setCharts();
+        this.setInputTypeChangeHandler();
     }
 
-    /*show () {
-        this.getElement().querySelector(".statistic")
-            .classList.remove("visually-hidden"); 
-
-    }
-    
-    hide() {
-        this.getElement().querySelector(".statistic")
-            .classList.add("visually-hidden");
-    }*/
 
     setCharts() {
         // Нужно отрисовать диаграмму
@@ -217,19 +197,24 @@ export default class Stats extends SmartView {
         this._genresChart = renderGenresChart(statisticCtx, this._data);
     }
 
-    /* _filterTypeChangeHandler(evt) {
-        if (evt.target.tagName !== "A") {
+    _inputTypeChangeHandler(evt) {
+        /*if (evt.target.tagName !== "A") {
             return;
-        }
+        }*/
         evt.preventDefault();
-        this._callback.filterTypeChange(evt.target.dataset.itemType);
+        this._currentInput = evt.target.value;
+        
+        this._data = siteInputMap[this._currentInput](this._whatchedArray);
+       
+        this.updateElement();
+        //this._callback.inputTypeChange();
     }
     
-    setFilterTypeChangeHandler(callback) {
-        this._callback.filterTypeChange = callback;
-        this.getElement().addEventListener("change", this._filterTypeChangeHandler);
+    setInputTypeChangeHandler(callback) {
+        this._callback.inputTypeChange = callback;
+        this.getElement().addEventListener("change", this._inputTypeChangeHandler);
         
-    }*/
+    }
 
     _getInputs() {
 

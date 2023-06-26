@@ -48,12 +48,7 @@ export default class MovieList {
         this._handleSortTypeChange = this._handleSortTypeChange.bind(this);//сортировка
 
         this._handleViewAction = this._handleViewAction.bind(this);
-        this._handleModelEvent = this._handleModelEvent.bind(this);
-
-        
-
-
-       
+        this._handleModelEvent = this._handleModelEvent.bind(this);       
     }
 
     init() {
