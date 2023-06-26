@@ -1,18 +1,10 @@
 export const dayjs = require("dayjs");
 export const relativeTime = require("dayjs/plugin/relativeTime");
 export const utc = require("dayjs/plugin/utc");
-export const he = require('he');
+export const he = require("he");
 
-const SortType = {
-    DEFAULT: "default",
-    DATE: "date_up",
-    RATE: "rate-up",
-};
+const ranks = ["novice", "fan", "movie buff"];
 
-const ExtraTitle = {
-    RATED: "Top rated",
-    COMMENTED: "Most commented",
-};
 
 const getRandomArrayElement = (items) => {
     const randElement = items[Math.floor(Math.random() * items.length)];
@@ -55,6 +47,39 @@ const getTimeFormat = (minutes) => {
     return timeFormat;
 };
 
+const getTimeFormatHours = (minutes) => {
+    const hours = Math.floor(minutes/60);
+
+    const timeFormatHour = `${hours}`;
+    return timeFormatHour;
+};
+
+const getTimeFormatMinutes = (minutes) => {
+    const restMinutes = minutes%60;
+
+    const timeFormatMinutes = `${restMinutes}`;
+    return timeFormatMinutes;
+};
+
+const getUserRank = (whatchedFilmsCount) => {
+    let userRank = "";
+    if (whatchedFilmsCount >=1 && whatchedFilmsCount<= 10) {
+        userRank = ranks[0];
+    } else if (whatchedFilmsCount >=11 && whatchedFilmsCount<= 20) {
+        userRank = ranks[1];
+    }else if (whatchedFilmsCount >=21 ) {
+        userRank = ranks[2];
+    }
+    return userRank;
+};
+
+const getUpperCase = (lowString) => {
+    const upperString = lowString[0].toUpperCase() + lowString.slice(1);
+    return upperString;
+};
+
+
+
 export default class Observer {
     constructor() {
         this._observers = [];
@@ -73,7 +98,12 @@ export default class Observer {
     }
 }
 
+/*duplicates =  watchedGenres.filter((number, index, numbers) => {
+    //console.log(number); // number - элемент массива
+    //console.log(index); // index - индекс элемента массива
+    //console.log(numbers.indexOf(number)); // numbers - представление массива values
+   return numbers.indexOf(number) !== index;
+    });*/
 
 
-
-export {SortType, ExtraTitle, getRandomArrayElement, getRandomCeilNumber, getRandomNumber, getRandomArray, getTimeFormat};
+export {getRandomArrayElement, getRandomCeilNumber, getRandomNumber, getRandomArray, getTimeFormat, getTimeFormatHours, getTimeFormatMinutes,getUserRank, getUpperCase};

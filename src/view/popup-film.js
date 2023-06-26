@@ -1,6 +1,7 @@
 import SmartView from "./smart.js";
 import {he} from "../utils/common.js";
 import {dayjs} from "../utils/common.js";
+import {getTimeFormat} from "../utils/common.js";
 
 const createGenreTemplate = (data) => {
     const {genres} = data;
@@ -105,7 +106,7 @@ const createPopupTemplate = (data, commentsOfmodel) => {
         director, writers, actors,
         rate, ageRate, release,
         duration, country, description, isChecked, imgSrc, commentText} = data;
-    
+    const newFormatDuration = getTimeFormat(duration);
 
     return `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
@@ -151,7 +152,7 @@ const createPopupTemplate = (data, commentsOfmodel) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
-                <td class="film-details__cell">${duration}</td>
+                <td class="film-details__cell">${newFormatDuration}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>

@@ -1,5 +1,5 @@
-
 import AbstractView from "./abstract.js";
+import {getTimeFormat} from "../utils/common.js";
 
 const createFilmsControls = (film) => {
     const {isWatchList, isWatched, isFavorite} = film;
@@ -26,13 +26,14 @@ const createFilmsControls = (film) => {
 const createFilmCardTemplate = (film) => {
     const {poster, title, rate, year, duration, genres, description, comments} = film;
     const genre = genres.slice(0, 1);
+    const newFormatDuration = getTimeFormat(duration);
 
     return `<article class="film-card">
     <h3 class="film-card__title">${title}</h3>
     <p class="film-card__rating">${rate}</p>
     <p class="film-card__info">
       <span class="film-card__year">${year}</span>
-      <span class="film-card__duration">${duration}</span>
+      <span class="film-card__duration">${newFormatDuration}</span>
       <span class="film-card__genre">${genre}</span>
     </p>
     <img src="${poster}" alt="" class="film-card__poster">

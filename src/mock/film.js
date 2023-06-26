@@ -3,7 +3,8 @@ import {nanoid} from "nanoid";
 import {dayjs} from "../utils/common.js";
 import {relativeTime} from "../utils/common.js";
 import {utc} from "../utils/common.js";
-
+dayjs.extend(utc);
+dayjs.extend(relativeTime);
 const MAX_COMMENTS_COUNT = 5;
 
 const filmTitles = [
@@ -33,7 +34,7 @@ const filmDescriptions = [
     "Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus."
 ];
 
-const filmGenres = ["Musical", "Comedy", "Drama", "Documental", "Historical"];
+const filmGenres = ["Sci-Fi", "Animation", "Fantasy", "Comedy", "TV Series"];
 
 const filmDurations = [56, 120, 77, 140, 180];
 
@@ -47,6 +48,8 @@ const countryes = ["USA","Great Britain", "Russia"];
 
 const commentAthors = ["Ivan Pypkov", "Kate Ritchie", "David", "Roman Scott", "Alfred"];
 const commentDates = ["2019-05-11T16:12:32.554Z", "2020-10-11T16:12:32.554Z", "2009-11-11T16:12:32.554Z", "2023-01-11T16:12:32.554Z"];
+const watchingDates = ["2023-06-26T12:58:32.554Z", "2023-06-26T12:58:32.554Z", "2022-06-26T12:12:32.554Z", "2021-06-26T12:12:32.554Z"];
+const watchingInFormatDates = watchingDates.map((el)=> dayjs.utc(el).toDate());
 
 const commentEmotions = [
     "./images/emoji/angry.png",
@@ -55,8 +58,7 @@ const commentEmotions = [
     "./images/emoji/smile.png"
 ];
 
-dayjs.extend(utc);
-dayjs.extend(relativeTime);
+
 //const dateCommentFormat = dayjs(getRandomArrayElement(commentDates)).format("YYYY/MM/DD  hh:mm:ss");
 
 const generatePopupComment = () => {
@@ -70,6 +72,7 @@ const generatePopupComment = () => {
         emotion: getRandomArrayElement(commentEmotions),
     };
 };
+
 
 
 const popupComments = new Array(MAX_COMMENTS_COUNT).fill().map(generatePopupComment);
@@ -91,7 +94,7 @@ const generateFilm = () => {
         title: getRandomArrayElement(filmTitles),
         rate: getRandomNumber(0, 10),
         year: getRandomCeilNumber(1921, 2005),
-        duration: getTimeFormat(getRandomArrayElement(filmDurations)),
+        duration: getRandomArrayElement(filmDurations),
         genres:  getRandomArray(filmGenres, 0, 3),
         description: getRandomArray(filmDescriptions, 0, 5),
         comments: getCommentsId(),
@@ -99,6 +102,7 @@ const generateFilm = () => {
         isWatchList: Boolean(getRandomCeilNumber(0, 1)),
         isWatched: Boolean(getRandomCeilNumber(0, 1)),
         isFavorite: Boolean(getRandomCeilNumber(0, 1)),
+        watchingDate:getRandomArrayElement(watchingInFormatDates),
 
         originalTitle: getRandomArrayElement(filmTitles),
         director: getRandomArrayElement(directors),
