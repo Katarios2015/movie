@@ -3,7 +3,7 @@ export const relativeTime = require("dayjs/plugin/relativeTime");
 export const utc = require("dayjs/plugin/utc");
 export const he = require("he");
 
-const ranks = ["novice", "fan", "movie buff"];
+import {RANKS} from "./constants.js";
 
 
 const getRandomArrayElement = (items) => {
@@ -64,11 +64,11 @@ const getTimeFormatMinutes = (minutes) => {
 const getUserRank = (whatchedFilmsCount) => {
     let userRank = "";
     if (whatchedFilmsCount >=1 && whatchedFilmsCount<= 10) {
-        userRank = ranks[0];
+        userRank = RANKS[0];
     } else if (whatchedFilmsCount >=11 && whatchedFilmsCount<= 20) {
-        userRank = ranks[1];
+        userRank = RANKS[1];
     }else if (whatchedFilmsCount >=21 ) {
-        userRank = ranks[2];
+        userRank = RANKS[2];
     }
     return userRank;
 };

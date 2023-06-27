@@ -7,24 +7,21 @@ var isToday = require('dayjs/plugin/isToday');
 dayjs.extend(isBetween);
 dayjs.extend(isToday);
 
+
 export const getSortedGenreObject = (whatchedArray) => {
     
     let watchedGenres = [];
     let genresObj = {};
     whatchedArray.forEach((item) => {
         watchedGenres = watchedGenres.concat(item.genres).sort();
-          
-        for (let i = 0; i < watchedGenres.length; i++) {
-            const item = watchedGenres[i];
+        watchedGenres.forEach((item)=>{
             if (genresObj[item]){
                 genresObj[item] +=1;
             }
-                
             else {
                 genresObj[item] = 1;
             }    
-        }
-       
+        });
     });
     return genresObj;
 };
@@ -35,14 +32,12 @@ export const getTopGenre = (genreObj) => {
     }
     let topGenre = "";
     let swap = 0;
-
     for(const genre in genreObj) {
         if (genreObj[genre] > swap){
             swap = genreObj[genre];
             topGenre = genre;
         }                
-    }     
-    
+    } 
     return topGenre;
 };
 
@@ -84,16 +79,3 @@ export const siteInputMap = {
         film.isWatched && dayjs(film.watchingDate)
             .isBetween(today, dayjs(lastYearDate), "year", "[]")),
 };
-
-//let count = {};
-
-/* const reduseTest = watchedGenres.forEach((item)=> {
-            if (count[item]){
-                count[item] +=1;
-            } else {
-                count[item] = 1;
-            }
-
-            console.log(count);
-    });*/
-   

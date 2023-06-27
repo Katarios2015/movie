@@ -1,5 +1,5 @@
 import {renderTemplate, render, RenderPosition, remove} from "./utils/render.js";
-import {UpdateType, FilterType} from "./utils/constants.js";
+import {FilterType} from "./utils/constants.js";
 import {siteFilterMap} from "./utils/filter.js";
 
 import MainNavView from "./view/main-navigation.js";

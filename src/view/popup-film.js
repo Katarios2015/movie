@@ -2,6 +2,7 @@ import SmartView from "./smart.js";
 import {he} from "../utils/common.js";
 import {dayjs} from "../utils/common.js";
 import {getTimeFormat} from "../utils/common.js";
+import {EMOJI} from "../utils/constants.js";
 
 const createGenreTemplate = (data) => {
     const {genres} = data;
@@ -22,7 +23,6 @@ const createGenreTemplate = (data) => {
 };
 
 const createPopupControls = (data) => {
-
     const {isWatchList, isWatched, isFavorite} = data;
 
     const watchListClass = isWatchList
@@ -64,21 +64,11 @@ const createCommentTemplate = (data, commentsOfModel) => {
                 </li>`);
         }
     }
-    
     return includesComments;
-
 };
-
-const Emoji = {
-    SMILE: "smile",
-    SLEEPING: "sleeping",
-    PUKE: "puke",
-    ANGRY: "angry"
-};
-
 
 const createNewCommentTemplate = (isChecked, imgSrc, commentText) => {
-    const emojiValues = Object.values(Emoji);
+    const emojiValues = Object.values(EMOJI);
    
     const emojiImg = isChecked ?
         `<img src="images/emoji/${imgSrc}.png" width="55" height="55" alt="emoji-smile">` : "";
@@ -117,10 +107,8 @@ const createPopupTemplate = (data, commentsOfmodel) => {
         <div class="film-details__info-wrap">
           <div class="film-details__poster">
             <img class="film-details__poster-img" src=${poster} alt="">
-
             <p class="film-details__age">${ageRate}</p>
           </div>
-
           <div class="film-details__info">
             <div class="film-details__info-head">
               <div class="film-details__title-wrap">
@@ -132,7 +120,6 @@ const createPopupTemplate = (data, commentsOfmodel) => {
                 <p class="film-details__total-rating">${rate}</p>
               </div>
             </div>
-
             <table class="film-details__table">
               <tr class="film-details__row">
                 <td class="film-details__term">Director</td>
@@ -162,24 +149,20 @@ const createPopupTemplate = (data, commentsOfmodel) => {
                 ${createGenreTemplate(data)}
               </tr>
             </table>
-
             <p class="film-details__film-description">
             ${description}
             </p>
           </div>
         </div>
-
         <section class="film-details__controls">
         ${createPopupControls(data)}
         </section>
       </div>
-
       <div class="film-details__bottom-container">
         <section class="film-details__comments-wrap">
           <h3 class="film-details__comments-title">
           Comments <span class="film-details__comments-count">${data.comments.length}</span>
           </h3>
-
           <ul class="film-details__comments-list">
            ${createCommentTemplate(data.comments, commentsOfmodel).join("")}
           </ul>
@@ -196,8 +179,6 @@ export default class Popup extends SmartView {
         this._data = this._parseFilmToData(popupFilm);
         this._comments = comments;
 
-        
-
         this._exitBtnClickHandler = this._exitBtnClickHandler.bind(this);
 
         this._addToWhatchListBtnClickHandler = this._addToWhatchListBtnClickHandler.bind(this);
@@ -205,14 +186,12 @@ export default class Popup extends SmartView {
         this._addToFavoriteBtnClickHandler = this._addToFavoriteBtnClickHandler.bind(this);
         
         this._deleteClickHandler = this._deleteClickHandler.bind(this);
-
         this._addCommentEnterHandler = this._addCommentEnterHandler.bind(this);
 
         this._parseFilmToData = this._parseFilmToData.bind(this);
         this._addEmojiHandler = this._addEmojiHandler.bind(this);
         
         this._inputCommentTextHandler = this._inputCommentTextHandler.bind(this);
-
         //this._parseDataToFilm = this._parseDataToFilm.bind(this);
         this._setInnerHandlers();
 
@@ -230,7 +209,6 @@ export default class Popup extends SmartView {
         );
     }
 
-
     /*_parseDataToFilm(data) {
         data = Object.assign(
             {},
@@ -238,7 +216,6 @@ export default class Popup extends SmartView {
         );
         return data;
     }*/
-
 
     reset(popupFilm) {
         this.updateData(
@@ -251,9 +228,7 @@ export default class Popup extends SmartView {
         this.updateElement();
         const scrollTop = this.getElement().scrollTop;
         this.getElement().scrollTop = scrollTop;
-        //console.log(this._comments);
     }
-
 
     getTemplate() {
         return createPopupTemplate(this._data, this._comments);
@@ -316,11 +291,9 @@ export default class Popup extends SmartView {
                 date: dayjs(new Date()).fromNow(), 
                 author: "Kate",
             };
-    
             this._callback.addCommentEnter(newComment);
         }
     }
-    
 
     setExitBtnClickHandler (callback) {
         this._callback.clickExit = callback;
@@ -346,36 +319,26 @@ export default class Popup extends SmartView {
             .addEventListener("click", this._addToFavoriteBtnClickHandler);
     }
 
-  
     setDeleteCommentClickHandler (callback) {
         this._callback.deleteClick = callback;
         this.getElement().querySelectorAll(".film-details__comment-delete")
             .forEach((item) => item.addEventListener("click", this._deleteClickHandler));
-            
     }
 
     setAddCommentClickHandler (callback) {
         this._callback.addCommentEnter = callback;
         this.getElement().querySelector("form")
             .addEventListener("keydown", this._addCommentEnterHandler);
-          
     }
 
-    _setInnerHandlers () {
-        
+    _setInnerHandlers () { 
         this.getElement().querySelector(".film-details__emoji-list")
             .addEventListener("change", this._addEmojiHandler);
-        
         this.getElement().querySelector(".film-details__comment-input")
             .addEventListener("input", this._inputCommentTextHandler);
-    }
-    
-
-
-    
+    }   
 
     restoreHandlers () {
-      
         //абстрактный метод
         //навешивает обработчики событий заново
         this._setInnerHandlers();
