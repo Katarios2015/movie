@@ -7,7 +7,6 @@ var isToday = require('dayjs/plugin/isToday');
 dayjs.extend(isBetween);
 dayjs.extend(isToday);
 
-
 export const getSortedGenreObject = (whatchedArray) => {
     
     let watchedGenres = [];

@@ -71,8 +71,6 @@ export default class Movie {
             render(this._filmContainer, this._filmCardComponent, RenderPosition.BEFOREEND);
             return;
         }
-
-
         if (this._mode === Mode.DEFAULT) {
             replace(this._filmCardComponent, prevFilmCardComponent);
         }
@@ -87,7 +85,6 @@ export default class Movie {
 
         remove(prevFilmCardComponent);
         remove(prevPopupComponent);
-
     }
 
     destroy() {

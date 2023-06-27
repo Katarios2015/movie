@@ -45,16 +45,16 @@ const createPopupControls = (data) => {
 
 const createCommentTemplate = (data, commentsOfModel) => { 
     const includesComments = []; 
-    for(const comment of commentsOfModel) {
-        if(data.includes(comment.id)) {
-            const {id, author, commentText, date, emotion} = comment;
+    for(const commentItem of commentsOfModel) {
+        if(data.includes(commentItem.id)) {
+            const {id, author, comment, date, emotion} = commentItem;
             includesComments.push(
                 `<li class="film-details__comment">
                 <span class="film-details__comment-emoji">
                 <img src="${emotion}" width="55" height="55" alt="emoji-smile">
                 </span>
                 <div>
-                <p class="film-details__comment-text">${commentText}</p>
+                <p class="film-details__comment-text">${comment}</p>
                 <p class="film-details__comment-info">
                 <span class="film-details__comment-author">${author}</span>
                 <span class="film-details__comment-day">${date}</span>
@@ -67,7 +67,7 @@ const createCommentTemplate = (data, commentsOfModel) => {
     return includesComments;
 };
 
-const createNewCommentTemplate = (isChecked, imgSrc, commentText) => {
+const createNewCommentTemplate = (isChecked, imgSrc, comment) => {
     const emojiValues = Object.values(EMOJI);
    
     const emojiImg = isChecked ?
@@ -78,7 +78,7 @@ const createNewCommentTemplate = (isChecked, imgSrc, commentText) => {
   
     <label class="film-details__comment-label">
     <textarea class="film-details__comment-input"
-    placeholder="Select reaction below and write comment here" name="comment">${he.encode(commentText)}</textarea>
+    placeholder="Select reaction below and write comment here" name="comment">${he.encode(comment)}</textarea>
     </label>
   
     <div class="film-details__emoji-list">
@@ -95,7 +95,7 @@ const createPopupTemplate = (data, commentsOfmodel) => {
     const {poster, title, originalTitle,
         director, writers, actors,
         rate, ageRate, release,
-        duration, country, description, isChecked, imgSrc, commentText} = data;
+        duration, country, description, isChecked, imgSrc, comment} = data;
     const newFormatDuration = getTimeFormat(duration);
 
     return `<section class="film-details">
@@ -166,7 +166,7 @@ const createPopupTemplate = (data, commentsOfmodel) => {
           <ul class="film-details__comments-list">
            ${createCommentTemplate(data.comments, commentsOfmodel).join("")}
           </ul>
-          ${createNewCommentTemplate(isChecked, imgSrc, commentText)}
+          ${createNewCommentTemplate(isChecked, imgSrc, comment)}
         </section>
       </div>
     </form>
@@ -204,7 +204,7 @@ export default class Popup extends SmartView {
             {
                 isChecked: "",
                 imgSrc: "",
-                commentText: ""
+                comment: ""
             }
         );
     }
@@ -268,7 +268,7 @@ export default class Popup extends SmartView {
     _inputCommentTextHandler(evt) {
         evt.preventDefault();
         this.updateData({
-            commentText: evt.target.value,     
+            comment: evt.target.value,     
         }, true);
         
     }
@@ -281,12 +281,12 @@ export default class Popup extends SmartView {
     
     _addCommentEnterHandler(evt) {
         if (evt.ctrlKey && evt.key === "Enter") {
-            if (this._data.commentText === "" || this._data.imgSrc === "") {
+            if (this._data.comment === "" || this._data.imgSrc === "") {
                 return;
             }
             const newComment = {
                 id:"0",
-                commentText: this._data.commentText,
+                comment: this._data.comment,
                 emotion: `./images/emoji/${this._data.imgSrc}.png`,
                 date: dayjs(new Date()).fromNow(), 
                 author: "Kate",
