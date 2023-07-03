@@ -11,17 +11,12 @@ const getRandomArrayElement = (items) => {
     return randElement;
 };
 
-
-
-
 const getRandomCeilNumber = (min, max) => {
     min = Math.ceil(min);
     max = Math.ceil(max);
     const randCeilNumber = Number(Math.round(Math.random() * (max - min) + min));
     return randCeilNumber;
 };
-
-
 
 const getRandomNumber = (min, max) => {
     const randNumber = Number((Math.random() * (max - min) + min).toFixed(1));

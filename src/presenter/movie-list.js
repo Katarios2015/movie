@@ -198,13 +198,12 @@ export default class MovieList {
         if (this._currentSortType ===  sortType) {
             return;
         }      
-
         //this._sortMovies(sortType);
         this._currentSortType = sortType;
 
         this._clearMovieList({resetRenderedFilmCount: true});
         this._renderMovieList();
-        
+    
         // this._clearRatedFilms();
         //this._clearCommentedFilms();
         //this._renderExtraSection();
@@ -305,7 +304,7 @@ export default class MovieList {
         this._ratedComponent.getElement().className = ("films-list films-list--extra films-list--rate");
         const slicedFilms = this._getMovies().slice();
         
-        const sortedByRateFilms = slicedFilms.sort((a, b) => b.rate - a.rate).slice(0, FILM_EXTRA_COUNT);
+        const sortedByRateFilms = slicedFilms.sort((a, b) => b.total_rating - a.total_rating).slice(0, FILM_EXTRA_COUNT);
         const sortedByCommentsFilms = slicedFilms.sort((a, b) => b.comments.length - a.comments.length).slice(0, FILM_EXTRA_COUNT);
 
         this._renderExtraMovieCards(this._ratedComponent.getElement().querySelector(".films-list__container"), sortedByRateFilms);
@@ -340,17 +339,14 @@ export default class MovieList {
     }
 
     _clearRatedFilms() {
-        Object.values(this._moviePresenterExtra).forEach((presenter) => {presenter.destroy();});
-        
+        Object.values(this._moviePresenterExtra).forEach((presenter) => {presenter.destroy();}); 
         this._moviePresenterExtra = {};
         remove(this._ratedComponent);
     }
 
     _clearCommentedFilms() {
         Object.values(this._moviePresenterExtra).forEach((presenter) => {presenter.destroy();});
-       
         this._moviePresenterExtra = {};
-
         remove(this._commentsComponent);
     }
 

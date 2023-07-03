@@ -12,7 +12,7 @@ export const getSortedGenreObject = (whatchedArray) => {
     let watchedGenres = [];
     let genresObj = {};
     whatchedArray.forEach((item) => {
-        watchedGenres = watchedGenres.concat(item.genres).sort();
+        watchedGenres = watchedGenres.concat(item.film_info.genre).sort();
         watchedGenres.forEach((item)=>{
             if (genresObj[item]){
                 genresObj[item] +=1;
@@ -31,10 +31,10 @@ export const getTopGenre = (genreObj) => {
     }
     let topGenre = "";
     let swap = 0;
-    for(const genre in genreObj) {
-        if (genreObj[genre] > swap){
-            swap = genreObj[genre];
-            topGenre = genre;
+    for(const genreItem in genreObj) {
+        if (genreObj[genreItem] > swap){
+            swap = genreObj[genreItem];
+            topGenre = genreItem;
         }                
     } 
     return topGenre;
@@ -44,37 +44,33 @@ export const getTopGenre = (genreObj) => {
 export const getDurationTotal = (whatchedArray) => {
     let total = 0;
     whatchedArray.map((item) =>  {
-        total+=item.duration;
+        total+=item.film_info.runtime;
     });
     return total; 
 };
 
 export const getWatchedArray = (data) => {
-    const WatchedArray = data.filter((film) => film.isWatched);
+    const WatchedArray = data.filter((film) => film.user_details.already_watched);
     return WatchedArray;
 };
 
 const today = new Date();
-console.log("today " + today);
 const lastWeekDate = dayjs(today).subtract(TIME_PERIOD.WEEK, "day").toDate();
-console.log("lastWeekDate " + lastWeekDate);
 const lastMonthDate = dayjs(today).subtract(TIME_PERIOD.MONTH, "month").toDate();
-console.log("lastMonthDate " + lastMonthDate);
 const lastYearDate = dayjs(today).subtract(TIME_PERIOD.YEAR, "year").toDate();
-console.log("lastYearDate " + lastYearDate);
 
 
 export const siteInputMap = {
-    [InputType.ALL_TIME]: (mockFilms) => mockFilms.filter((film) => film.isWatched),
+    [InputType.ALL_TIME]: (mockFilms) => mockFilms.filter((film) => film.user_details.already_watched),
     [InputType.TODAY]: (mockFilms) => mockFilms.filter((film) => 
-        film.isWatched && dayjs(film.watchingDate).isToday()),
+        film.already_watched && dayjs(film.watching_date).isToday()),
     [InputType.WEEK]:  (mockFilms) => mockFilms.filter((film) => 
-        film.isWatched && dayjs(film.watchingDate)
+        film.already_watched && dayjs(film.watching_date)
             .isBetween(today, dayjs(lastWeekDate), "day", "[]")),
     [InputType.MONTH]:  (mockFilms) => mockFilms.filter((film) => 
-        film.isWatched && dayjs(film.watchingDate)
+        film.user_details.already_watched && dayjs(film.user_details.watching_date)
             .isBetween(today, dayjs(lastMonthDate), "month", "[]")),
     [InputType.YEAR]:  (mockFilms) => mockFilms.filter((film) => 
-        film.isWatched && dayjs(film.watchingDate)
+        film.user_details.already_watched && dayjs(film.user_details.watching_date)
             .isBetween(today, dayjs(lastYearDate), "year", "[]")),
 };

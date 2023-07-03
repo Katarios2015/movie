@@ -132,10 +132,8 @@ export default class Movie {
         this._popupComponent.setDeleteCommentClickHandler(this._handleDeleteCommentClick);
 
         this._popupComponent.setAddCommentClickHandler(this._handleAddComment);
-
         document.addEventListener("keydown", this._onEscKeyDownHandler);
 
-        // console.log(this._mode);
     }
 
     _handleHidePopup() {
@@ -161,7 +159,7 @@ export default class Movie {
                 {},
                 this._filmData,
                 {
-                    isWatchList: !this._filmData.isWatchList,
+                    user_details:{...this._filmData.user_details, watchlist: !this._filmData.user_details.watchlist},
                 },
             ),
         );
@@ -175,7 +173,7 @@ export default class Movie {
                 {},
                 this._filmData,
                 {
-                    isWatched: !this._filmData.isWatched,
+                    user_details: {...this._filmData.user_details, already_watched: !this._filmData.user_details.already_watched},
                 },
             ),
         );
@@ -189,7 +187,7 @@ export default class Movie {
                 {},
                 this._filmData,
                 {
-                    isFavorite: !this._filmData.isFavorite,
+                    user_details:{...this._filmData.user_details, favorite: !this._filmData.user_details.favorite},
                 },
             ),
         );

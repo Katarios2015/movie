@@ -43,7 +43,7 @@ const commentIds = [5, 120, 7, 140, 1];
 const directors = ["Anthony Mann", "Guy Ritchie", "David Yates", "Ridley Scott", "Alfred Hitchcock"];
 const writers = ["Anne Wigton", "Heinz Herald", "Richard Weil", "Russell Tee", "Noel Adams", "Clemence Dane"];
 const actors = ["Robert De Niro", "Jack Nicholson", "Marlon Brando", "Denzel Washington", "Katharine Hepburn"];
-const releases = ["2019-05-11T00:00:00.000Z", "2019-05-11T00:00:00.000Z", "2019-05-11T00:00:00.000Z", "2019-05-11T00:00:00.000Z"];
+const releases = ["2009-05-11T00:00:00.000Z", "2010-05-11T00:00:00.000Z", "2000-05-11T00:00:00.000Z", "2019-05-11T00:00:00.000Z"];
 const countryes = ["USA","Great Britain", "Russia"];
 
 const commentAthors = ["Ivan Pypkov", "Kate Ritchie", "David", "Roman Scott", "Alfred"];
@@ -57,7 +57,6 @@ const commentEmotions = [
     "./images/emoji/sleeping.png",
     "./images/emoji/smile.png"
 ];
-
 
 //const dateCommentFormat = dayjs(getRandomArrayElement(commentDates)).format("YYYY/MM/DD  hh:mm:ss");
 
@@ -73,10 +72,7 @@ const generatePopupComment = () => {
     };
 };
 
-
-
 const popupComments = new Array(MAX_COMMENTS_COUNT).fill().map(generatePopupComment);
-
 
 const getCommentsId = () => {
     const newPopupComments = popupComments.slice();
@@ -100,7 +96,7 @@ const generateFilm = () => {
             writers: getRandomArray(writers, 0, 3),
             actors: getRandomArray(actors, 0, 5),
             release: {
-                date: dayjs(getRandomArrayElement(releases)).format("DD MMMM YYYY"),//release
+                date: getRandomArrayElement(releases),//release dayjs(getRandomArrayElement(releases)).format("DD MMMM YYYY")
                 //year: getRandomCeilNumber(1921, 2005),брать год в карточку фильма из даты релиза
                 release_country: getRandomArrayElement(countryes),//country
             },

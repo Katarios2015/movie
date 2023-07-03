@@ -150,7 +150,8 @@ export default class Stats extends SmartView {
         this._currentInput =  InputType.ALL_TIME;
         
         this._whatchedArray = getWatchedArray(this._movies);
-        this._whatchedArray.forEach((item) => console.log(item.watchingDate));
+        
+        //this._whatchedArray.forEach((item) => console.log(item.user_details.watching_date));
         
         this._data = siteInputMap[this._currentInput](this._movies);
         this._inputTypeChangeHandler = this._inputTypeChangeHandler.bind(this);

@@ -5,10 +5,10 @@ import {getTimeFormat} from "../utils/common.js";
 import {EMOJI} from "../utils/constants.js";
 
 const createGenreTemplate = (data) => {
-    const {genres} = data;
+    const {film_info:{genre}} = data;
     let genreEnding = "";
 
-    if (genres.length > 1) {
+    if (genre.length > 1) {
         genreEnding = "Genres";
     } else {
         genreEnding = "Genre";
@@ -16,22 +16,22 @@ const createGenreTemplate = (data) => {
     return(
         `<td class="film-details__term">${genreEnding}</td>
     <td class="film-details__cell">
-      ${genres.map((el) => `<span class="film-details__genre">${el}</span>`).join("")}
+      ${genre.map((el) => `<span class="film-details__genre">${el}</span>`).join("")}
     </td>`
     );
 
 };
 
 const createPopupControls = (data) => {
-    const {isWatchList, isWatched, isFavorite} = data;
+    const {user_details:{watchlist, already_watched, favorite}} = data;
 
-    const watchListClass = isWatchList
+    const watchListClass = watchlist
         ? "film-details__control-button--watchlist film-details__control-button--active" :
         "film-details__control-button--watchlist";
-    const watchedClass = isWatched
+    const watchedClass = already_watched
         ? "film-details__control-button--watched film-details__control-button--active" :
         "film-details__control-button--watched";
-    const favoriteClass = isFavorite
+    const favoriteClass = favorite
         ? "film-details__control-button--favorite film-details__control-button--active" :
         "film-details__control-button--favorite";
 
@@ -92,11 +92,11 @@ const createNewCommentTemplate = (isChecked, imgSrc, comment) => {
 };
 
 const createPopupTemplate = (data, commentsOfmodel) => {
-    const {poster, title, originalTitle,
+    const {film_info:{poster, title, alternative_title,
         director, writers, actors,
-        rate, ageRate, release,
-        duration, country, description, isChecked, imgSrc, comment} = data;
-    const newFormatDuration = getTimeFormat(duration);
+        total_rating, age_rating, 
+        runtime, description, release:{date, release_country}}, isChecked, imgSrc, comment} = data;
+    const newFormatDuration = getTimeFormat(runtime);
 
     return `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
@@ -107,17 +107,17 @@ const createPopupTemplate = (data, commentsOfmodel) => {
         <div class="film-details__info-wrap">
           <div class="film-details__poster">
             <img class="film-details__poster-img" src=${poster} alt="">
-            <p class="film-details__age">${ageRate}</p>
+            <p class="film-details__age">${age_rating}</p>
           </div>
           <div class="film-details__info">
             <div class="film-details__info-head">
               <div class="film-details__title-wrap">
                 <h3 class="film-details__title">${title}</h3>
-                <p class="film-details__title-original">${originalTitle}</p>
+                <p class="film-details__title-original">${alternative_title}</p>
               </div>
 
               <div class="film-details__rating">
-                <p class="film-details__total-rating">${rate}</p>
+                <p class="film-details__total-rating">${total_rating}</p>
               </div>
             </div>
             <table class="film-details__table">
@@ -135,7 +135,7 @@ const createPopupTemplate = (data, commentsOfmodel) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">${release}</td>
+                <td class="film-details__cell">${dayjs(date).format("DD MMMM YYYY")}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
@@ -143,7 +143,7 @@ const createPopupTemplate = (data, commentsOfmodel) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
-                <td class="film-details__cell">${country}</td>
+                <td class="film-details__cell">${release_country}</td>
               </tr>
               <tr class="film-details__row">
                 ${createGenreTemplate(data)}

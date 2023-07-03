@@ -78,11 +78,11 @@ export const replace = (newChild, oldChild) => {
 };
 
 export const sortMovieDate = (a,b) => {
-    return (b.year - a.year);
+    return (dayjs(b.film_info.release.date).format("YYYY") - dayjs(a.film_info.release.date).format("YYYY"));//ДОДЕЛАТЬ year
 };
 
 
 
 export const sortMovieRate = (a,b) => {
-    return (b.rate - a.rate);
+    return (b.film_info.total_rating - a.film_info.total_rating);
 };
