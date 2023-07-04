@@ -37,7 +37,7 @@ export default class MovieList {
 
         this._sortComponent = null;
         this._showMoreBtnComponent = null;
-        this._EmptyFilmListComponent = new EmptyFilmListView();
+       
         
         this._handleShowMoreBtn = this._handleShowMoreBtn.bind(this);
         this._renderExtraSection = this._renderExtraSection.bind(this);
@@ -127,7 +127,7 @@ export default class MovieList {
         
         const filterType = this._filterModel.getFilter();
         const movies = this._moviesModel.getMovies();
-        
+        console.log("filterType " + filterType);
         const filtredMovies = siteFilterMap[filterType](movies);
         switch (this._currentSortType) {
         case SortType.DATE:
@@ -155,6 +155,7 @@ export default class MovieList {
 
 
     _renderEmptyFilmList() {
+        this._EmptyFilmListComponent = new EmptyFilmListView(this._filterModel.getFilter());
         render(this._siteMainContainer, this._EmptyFilmListComponent, RenderPosition.BEFOREEND);
     }
 
@@ -244,9 +245,12 @@ export default class MovieList {
     _renderMovieList() {
         
         if (this._getMovies().length === 0) {
+            if(this._EmptyFilmListComponent) {
+                remove(this._EmptyFilmListComponent);
+            }
             this._renderEmptyFilmList();
         } else {
-            
+
             const moviesCount = this._getMovies().length;
             const movies = this._getMovies().slice(0, Math.min(moviesCount, this._renderedFilmsCounter));
 

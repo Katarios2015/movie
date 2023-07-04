@@ -18,7 +18,7 @@ import MoviesModel from "./model/movies.js";
 import CommentsModel from "./model/comments.js";
 import FilterModel from "./model/filter.js";
 
-const MOCK_FILMS_COUNT = 20;
+const MOCK_FILMS_COUNT = 0;
 
 const mainNavComponent = new MainNavView ();
 
