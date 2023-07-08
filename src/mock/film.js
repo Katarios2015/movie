@@ -86,28 +86,28 @@ const generateFilm = () => {
     return {
         id: nanoid(),
         comments: getCommentsId(),
-        film_info: {
+        filmInfo: {
             title: getRandomArrayElement(filmTitles),
-            alternative_title: getRandomArrayElement(filmTitles),//originalTitle
-            total_rating : getRandomNumber(0, 10),//rate
+            alternativeTitle: getRandomArrayElement(filmTitles),//originalTitle
+            totalRating : getRandomNumber(0, 10),//rate
             poster: getRandomArrayElement(filmPosters),
-            age_rating: `${getRandomCeilNumber(0, 18)}+`,//ageRate
+            ageRating: `${getRandomCeilNumber(0, 18)}+`,//ageRate
             director: getRandomArrayElement(directors),
             writers: getRandomArray(writers, 0, 3),
             actors: getRandomArray(actors, 0, 5),
             release: {
                 date: getRandomArrayElement(releases),//release dayjs(getRandomArrayElement(releases)).format("DD MMMM YYYY")
                 //year: getRandomCeilNumber(1921, 2005),брать год в карточку фильма из даты релиза
-                release_country: getRandomArrayElement(countryes),//country
+                releaseCountry: getRandomArrayElement(countryes),//country
             },
             runtime: getRandomArrayElement(filmDurations),//duration
             genre:  getRandomArray(filmGenres, 0, 3),//genres
             description: getRandomArray(filmDescriptions, 0, 5),
         },
-        user_details: {
+        userDetails: {
             watchlist: Boolean(getRandomCeilNumber(0, 1)),//isWatchList
-            already_watched: Boolean(getRandomCeilNumber(0, 1)),//isWatched
-            watching_date:getRandomArrayElement(watchingInFormatDates),//watchingDate
+            alreadyWatched: Boolean(getRandomCeilNumber(0, 1)),//isWatched
+            watchingDate:getRandomArrayElement(watchingInFormatDates),//watchingDate
             favorite: Boolean(getRandomCeilNumber(0, 1)),//isFavorite
         }   
     };

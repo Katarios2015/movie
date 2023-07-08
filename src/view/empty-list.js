@@ -32,17 +32,23 @@ const createEmptyFilmList = (filterType) => {
       <h2 class="films-list__title">There are no favorite movies now</h2>
     </section>
     </section>`;
-
+    }
+    
+    else if (filterType === "statistics") {
+        return "";
     }
 };
 
+
+
+
 export default class EmptyFilmList extends AbstractView {
-  constructor(filterType) {
-    super();
-    this._filterType = filterType;
+    constructor(filterType) {
+        super();
+        this._filterType = filterType;
 
 
-}
+    }
     
     getTemplate() {
         return createEmptyFilmList(this._filterType);

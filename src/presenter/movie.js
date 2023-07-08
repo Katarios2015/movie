@@ -9,13 +9,14 @@ const Mode = {
 };
 
 export default class Movie {
-    constructor (siteBody, changeData, changeMode, commentsModel) {
+    constructor (siteBody, changeData, changeMode, commentsModel, api) {
         this._siteBodyContainer = siteBody;
         this._changeData = changeData;
         this._changeMode = changeMode;
         this._mode = Mode.DEFAULT;
         this._filmCardComponent = null;
         this._popupComponent = null;
+        this._api = api; 
 
         this._commentsModel = commentsModel;
 
@@ -120,6 +121,11 @@ export default class Movie {
     _handleShowPopupClick() {
         this._changeMode();
        
+        this._api.getComments(this._filmData.id)
+            .then((comments) => {
+                console.log(comments);
+            });
+
         render(this._siteBodyContainer, this._popupComponent, RenderPosition.BEFOREEND);
         this._mode = Mode.EDITING;
         this._commentsModel.addObserver(this._handleModelEvent);
@@ -129,8 +135,8 @@ export default class Movie {
         this._popupComponent.setAddToWatchBtnListClickHandler(this._handleAddToWatchedListClick);
         this._popupComponent.setAlreadyWatchedBtnClickHandler(this._handleAddToAlreadyWatchedClick);
         this._popupComponent.setAddToFavoriteBtnClickHandler(this._handleAddToFavoriteClick);
-        this._popupComponent.setDeleteCommentClickHandler(this._handleDeleteCommentClick);
 
+        this._popupComponent.setDeleteCommentClickHandler(this._handleDeleteCommentClick);
         this._popupComponent.setAddCommentClickHandler(this._handleAddComment);
         document.addEventListener("keydown", this._onEscKeyDownHandler);
 
@@ -159,7 +165,7 @@ export default class Movie {
                 {},
                 this._filmData,
                 {
-                    user_details:{...this._filmData.user_details, watchlist: !this._filmData.user_details.watchlist},
+                    user_details:{...this._filmData.userDetails, watchlist: !this._filmData.userDetails.watchlist},
                 },
             ),
         );
@@ -173,7 +179,7 @@ export default class Movie {
                 {},
                 this._filmData,
                 {
-                    user_details: {...this._filmData.user_details, already_watched: !this._filmData.user_details.already_watched},
+                    userDetails: {...this._filmData.userDetails, already_watched: !this._filmData.userDetails.alreadyWatched},
                 },
             ),
         );
@@ -187,7 +193,7 @@ export default class Movie {
                 {},
                 this._filmData,
                 {
-                    user_details:{...this._filmData.user_details, favorite: !this._filmData.user_details.favorite},
+                    userDetails:{...this._filmData.userDetails, favorite: !this._filmData.userDetails.favorite},
                 },
             ),
         );

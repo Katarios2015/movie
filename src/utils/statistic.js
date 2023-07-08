@@ -12,7 +12,7 @@ export const getSortedGenreObject = (whatchedArray) => {
     let watchedGenres = [];
     let genresObj = {};
     whatchedArray.forEach((item) => {
-        watchedGenres = watchedGenres.concat(item.film_info.genre).sort();
+        watchedGenres = watchedGenres.concat(item.filmInfo.genre).sort();
         watchedGenres.forEach((item)=>{
             if (genresObj[item]){
                 genresObj[item] +=1;
@@ -44,13 +44,13 @@ export const getTopGenre = (genreObj) => {
 export const getDurationTotal = (whatchedArray) => {
     let total = 0;
     whatchedArray.map((item) =>  {
-        total+=item.film_info.runtime;
+        total+=item.filmInfo.runtime;
     });
     return total; 
 };
 
 export const getWatchedArray = (data) => {
-    const WatchedArray = data.filter((film) => film.user_details.already_watched);
+    const WatchedArray = data.filter((film) => film.userDetails.alreadyWatched);
     return WatchedArray;
 };
 
@@ -61,16 +61,16 @@ const lastYearDate = dayjs(today).subtract(TIME_PERIOD.YEAR, "year").toDate();
 
 
 export const siteInputMap = {
-    [InputType.ALL_TIME]: (mockFilms) => mockFilms.filter((film) => film.user_details.already_watched),
+    [InputType.ALL_TIME]: (mockFilms) => mockFilms.filter((film) => film.userDetails.alreadyWatched),
     [InputType.TODAY]: (mockFilms) => mockFilms.filter((film) => 
-        film.already_watched && dayjs(film.watching_date).isToday()),
+        film.alreadyWatched && dayjs(film.watchingDate).isToday()),
     [InputType.WEEK]:  (mockFilms) => mockFilms.filter((film) => 
-        film.already_watched && dayjs(film.watching_date)
+        film.alreadyWatched && dayjs(film.watchingDate)
             .isBetween(today, dayjs(lastWeekDate), "day", "[]")),
     [InputType.MONTH]:  (mockFilms) => mockFilms.filter((film) => 
-        film.user_details.already_watched && dayjs(film.user_details.watching_date)
+        film.userDetails.alreadyWatched && dayjs(film.userDetails.watchingDate)
             .isBetween(today, dayjs(lastMonthDate), "month", "[]")),
     [InputType.YEAR]:  (mockFilms) => mockFilms.filter((film) => 
-        film.user_details.already_watched && dayjs(film.user_details.watching_date)
+        film.userDetails.alreadyWatched && dayjs(film.userDetails.watchingDate)
             .isBetween(today, dayjs(lastYearDate), "year", "[]")),
 };

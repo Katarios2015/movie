@@ -1,5 +1,5 @@
 import {renderTemplate, render, RenderPosition, remove} from "./utils/render.js";
-import {FilterType} from "./utils/constants.js";
+import {FilterType, UpdateType} from "./utils/constants.js";
 import {siteFilterMap} from "./utils/filter.js";
 
 import MainNavView from "./view/main-navigation.js";
@@ -18,7 +18,14 @@ import MoviesModel from "./model/movies.js";
 import CommentsModel from "./model/comments.js";
 import FilterModel from "./model/filter.js";
 
-const MOCK_FILMS_COUNT = 0;
+import Api from "./api.js";
+
+//const MOCK_FILMS_COUNT = 20;
+
+const AUTHORIZATION = "Basic 39w3ash4q2";
+const END_POINT = "https://14.ecmascript.pages.academy/cinemaddict"; 
+
+const api = new Api(END_POINT, AUTHORIZATION);
 
 const mainNavComponent = new MainNavView ();
 
@@ -32,21 +39,22 @@ const siteFooter = document.querySelector(".footer");
 const footerStat = siteFooter.querySelector(".footer__statistics");
 
 const comments = popupComments;
-const mockFilms = new Array(MOCK_FILMS_COUNT).fill().map(() => generateFilm(comments));
-//console.log(mockFilms);
+//const mockFilms = new Array(MOCK_FILMS_COUNT).fill().map(() => generateFilm(comments));
+
 
 const commentsModel = new CommentsModel();
 commentsModel.setComments(comments);
 
 const moviesModel = new MoviesModel();
-moviesModel.setMovies(mockFilms);
+//moviesModel.setMovies(mockFilms);
 
 const filterModel = new FilterModel();
-const statsComponent = new StatsView(moviesModel.getMovies());
-const allWhatchedFilms = siteFilterMap[FilterType.HISTORY](mockFilms).length;
+let statsComponent = null;
 //FilterModel.setFilters(mockFilms);
 
+
 //render(siteMainContainer, new Menu(filmFilters), RenderPosition.AFTERBEGIN);
+
 
 const handleFilterMenuClick = (menuItem) => {
     const menuItemData = menuItem.dataset.itemType;
@@ -65,23 +73,35 @@ const handleFilterMenuClick = (menuItem) => {
     case FilterType.STATISTICS:
         movieListPresenter.destroy();// Скрыть список фильмов
         activeItem.classList.remove("main-navigation__item--active");
+        statsComponent = new StatsView(moviesModel.getMovies());
         render(siteMainContainer, statsComponent, RenderPosition.BEFOREEND);
         statsComponent.setCharts(moviesModel.getMovies());
         mainNavContainer.classList.add("main-navigation__item--active");// Показать статистику
         break;
     }
 };
-  
-mainNavComponent.setMenuClickHandler(handleFilterMenuClick);
-
-
-render(siteMainContainer, mainNavComponent, RenderPosition.AFTERBEGIN);
-
-
-renderTemplate (footerStat, `<p>${MOCK_FILMS_COUNT} movies inside</p>`, RenderPosition.BEFOREEND);
 
 const filterPresenter = new MenuFilterPresenter (mainNavContainer, filterModel, moviesModel);
-const movieListPresenter = new MovieListPresenter(siteMainContainer, siteBody, moviesModel, commentsModel, filterModel);
-render(siteHeader, new UserRank(generateUseRank(allWhatchedFilms)), RenderPosition.BEFOREEND);
+const movieListPresenter = new MovieListPresenter(siteMainContainer, siteBody, moviesModel, commentsModel, filterModel, api);
+
 filterPresenter.init();
 movieListPresenter.init();
+
+api.getMovies()
+    .then((movies) => {
+        console.log(movies);
+        moviesModel.setMovies(UpdateType.INIT, movies);
+        render(siteMainContainer, mainNavComponent, RenderPosition.AFTERBEGIN);
+        const allWhatchedFilms = siteFilterMap[FilterType.HISTORY](moviesModel.getMovies()).length;
+        render(siteHeader, new UserRank(generateUseRank(allWhatchedFilms)), RenderPosition.BEFOREEND);
+        
+        mainNavComponent.setMenuClickHandler(handleFilterMenuClick);
+        
+        renderTemplate (footerStat, `<p>${moviesModel.getMovies().length} movies inside</p>`, RenderPosition.BEFOREEND);
+    })
+    .catch(() => {
+        moviesModel.setMovies(UpdateType.INIT, []);
+        render(siteMainContainer, mainNavComponent, RenderPosition.AFTERBEGIN);
+        mainNavComponent.setMenuClickHandler(handleFilterMenuClick);
+        console.log("error load");
+    });

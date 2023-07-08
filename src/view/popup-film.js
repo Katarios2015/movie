@@ -5,7 +5,7 @@ import {getTimeFormat} from "../utils/common.js";
 import {EMOJI} from "../utils/constants.js";
 
 const createGenreTemplate = (data) => {
-    const {film_info:{genre}} = data;
+    const {filmInfo:{genre}} = data;
     let genreEnding = "";
 
     if (genre.length > 1) {
@@ -23,12 +23,12 @@ const createGenreTemplate = (data) => {
 };
 
 const createPopupControls = (data) => {
-    const {user_details:{watchlist, already_watched, favorite}} = data;
+    const {userDetails:{watchlist, alreadyWatched, favorite}} = data;
 
     const watchListClass = watchlist
         ? "film-details__control-button--watchlist film-details__control-button--active" :
         "film-details__control-button--watchlist";
-    const watchedClass = already_watched
+    const watchedClass = alreadyWatched
         ? "film-details__control-button--watched film-details__control-button--active" :
         "film-details__control-button--watched";
     const favoriteClass = favorite
@@ -92,10 +92,11 @@ const createNewCommentTemplate = (isChecked, imgSrc, comment) => {
 };
 
 const createPopupTemplate = (data, commentsOfmodel) => {
-    const {film_info:{poster, title, alternative_title,
+    const {filmInfo:{poster, title, alternativeTitle,
         director, writers, actors,
-        total_rating, age_rating, 
-        runtime, description, release:{date, release_country}}, isChecked, imgSrc, comment} = data;
+        totalRating, ageRating, 
+        runtime, description, release:{date, releaseCountry}},
+    isChecked, imgSrc, comment} = data;
     const newFormatDuration = getTimeFormat(runtime);
 
     return `<section class="film-details">
@@ -107,17 +108,17 @@ const createPopupTemplate = (data, commentsOfmodel) => {
         <div class="film-details__info-wrap">
           <div class="film-details__poster">
             <img class="film-details__poster-img" src=${poster} alt="">
-            <p class="film-details__age">${age_rating}</p>
+            <p class="film-details__age">${ageRating}</p>
           </div>
           <div class="film-details__info">
             <div class="film-details__info-head">
               <div class="film-details__title-wrap">
                 <h3 class="film-details__title">${title}</h3>
-                <p class="film-details__title-original">${alternative_title}</p>
+                <p class="film-details__title-original">${alternativeTitle}</p>
               </div>
 
               <div class="film-details__rating">
-                <p class="film-details__total-rating">${total_rating}</p>
+                <p class="film-details__total-rating">${totalRating}</p>
               </div>
             </div>
             <table class="film-details__table">
@@ -143,7 +144,7 @@ const createPopupTemplate = (data, commentsOfmodel) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
-                <td class="film-details__cell">${release_country}</td>
+                <td class="film-details__cell">${releaseCountry}</td>
               </tr>
               <tr class="film-details__row">
                 ${createGenreTemplate(data)}

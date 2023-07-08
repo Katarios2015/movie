@@ -3,12 +3,12 @@ import {getTimeFormat} from "../utils/common.js";
 import {dayjs} from "../utils/common.js";
 
 const createFilmsControls = (film) => {
-    const {user_details:{watchlist, already_watched, favorite}} = film;
+    const {userDetails:{watchlist, alreadyWatched, favorite}} = film;
 
     const watchListClass = watchlist
         ? "film-card__controls-item--add-to-watchlist film-card__controls-item--active" :
         "film-card__controls-item--add-to-watchlist";
-    const watchedClass = already_watched
+    const watchedClass = alreadyWatched
         ? "film-card__controls-item--mark-as-watched film-card__controls-item--active" :
         "film-card__controls-item--mark-as-watched";
     const favoriteClass = favorite
@@ -24,8 +24,8 @@ const createFilmsControls = (film) => {
 
 const createFilmCardTemplate = (film) => {
     const {
-        film_info:
-        {poster, title, total_rating, 
+        filmInfo:
+        {poster, title, totalRating, 
             release:{date}, 
             runtime, genre, description}, comments} = film;
     const genres = genre.slice(0, 1);
@@ -33,7 +33,7 @@ const createFilmCardTemplate = (film) => {
 
     return `<article class="film-card">
     <h3 class="film-card__title">${title}</h3>
-    <p class="film-card__rating">${total_rating}</p>
+    <p class="film-card__rating">${totalRating}</p>
     <p class="film-card__info">
       <span class="film-card__year">${dayjs(date).format("YYYY")}</span>
       <span class="film-card__duration">${newFormatDuration}</span>

@@ -38,4 +38,31 @@ export default class Comments extends Observer {
     
         this._notify(updateType, update);
     }
-}
+
+    static adaptToClient(comment) {
+        const adaptedComment = Object.assign(
+            {},
+            comment,
+            {
+
+                date: comment.date !== null ? new Date(comment.date) : comment.date,
+            },
+        );
+        
+        return adaptedComment;
+    }
+
+    static adaptToServer(comment) {
+        const adaptedComment = Object.assign(
+            {},
+            comment,
+            {
+                "date": comment.date  instanceof Date ? comment.date.toISOString() : null,
+            },
+        );
+    
+        // Ненужные ключи мы удаляем
+           
+        return adaptedComment;
+    }
+}//"date": movie.filmInfo.release.date instanceof Date ? movie.filmInfo.release.date.toISOString() : null,

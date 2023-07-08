@@ -56,21 +56,21 @@ const getTimeFormatMinutes = (minutes) => {
     return timeFormatMinutes;
 };
 
-const getUserRank = (whatchedFilmsCount) => {
-    let userRank = "";
-    if (whatchedFilmsCount >=1 && whatchedFilmsCount<= 10) {
-        userRank = RANKS[0];
-    } else if (whatchedFilmsCount >=11 && whatchedFilmsCount<= 20) {
-        userRank = RANKS[1];
-    }else if (whatchedFilmsCount >=21 ) {
-        userRank = RANKS[2];
-    }
-    return userRank;
-};
-
 const getUpperCase = (lowString) => {
     const upperString = lowString[0].toUpperCase() + lowString.slice(1);
     return upperString;
+};
+
+const getUserRank = (whatchedFilmsCount) => {
+    let userRank = "";
+    if (whatchedFilmsCount >=1 && whatchedFilmsCount<= 10) {
+        userRank = getUpperCase(RANKS[0]);
+    } else if (whatchedFilmsCount >=11 && whatchedFilmsCount<= 20) {
+        userRank = getUpperCase(RANKS[1]);
+    }else if (whatchedFilmsCount >=21 ) {
+        userRank = getUpperCase(RANKS[2]);
+    }
+    return userRank;
 };
 
 

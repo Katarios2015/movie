@@ -4,6 +4,7 @@ import ShowMoreBtnView from "../view/show-more-btn.js";
 import ExtraSectionView from "../view/create-extra-section.js";
 import {siteFilterMap} from "../utils/filter.js";
 import SortView from "../view/sort.js";
+import LoadView from "../view/loading.js";
 import {UserAction, UpdateType, SortType, ExtraTitle} from "../utils/constants.js";
 import {sortMovieDate, sortMovieRate, render, RenderPosition, remove} from "../utils/render.js";
 
@@ -15,18 +16,21 @@ const FILM_EXTRA_COUNT = 2;
 
 
 export default class MovieList {
-    constructor(siteContainer, siteBody, moviesModel, commentsModel, filterModel) {
+    constructor(siteContainer, siteBody, moviesModel, commentsModel, filterModel, api) {
         this._moviesModel = moviesModel;
         this._commentsModel = commentsModel;
         this._filterModel = filterModel;
+        this._api = api;
 
 
         this._siteMainContainer = siteContainer;
         this._siteBodyContainer = siteBody;
         this._renderedFilmsCounter = MAX_FILM_COUNT;
 
+        this._isLoading = true;
         this._ratedComponent = null;
         this._commentsComponent = null;
+        this._loadComponent = new LoadView();
 
         this._moviePresenter = {};
         this._moviePresenterExtra = {};
@@ -79,6 +83,7 @@ export default class MovieList {
         this._clearMovieList({resetRenderedFilmCount: true, resetSortType: true});
     
         remove(this._filmListComponent);
+        //remove(this._EmptyFilmListComponent);
     
         this._moviesModel.removeObserver(this._handleModelEvent);
         this._filterModel.removeObserver(this._handleModelEvent);
@@ -87,7 +92,9 @@ export default class MovieList {
     _handleViewAction(actionType, updateType, update) {
         switch (actionType) {
         case UserAction.UPDATE_MOVIE:
-            this._moviesModel.updateMovie(updateType, update);
+            this._api.updateMovie(update).then((response) => {
+                this._moviesModel.updateMovie(updateType, response);
+            });
             break;
         case UserAction.ADD_COMMENT:
             this._commentsModel.addComment(updateType, update);
@@ -119,23 +126,35 @@ export default class MovieList {
             this._clearMovieList({resetRenderedFilmCount: true, resetSortType: true});
             this._renderMovieList();
             break;
+        case UpdateType.INIT:
+            this._isLoading = false;
+            remove(this._loadComponent);
+            this._renderMovieList();
+            break;
         }
+       
     }
 
+    _renderLoading() {
+        render(this._filmListComponent, this._loadComponent, RenderPosition.AFTERBEGIN);
+    }
 
     _getMovies() {
         
         const filterType = this._filterModel.getFilter();
         const movies = this._moviesModel.getMovies();
-        console.log("filterType " + filterType);
+        //console.log("filterType " + filterType);
         const filtredMovies = siteFilterMap[filterType](movies);
+        const slicedArray = filtredMovies.slice();
         switch (this._currentSortType) {
         case SortType.DATE:
             return filtredMovies.sort(sortMovieDate);
         case SortType.RATE:
             return filtredMovies.sort(sortMovieRate);
+        //default:
+            
         }
-        return filtredMovies;
+        return slicedArray;
     }
 
     _renderSort() {
@@ -214,7 +233,7 @@ export default class MovieList {
 
     _renderFilmCard(filmContainer, filmData) {
         const moviePresenter = new MoviePresenter(this._siteBodyContainer, 
-            this._handleViewAction,  this._handleModeChange, this._commentsModel);
+            this._handleViewAction,  this._handleModeChange, this._commentsModel, this._api);
         moviePresenter.init(filmContainer, filmData);
         this._moviePresenter[filmData.id] = moviePresenter;
     }
@@ -243,6 +262,11 @@ export default class MovieList {
     }
 
     _renderMovieList() {
+
+        if (this._isLoading) {
+            this._renderLoading();
+            return;
+        }
         
         if (this._getMovies().length === 0) {
             if(this._EmptyFilmListComponent) {
@@ -250,7 +274,7 @@ export default class MovieList {
             }
             this._renderEmptyFilmList();
         } else {
-
+           
             const moviesCount = this._getMovies().length;
             const movies = this._getMovies().slice(0, Math.min(moviesCount, this._renderedFilmsCounter));
 
