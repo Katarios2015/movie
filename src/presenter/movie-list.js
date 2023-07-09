@@ -8,7 +8,6 @@ import LoadView from "../view/loading.js";
 import {UserAction, UpdateType, SortType, ExtraTitle} from "../utils/constants.js";
 import {sortMovieDate, sortMovieRate, render, RenderPosition, remove} from "../utils/render.js";
 
-
 import MoviePresenter from "./movie.js";
 
 const MAX_FILM_COUNT = 5;
@@ -21,7 +20,6 @@ export default class MovieList {
         this._commentsModel = commentsModel;
         this._filterModel = filterModel;
         this._api = api;
-
 
         this._siteMainContainer = siteContainer;
         this._siteBodyContainer = siteBody;
@@ -36,12 +34,10 @@ export default class MovieList {
         this._moviePresenterExtra = {};
 
         this._currentSortType = SortType.DEFAULT;
-        
         this._filmListComponent = new FilmListView();
 
         this._sortComponent = null;
-        this._showMoreBtnComponent = null;
-       
+        this._showMoreBtnComponent = null;      
         
         this._handleShowMoreBtn = this._handleShowMoreBtn.bind(this);
         this._renderExtraSection = this._renderExtraSection.bind(this);
@@ -89,7 +85,7 @@ export default class MovieList {
         this._filterModel.removeObserver(this._handleModelEvent);
     }
 
-    _handleViewAction(actionType, updateType, update) {
+    _handleViewAction(actionType, updateType, update, movieId) {
         switch (actionType) {
         case UserAction.UPDATE_MOVIE:
             this._api.updateMovie(update).then((response) => {
@@ -97,9 +93,12 @@ export default class MovieList {
             });
             break;
         case UserAction.ADD_COMMENT:
-            this._commentsModel.addComment(updateType, update);
+            this._api.addComment(update, movieId).then((response) => {
+                this._commentsModel.addComment(response);
+            });
             break;
         case UserAction.DELETE_COMMENT:
+            //при удалении комментариев возвращать с сервера нечего, остается update
             this._commentsModel.deleteComment(updateType, update);
             break;
         }
@@ -140,7 +139,6 @@ export default class MovieList {
     }
 
     _getMovies() {
-        
         const filterType = this._filterModel.getFilter();
         const movies = this._moviesModel.getMovies();
         //console.log("filterType " + filterType);
@@ -152,7 +150,6 @@ export default class MovieList {
         case SortType.RATE:
             return filtredMovies.sort(sortMovieRate);
         //default:
-            
         }
         return slicedArray;
     }
@@ -171,8 +168,6 @@ export default class MovieList {
     /*_renderMenu() {
         render(this._siteMainContainer, this._menuComponent, RenderPosition.AFTERBEGIN);
     }*/
-
-
     _renderEmptyFilmList() {
         this._EmptyFilmListComponent = new EmptyFilmListView(this._filterModel.getFilter());
         render(this._siteMainContainer, this._EmptyFilmListComponent, RenderPosition.BEFOREEND);
@@ -212,8 +207,6 @@ export default class MovieList {
         // this._sourcedMoviesTwo = updateItem(this._sourcedMoviesTwo, updatedMovie);
         
     }*/
-
-
     _handleSortTypeChange(sortType) {
         if (this._currentSortType ===  sortType) {
             return;
@@ -227,9 +220,7 @@ export default class MovieList {
         // this._clearRatedFilms();
         //this._clearCommentedFilms();
         //this._renderExtraSection();
-        
     }
-
 
     _renderFilmCard(filmContainer, filmData) {
         const moviePresenter = new MoviePresenter(this._siteBodyContainer, 
@@ -239,12 +230,10 @@ export default class MovieList {
     }
 
     _renderFilmCardExtra(filmContainer, filmData) {
-        
         const moviePresenterExtra = new MoviePresenter(this._siteBodyContainer, 
-            this._handleViewAction,  this._handleModeChangeExtra, this._commentsModel);
+            this._handleViewAction,  this._handleModeChangeExtra, this._commentsModel, this._api);
         moviePresenterExtra.init(filmContainer, filmData);
         this._moviePresenterExtra[filmData.id] = moviePresenterExtra;
-       
     }
 
     _renderMovieCards(container, dataArray) {
@@ -339,8 +328,6 @@ export default class MovieList {
         this._renderExtraMovieCards(this._commentsComponent.getElement().querySelector(".films-list__container"), sortedByCommentsFilms);
     }
 
-    
-    
     _clearMovieList({resetRenderedFilmCount = false, resetSortType = false} = {}) {
         Object
             .values(this._moviePresenter)
@@ -349,9 +336,7 @@ export default class MovieList {
         remove(this._filmListComponent);
         remove(this._showMoreBtnComponent);
         remove(this._sortComponent);
-        
         //this._renderedFilmsCounter = MAX_FILM_COUNT;
-
         if (resetRenderedFilmCount) {
             this._renderedFilmsCounter = MAX_FILM_COUNT;
         } else {

@@ -60,9 +60,7 @@ export default class Comments extends Observer {
                 "date": comment.date  instanceof Date ? comment.date.toISOString() : null,
             },
         );
-    
         // Ненужные ключи мы удаляем
-           
         return adaptedComment;
     }
 }//"date": movie.filmInfo.release.date instanceof Date ? movie.filmInfo.release.date.toISOString() : null,

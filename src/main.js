@@ -38,12 +38,12 @@ const siteFooter = document.querySelector(".footer");
 
 const footerStat = siteFooter.querySelector(".footer__statistics");
 
-const comments = popupComments;
+//const comments = popupComments;
 //const mockFilms = new Array(MOCK_FILMS_COUNT).fill().map(() => generateFilm(comments));
 
 
 const commentsModel = new CommentsModel();
-commentsModel.setComments(comments);
+//commentsModel.setComments(comments);
 
 const moviesModel = new MoviesModel();
 //moviesModel.setMovies(mockFilms);

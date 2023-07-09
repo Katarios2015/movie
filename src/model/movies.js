@@ -49,7 +49,7 @@ export default class Movies extends Observer {
                     writers: movie.film_info.writers,
                     actors: movie.film_info.actors,
                     release: {
-                        date: movie.film_info.release.date,
+                        date: new Date(movie.film_info.release.date),
                         releaseCountry:  movie.film_info.release.release_country,
                     },
                     runtime: movie.film_info.runtime,
@@ -65,12 +65,12 @@ export default class Movies extends Observer {
                 }
             },
         );
-        delete adaptedMovie.film_info;
+        //delete adaptedMovie.film_info;
         //delete adaptedMovie.film_info.alternative_title;
         //delete adaptedMovie.film_info.total_rating;
         //delete adaptedMovie.film_info.age_rating;
         //delete adaptedMovie.film_info.release.release_country;
-        delete adaptedMovie.user_details;
+       // delete adaptedMovie.user_details;
         //delete adaptedMovie.user_details.already_watched;
 
         return adaptedMovie;
@@ -93,7 +93,7 @@ export default class Movies extends Observer {
                     "writers":movie.filmInfo.writers,
                     "actors": movie.filmInfo.actors,
                     "release": {
-                        "date": movie.filmInfo.release.date instanceof Date ? movie.filmInfo.release.date.toISOString() : null,
+                        "date": movie.filmInfo.release.date.toISOString(),
                         "release_country": movie.filmInfo.release.releaseCountry
                     },
                     "runtime": movie.filmInfo.runtime,
@@ -112,7 +112,10 @@ export default class Movies extends Observer {
         // Ненужные ключи мы удаляем
         delete adaptedMovie.filmInfo;
         delete adaptedMovie.userDetails;
-    
+        //delete adaptedMovie.userDetails.alreadyWatched;
+        //delete adaptedMovie.userDetails.favorite;
+        //delete adaptedMovie.userDetails.watchlist;
+
         return adaptedMovie;
     }
 }

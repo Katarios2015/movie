@@ -51,13 +51,13 @@ const createCommentTemplate = (data, commentsOfModel) => {
             includesComments.push(
                 `<li class="film-details__comment">
                 <span class="film-details__comment-emoji">
-                <img src="${emotion}" width="55" height="55" alt="emoji-smile">
+                <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-smile">
                 </span>
                 <div>
                 <p class="film-details__comment-text">${comment}</p>
                 <p class="film-details__comment-info">
                 <span class="film-details__comment-author">${author}</span>
-                <span class="film-details__comment-day">${date}</span>
+                <span class="film-details__comment-day">${dayjs(date).fromNow()}</span>
                 <button class="film-details__comment-delete" data-id="${id}">Delete</button>
                 </p>
                 </div>
@@ -286,11 +286,11 @@ export default class Popup extends SmartView {
                 return;
             }
             const newComment = {
-                id:"0",
+                id: 0,
                 comment: this._data.comment,
                 emotion: `./images/emoji/${this._data.imgSrc}.png`,
                 date: dayjs(new Date()).fromNow(), 
-                author: "Kate",
+                //author: "Kate",
             };
             this._callback.addCommentEnter(newComment);
         }
