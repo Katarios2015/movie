@@ -94,12 +94,15 @@ export default class MovieList {
             break;
         case UserAction.ADD_COMMENT:
             this._api.addComment(update, movieId).then((response) => {
-                this._commentsModel.addComment(response);
+                console.log(response);
+                this._commentsModel.addComment(updateType, response);
             });
             break;
         case UserAction.DELETE_COMMENT:
+            this._api.deleteComment(update).then(() => {
+                this._commentsModel.deleteComment(updateType, update);
+            });
             //при удалении комментариев возвращать с сервера нечего, остается update
-            this._commentsModel.deleteComment(updateType, update);
             break;
         }
         // Здесь будем вызывать обновление модели.
@@ -112,10 +115,12 @@ export default class MovieList {
         switch (updateType) {
         case UpdateType.PATCH:
             // - обновить часть списка (например, когда удалили/добавили коммент)
+            
             this._moviePresenter[data.id].init(filmContainer, data);
             //this._moviePresenterExtra[data.id].init(filmContainer, data); добвавить условие
             break;
         case UpdateType.MINOR:
+            //console.log("отработал этот minor");
             this._clearMovieList();
             this._renderMovieList(); // - обновить список (без сброса сортировки и фильтров)*/
             

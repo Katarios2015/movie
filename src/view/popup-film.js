@@ -64,6 +64,7 @@ const createCommentTemplate = (data, commentsOfModel) => {
                 </li>`);
         }
     }
+    
     return includesComments;
 };
 
@@ -108,7 +109,7 @@ const createPopupTemplate = (data, commentsOfmodel) => {
         <div class="film-details__info-wrap">
           <div class="film-details__poster">
             <img class="film-details__poster-img" src=${poster} alt="">
-            <p class="film-details__age">${ageRating}</p>
+            <p class="film-details__age">${ageRating}+</p>
           </div>
           <div class="film-details__info">
             <div class="film-details__info-head">
@@ -288,8 +289,8 @@ export default class Popup extends SmartView {
             const newComment = {
                 id: 0,
                 comment: this._data.comment,
-                emotion: `./images/emoji/${this._data.imgSrc}.png`,
-                date: dayjs(new Date()).fromNow(), 
+                emotion: this._data.imgSrc,
+                //date: dayjs(new Date()).fromNow(), 
                 //author: "Kate",
             };
             this._callback.addCommentEnter(newComment);

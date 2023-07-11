@@ -47,8 +47,8 @@ export default class Comments extends Observer {
 
                 date: comment.date !== null ? new Date(comment.date) : comment.date,
             },
+            
         );
-        
         return adaptedComment;
     }
 

@@ -152,6 +152,7 @@ export default class Movie {
 
     _handleAddToWatchedListClick() {
         this._changeData(
+            
             UserAction.UPDATE_MOVIE,
             UpdateType.PATCH,
             Object.assign(
@@ -218,7 +219,7 @@ export default class Movie {
             UserAction.ADD_COMMENT,
             UpdateType.MINOR,
             newComment,
-            this._movieId
+            this._filmData.id
         );
 
         this._changeData(
@@ -235,15 +236,16 @@ export default class Movie {
         );
        
     }
-
-    
+   
 
     _handleModelEvent(updateType, data) {
         switch (updateType) {
         case UpdateType.PATCH:
+            
             // - обновить часть списка (например, когда удалили/добавили коммент)
             break;
         case UpdateType.MINOR:
+            //console.log("отработал этот minor");
             this._popupComponent.update(this._commentsModel.getComments(data.id));
             break;
         }
