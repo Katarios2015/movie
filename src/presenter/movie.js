@@ -247,7 +247,6 @@ export default class Movie {
             break;
         case UpdateType.MINOR:
             //console.log("отработал этот minor");
-
             this._popupComponent.update(this._commentsModel.getComments(data.id));
             break;
         }
