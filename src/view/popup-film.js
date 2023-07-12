@@ -290,8 +290,7 @@ export default class Popup extends SmartView {
                 id: "0",
                 comment: this._data.comment,
                 emotion: this._data.imgSrc,
-                date: new Date(), 
-                //author: "Kate",
+                date: new Date(),
             };
             this._callback.addCommentEnter(newComment);
         }

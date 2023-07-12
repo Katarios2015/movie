@@ -114,9 +114,9 @@ export default class Movie {
 
     _handleShowPopupClick() {
         this._changeMode();
+        
         this._api.getComments(this._filmData.id)
             .then((comments) => {
-                console.log(comments);
                 this._commentsModel.setComments(comments);
                 this._popupComponent =  new PopupView(this._filmData, this._commentsModel.getComments());
                 this._movieId = this._filmData.id;
@@ -235,6 +235,7 @@ export default class Movie {
             
         );
        
+       
     }
    
 
@@ -246,6 +247,7 @@ export default class Movie {
             break;
         case UpdateType.MINOR:
             //console.log("отработал этот minor");
+
             this._popupComponent.update(this._commentsModel.getComments(data.id));
             break;
         }

@@ -116,8 +116,8 @@ export default class MovieList {
         switch (updateType) {
         case UpdateType.PATCH:
             // - обновить часть списка (например, когда удалили/добавили коммент)
-            
             this._moviePresenter[data.id].init(filmContainer, data);
+            console.log(this._moviePresenter);
             //this._moviePresenterExtra[data.id].init(filmContainer, data); добвавить условие
             break;
         case UpdateType.MINOR:
