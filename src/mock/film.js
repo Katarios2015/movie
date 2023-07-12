@@ -1,4 +1,4 @@
-import {getRandomArrayElement, getRandomCeilNumber, getRandomNumber, getRandomArray, getTimeFormat} from "../utils/common.js";
+import {getRandomArrayElement, getRandomCeilNumber, getRandomNumber, getRandomArray} from "../utils/common.js";
 import {nanoid} from "nanoid";
 import {dayjs} from "../utils/common.js";
 import {relativeTime} from "../utils/common.js";

@@ -49,6 +49,7 @@ export default class Comments extends Observer {
             },
             
         );
+        delete adaptedComment.date;
         return adaptedComment;
     }
 
@@ -61,6 +62,7 @@ export default class Comments extends Observer {
             },
         );
         // Ненужные ключи мы удаляем
+        delete adaptedComment.date;
         return adaptedComment;
     }
 }//"date": movie.filmInfo.release.date instanceof Date ? movie.filmInfo.release.date.toISOString() : null,

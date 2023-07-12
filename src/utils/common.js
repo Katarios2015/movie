@@ -1,10 +1,13 @@
 export const dayjs = require("dayjs");
 export const relativeTime = require("dayjs/plugin/relativeTime");
+dayjs.extend(relativeTime);
+const duration = require("dayjs/plugin/duration");
+dayjs.extend(duration);
+
 export const utc = require("dayjs/plugin/utc");
 export const he = require("he");
 
 import {RANKS} from "./constants.js";
-
 
 const getRandomArrayElement = (items) => {
     const randElement = items[Math.floor(Math.random() * items.length)];

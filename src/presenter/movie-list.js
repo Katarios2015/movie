@@ -89,6 +89,7 @@ export default class MovieList {
         switch (actionType) {
         case UserAction.UPDATE_MOVIE:
             this._api.updateMovie(update).then((response) => {
+                //console.log(response);
                 this._moviesModel.updateMovie(updateType, response);
             });
             break;

@@ -287,10 +287,10 @@ export default class Popup extends SmartView {
                 return;
             }
             const newComment = {
-                id: 0,
+                id: "0",
                 comment: this._data.comment,
                 emotion: this._data.imgSrc,
-                //date: dayjs(new Date()).fromNow(), 
+                date: new Date(), 
                 //author: "Kate",
             };
             this._callback.addCommentEnter(newComment);
