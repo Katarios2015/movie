@@ -41,7 +41,6 @@ export default class Movie {
     init(filmContainer, filmData) {
         this._filmContainer = filmContainer;
         this._filmData = filmData;
-        
         const prevFilmCardComponent = this._filmCardComponent;
         const prevPopupComponent = this._popupComponent;
         this._popupComponent =  new PopupView(this._filmData, this._commentsModel.getComments());
@@ -114,7 +113,6 @@ export default class Movie {
 
     _handleShowPopupClick() {
         this._changeMode();
-        
         this._api.getComments(this._filmData.id)
             .then((comments) => {
                 this._commentsModel.setComments(comments);
@@ -234,19 +232,23 @@ export default class Movie {
             ),
             
         );
-       
-       
+        
+        this.prevPopupComponent = this._popupComponent;
+        if (this.prevPopupComponent !== null &&  this._mode === Mode.EDITING) {
+            replace(this._popupComponent, this.prevPopupComponent);
+            this._handleShowPopupClick();
+        }
+        remove(this.prevPopupComponent);
+      
     }
-   
+    
 
     _handleModelEvent(updateType, data) {
         switch (updateType) {
-        case UpdateType.PATCH:
-            
+        case UpdateType.PATCH:      
             // - обновить часть списка (например, когда удалили/добавили коммент)
             break;
         case UpdateType.MINOR:
-            //console.log("отработал этот minor");
             this._popupComponent.update(this._commentsModel.getComments(data.id));
             break;
         }

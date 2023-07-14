@@ -27,12 +27,12 @@ export default class Api {
     }
     
     updateMovie(movies) {
-        console.log(this._load(
+        /*console.log(this._load(
             {url: `movies/${movies.id}`,
             method: Method.PUT,
             body: JSON.stringify(MoviesModel.adaptToServer(movies)),
             headers: new Headers({"Content-Type": "application/json"}),
-        }));
+        }));*/
         
         return this._load({
             

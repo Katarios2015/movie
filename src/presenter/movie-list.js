@@ -95,7 +95,6 @@ export default class MovieList {
             break;
         case UserAction.ADD_COMMENT:
             this._api.addComment(update, movieId).then((response) => {
-                console.log(response);
                 this._commentsModel.addComment(updateType, response);
             });
             break;

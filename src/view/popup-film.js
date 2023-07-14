@@ -232,6 +232,7 @@ export default class Popup extends SmartView {
         this.getElement().scrollTop = scrollTop;
     }
 
+
     getTemplate() {
         return createPopupTemplate(this._data, this._comments);
     }
