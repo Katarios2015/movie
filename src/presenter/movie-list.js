@@ -95,7 +95,9 @@ export default class MovieList {
             break;
         case UserAction.ADD_COMMENT:
             this._api.addComment(update, movieId).then((response) => {
-                this._commentsModel.addComment(updateType, response);
+                console.log(response);
+                this._commentsModel.setComments(response.comments);
+                this._moviesModel.updateMovie(updateType, response.movie);
             });
             break;
         case UserAction.DELETE_COMMENT:
@@ -117,6 +119,7 @@ export default class MovieList {
             // - обновить часть списка (например, когда удалили/добавили коммент)
             this._moviePresenter[data.id].init(filmContainer, data);
             console.log(this._moviePresenter);
+            console .log(this._commentsModel.getComments());
             //this._moviePresenterExtra[data.id].init(filmContainer, data); добвавить условие
             break;
         case UpdateType.MINOR:

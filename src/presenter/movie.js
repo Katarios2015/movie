@@ -116,6 +116,7 @@ export default class Movie {
         this._api.getComments(this._filmData.id)
             .then((comments) => {
                 this._commentsModel.setComments(comments);
+                console.log(this._commentsModel.getComments());
                 this._popupComponent =  new PopupView(this._filmData, this._commentsModel.getComments());
                 this._movieId = this._filmData.id;
                 render(this._siteBodyContainer, this._popupComponent, RenderPosition.BEFOREEND);
@@ -233,12 +234,7 @@ export default class Movie {
             
         );
         
-        this.prevPopupComponent = this._popupComponent;
-        if (this.prevPopupComponent !== null &&  this._mode === Mode.EDITING) {
-            replace(this._popupComponent, this.prevPopupComponent);
-            this._handleShowPopupClick();
-        }
-        remove(this.prevPopupComponent);
+        
       
     }
     
@@ -249,7 +245,7 @@ export default class Movie {
             // - обновить часть списка (например, когда удалили/добавили коммент)
             break;
         case UpdateType.MINOR:
-            this._popupComponent.update(this._commentsModel.getComments(data.id));
+            this._popupComponent.update(this._commentsModel.getComments());
             break;
         }
     }
