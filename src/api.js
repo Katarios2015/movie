@@ -61,7 +61,14 @@ export default class Api {
             headers: new Headers({"Content-Type": "application/json"}),
         })
             .then(Api.toJSON)
-            .then(CommentsModel.adaptToClient);
+            .then((response)=>{ 
+                return Object.assign(
+                    {},
+                    {
+                        comments: response.comments.map(CommentsModel.adaptToClient)
+                    }
+                );
+            });
     }
 
     deleteComment(comment) {
@@ -78,8 +85,6 @@ export default class Api {
         headers = new Headers(),
     }) {
         headers.append("Authorization", this._authorization);
-  console.log( `${this._endPoint}/${url}`,
-  {method, body, headers});
         return fetch(
             `${this._endPoint}/${url}`,
             {method, body, headers},

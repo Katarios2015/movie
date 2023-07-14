@@ -233,23 +233,18 @@ export default class Movie {
             
         );
         
-        this.prevPopupComponent = this._popupComponent;
-        if (this.prevPopupComponent !== null &&  this._mode === Mode.EDITING) {
-            replace(this._popupComponent, this.prevPopupComponent);
-            this._handleShowPopupClick();
-        }
-        remove(this.prevPopupComponent);
+        
       
     }
     
 
-    _handleModelEvent(updateType, data) {
+    _handleModelEvent(updateType) {
         switch (updateType) {
         case UpdateType.PATCH:      
             // - обновить часть списка (например, когда удалили/добавили коммент)
             break;
         case UpdateType.MINOR:
-            this._popupComponent.update(this._commentsModel.getComments(data.id));
+            this._popupComponent.update(this._commentsModel.getComments());
             break;
         }
     }

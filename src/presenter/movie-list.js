@@ -88,14 +88,18 @@ export default class MovieList {
     _handleViewAction(actionType, updateType, update, movieId) {
         switch (actionType) {
         case UserAction.UPDATE_MOVIE:
+        
             this._api.updateMovie(update).then((response) => {
-                //console.log(response);
+                console.log(response);
                 this._moviesModel.updateMovie(updateType, response);
+                //this._moviesModel.updateMovie(updateType, response.movie);
             });
             break;
         case UserAction.ADD_COMMENT:
             this._api.addComment(update, movieId).then((response) => {
-                this._commentsModel.addComment(updateType, response);
+                console.log(response);
+                this._commentsModel.setComments(response.comments);
+                //this._moviesModel.updateMovie(updateType, response.movie.id);
             });
             break;
         case UserAction.DELETE_COMMENT:
@@ -117,6 +121,7 @@ export default class MovieList {
             // - обновить часть списка (например, когда удалили/добавили коммент)
             this._moviePresenter[data.id].init(filmContainer, data);
             console.log(this._moviePresenter);
+            console .log(this._commentsModel.getComments());
             //this._moviePresenterExtra[data.id].init(filmContainer, data); добвавить условие
             break;
         case UpdateType.MINOR:
