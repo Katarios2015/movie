@@ -8,7 +8,7 @@ import LoadView from "../view/loading.js";
 import {UserAction, UpdateType, SortType, ExtraTitle} from "../utils/constants.js";
 import {sortMovieDate, sortMovieRate, render, RenderPosition, remove} from "../utils/render.js";
 
-import MoviePresenter from "./movie.js";
+import MoviePresenter, {State} from "./movie.js";
 
 const MAX_FILM_COUNT = 5;
 const FILM_EXTRA_COUNT = 2;
@@ -100,9 +100,10 @@ export default class MovieList {
             });
             break;
         case UserAction.DELETE_COMMENT:
-            this._api.deleteComment(update).then(() => {
-                this._commentsModel.deleteComment(updateType, update);
-            });
+            this._api.deleteComment(update)
+                .then(() => {
+                    this._commentsModel.deleteComment(updateType, update);
+                });
             //при удалении комментариев возвращать с сервера нечего, остается update
             break;
         }
@@ -148,7 +149,6 @@ export default class MovieList {
     _getMovies() {
         const filterType = this._filterModel.getFilter();
         const movies = this._moviesModel.getMovies();
-        //console.log("filterType " + filterType);
         const filtredMovies = siteFilterMap[filterType](movies);
         const slicedArray = filtredMovies.slice();
         switch (this._currentSortType) {

@@ -9,6 +9,11 @@ const Mode = {
     EDITING: "EDITING",
 };
 
+export const State = {
+    SAVING: "SAVING",
+    DELETING: "DELETING",
+};
+
 export default class Movie {
     constructor (siteBody, changeData, changeMode, commentsModel, api) {
         this._siteBodyContainer = siteBody;
@@ -92,6 +97,8 @@ export default class Movie {
             this._handleHidePopup();
         }
     }
+
+   
 
     _onEscKeyDownHandler(evt) {
         if (evt.key === "Escape" || evt.keyCode === 27) {
@@ -211,6 +218,8 @@ export default class Movie {
         );
     }
 
+
+
     _handleAddComment(newComment) {
       
         this._changeData(
@@ -232,9 +241,6 @@ export default class Movie {
             ),
             
         );
-        
-        
-      
     }
     
 

@@ -65,12 +65,12 @@ export default class Movies extends Observer {
                 }
             },
         );
-        //delete adaptedMovie.film_info;
+        delete adaptedMovie.film_info;
         //delete adaptedMovie.film_info.alternative_title;
         //delete adaptedMovie.film_info.total_rating;
         //delete adaptedMovie.film_info.age_rating;
         //delete adaptedMovie.film_info.release.release_country;
-       // delete adaptedMovie.user_details;
+        delete adaptedMovie.user_details;
         //delete adaptedMovie.user_details.already_watched;
 
         return adaptedMovie;
