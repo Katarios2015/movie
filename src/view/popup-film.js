@@ -4,6 +4,7 @@ import {dayjs} from "../utils/common.js";
 import {getTimeFormat} from "../utils/common.js";
 import {EMOJI} from "../utils/constants.js";
 
+
 const createGenreTemplate = (data) => {
     const {filmInfo:{genre}} = data;
     let genreEnding = "";
@@ -43,7 +44,7 @@ const createPopupControls = (data) => {
 };
 
 
-const createCommentTemplate = (data, commentsOfModel) => { 
+const createCommentTemplate = (data, commentsOfModel, isDisabled, isDeleting) => { 
     const includesComments = []; 
     for(const commentItem of commentsOfModel) {
         if(data.includes(commentItem.id)) {
@@ -58,7 +59,7 @@ const createCommentTemplate = (data, commentsOfModel) => {
                 <p class="film-details__comment-info">
                 <span class="film-details__comment-author">${author}</span>
                 <span class="film-details__comment-day">${dayjs(date).fromNow()}</span>
-                <button class="film-details__comment-delete" data-id="${id}">Delete</button>
+                <button class="film-details__comment-delete"${isDisabled ? "disabled" : ""} data-id="${id}">${isDeleting ? "Deleting..." : "Delete"}</button>
                 </p>
                 </div>
                 </li>`);
@@ -92,7 +93,7 @@ const createNewCommentTemplate = (isChecked, imgSrc, comment) => {
   </div>`);
 };
 
-const createPopupTemplate = (data, commentsOfmodel) => {
+const createPopupTemplate = (data, commentsOfmodel, isDisabled) => {
     const {filmInfo:{poster, title, alternativeTitle,
         director, writers, actors,
         totalRating, ageRating, 
@@ -101,7 +102,7 @@ const createPopupTemplate = (data, commentsOfmodel) => {
     const newFormatDuration = getTimeFormat(runtime);
 
     return `<section class="film-details">
-    <form class="film-details__inner" action="" method="get">
+    <form class="film-details__inner" action="" method="get" ${isDisabled ? "disabled" : ""}>
       <div class="film-details__top-container">
         <div class="film-details__close">
           <button class="film-details__close-btn" type="button">close</button>
@@ -206,7 +207,7 @@ export default class Popup extends SmartView {
             {
                 isChecked: "",
                 imgSrc: "",
-                comment: ""
+                comment: "",
             }
         );
     }
@@ -224,6 +225,8 @@ export default class Popup extends SmartView {
             this._parseFilmToData(popupFilm)
         );
     }
+
+
 
     update(comments) {
         this._comments = comments.slice();

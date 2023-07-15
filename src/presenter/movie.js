@@ -9,6 +9,11 @@ const Mode = {
     EDITING: "EDITING",
 };
 
+export const State = {
+    SAVING: "SAVING",
+    DELETING: "DELETING",
+};
+
 export default class Movie {
     constructor (siteBody, changeData, changeMode, commentsModel, api) {
         this._siteBodyContainer = siteBody;
@@ -93,6 +98,8 @@ export default class Movie {
         }
     }
 
+   
+
     _onEscKeyDownHandler(evt) {
         if (evt.key === "Escape" || evt.keyCode === 27) {
             evt.preventDefault();
@@ -116,7 +123,6 @@ export default class Movie {
         this._api.getComments(this._filmData.id)
             .then((comments) => {
                 this._commentsModel.setComments(comments);
-                console.log(this._commentsModel.getComments());
                 this._popupComponent =  new PopupView(this._filmData, this._commentsModel.getComments());
                 this._movieId = this._filmData.id;
                 render(this._siteBodyContainer, this._popupComponent, RenderPosition.BEFOREEND);
@@ -212,6 +218,8 @@ export default class Movie {
         );
     }
 
+
+
     _handleAddComment(newComment) {
       
         this._changeData(
@@ -233,13 +241,10 @@ export default class Movie {
             ),
             
         );
-        
-        
-      
     }
     
 
-    _handleModelEvent(updateType, data) {
+    _handleModelEvent(updateType) {
         switch (updateType) {
         case UpdateType.PATCH:      
             // - обновить часть списка (например, когда удалили/добавили коммент)
