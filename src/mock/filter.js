@@ -1,8 +1,8 @@
 const siteFilterMap = {
     all: (mockFilms) => mockFilms.length,
-    watchlist: (mockFilms) => mockFilms.filter((film) => film.isWatchList).length,
-    history:  (mockFilms) => mockFilms.filter((film) => film.isWatched).length,
-    favorites:  (mockFilms) => mockFilms.filter((film) => film.isFavorite).length,
+    watchlist: (mockFilms) => mockFilms.filter((film) => film.userDetails.watchlist).length,
+    history:  (mockFilms) => mockFilms.filter((film) => film.userDetails.alreadyWatched).length,
+    favorites:  (mockFilms) => mockFilms.filter((film) => film.userDetails.favorite).length,
 };
 
 const generateFilter = (mockFilms) => {

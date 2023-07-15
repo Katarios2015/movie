@@ -30,16 +30,4 @@ export default class MainNav extends AbstractView {
         this._callback.menuClick = callback;
         this.getElement().addEventListener("click", this._menuClickHandler);
     }
-
-
-    
-    /*setMenuItem(menuItem) {
-        const item = this.getElement().querySelector(`[data-item-type=${menuItem}]`);
-    
-        if (item !== null) {
-            item.checked = true;
-        }
-    }*/
-
-
 }

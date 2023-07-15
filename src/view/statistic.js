@@ -1,14 +1,11 @@
-import dayjs from "dayjs";
+//import dayjs from "dayjs";
 import Chart from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import SmartView from "./smart.js";
-//import {siteFilterMap} from "../utils/filter.js";
-import {InputType} from "../utils/constants.js";
+import {InputType, DATASETS, DATALABELS, SCALES} from "../utils/constants.js";
 import {getSortedGenreObject, getDurationTotal, getTopGenre, getWatchedArray, siteInputMap} from "../utils/statistic.js";
 import {getTimeFormatHours, getTimeFormatMinutes, getUserRank, getUpperCase} from "../utils/common.js";
 
-/*<input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" checked>
-      <label for="statistic-all-time" class="statistic__filters-label">All time</label>*/
 
 const createInputTemplate = (input, currentInput)=> {
     const {type, name} = input;
@@ -27,20 +24,14 @@ const createStatsMenuTemplate = (inputs, currentInput) => {
     ${inputTemplate}</form>`;
 };
 
-
-
 const renderGenresChart = (statisticCtx, data) => {
     const BAR_HEIGHT = 50; //вынести в файл констант
     const whatchedArray = getWatchedArray(data);
-    
     if (whatchedArray === []) {
         return "";
     }
-
     const genreObject = getSortedGenreObject(whatchedArray);
-    console.log(genreObject);
     const arrayOfObgectGenres = Object.entries(genreObject).sort((a,b)=>b[1]-a[1]);
-    console.log(arrayOfObgectGenres);
     let generKeys = [];
     let genres = [];
 
@@ -48,7 +39,6 @@ const renderGenresChart = (statisticCtx, data) => {
         genres = [...genres, name];
         generKeys = [...generKeys, count];
     });
- 
     // Обязательно рассчитайте высоту canvas, она зависит от количества элементов диаграммы
     statisticCtx.height = BAR_HEIGHT * arrayOfObgectGenres.length;
     // Функция для отрисовки диаграммы(количество просмотренных фильмов в разрезе жанров)
@@ -59,35 +49,35 @@ const renderGenresChart = (statisticCtx, data) => {
             labels: genres,
             datasets: [{
                 data: generKeys,
-                backgroundColor: "#ffe800",
-                hoverBackgroundColor: "#ffe800",
-                anchor: "start",
+                backgroundColor: DATASETS.BACKGROUND_COLOR,
+                hoverBackgroundColor: DATASETS.HOVER_BACKGROUND_COLOR,
+                anchor: DATASETS.ANCHOR,
             }],
         },
         options: {
             plugins: {
                 datalabels: {
                     font: {
-                        size: 20,
+                        size: DATALABELS.FONT_SIZE,
                     },
-                    color: "#ffffff",
-                    anchor: "start",
-                    align: "start",
-                    offset: 40,
+                    color: DATALABELS.COLOR,
+                    anchor: DATALABELS.ANCHOR,
+                    align: DATALABELS.ALIGN,
+                    offset: DATALABELS.OFFSET,
                 },
             },
             scales: {
                 yAxes: [{
                     ticks: {
-                        fontColor: "#ffffff",
-                        padding: 100,
-                        fontSize: 20,
+                        fontColor: SCALES.TICKS_FONTCOLOR,
+                        padding: SCALES.TICKS_PADDING,
+                        fontSize: SCALES.TICKS_FONTSIZE,
                     },
                     gridLines: {
                         display: false,
                         drawBorder: false,
                     },
-                    barThickness: 24,
+                    barThickness: SCALES.BARTHICKNESS,
                 }],
                 xAxes: [{
                     ticks: {
@@ -107,16 +97,11 @@ const renderGenresChart = (statisticCtx, data) => {
                 enabled: false,
             },
         },
-    });
-     
-    
+    });    
 }; 
 
 
 const createStatsTemplate = (data, inputs, currentInput, whatchedArray) => {
-   // const whatchedArray = getWatchedArray(data);
-    //const allWhatchedFilmLength = whatchedArray.length;
-   
     const genreObject = getSortedGenreObject(data);
     
     const TopGenre = getTopGenre(genreObject);
@@ -127,7 +112,7 @@ const createStatsTemplate = (data, inputs, currentInput, whatchedArray) => {
     <p class="statistic__rank">
       Your rank
       <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-      <span class="statistic__rank-label">${getUpperCase(getUserRank(whatchedArray.length))}</span>
+      <span class="statistic__rank-label">${getUserRank(whatchedArray.length)}</span>
     </p>
     ${createStatsMenuTemplate(inputs, currentInput)}
 
@@ -156,8 +141,6 @@ const createStatsTemplate = (data, inputs, currentInput, whatchedArray) => {
 };
 
 
-    //this.#data = filmsToFilterMap[this.#currentFilter](this.#watchedFilms);
-
 export default class Stats extends SmartView {
     constructor(movies) {
         super();
@@ -167,17 +150,15 @@ export default class Stats extends SmartView {
         this._currentInput =  InputType.ALL_TIME;
         
         this._whatchedArray = getWatchedArray(this._movies);
-        this._whatchedArray.forEach((item) => console.log(item.watchingDate));
+        
+        //this._whatchedArray.forEach((item) => console.log(item.user_details.watching_date));
         
         this._data = siteInputMap[this._currentInput](this._movies);
-        //this._setCharts();
         this._inputTypeChangeHandler = this._inputTypeChangeHandler.bind(this);
-        this.setInputTypeChangeHandler(this._inputTypeChangeHandler);
-        
+        this.setInputTypeChangeHandler(this._inputTypeChangeHandler);  
     }
 
-    getTemplate () {
-        
+    getTemplate () {       
         return createStatsTemplate(this._data, this._inputs, this._currentInput, this._whatchedArray);
     }
 
@@ -185,7 +166,6 @@ export default class Stats extends SmartView {
         this.setCharts();
         this.setInputTypeChangeHandler();
     }
-
 
     setCharts() {
         // Нужно отрисовать диаграмму
@@ -198,16 +178,11 @@ export default class Stats extends SmartView {
     }
 
     _inputTypeChangeHandler(evt) {
-        /*if (evt.target.tagName !== "A") {
-            return;
-        }*/
+
         evt.preventDefault();
         this._currentInput = evt.target.value;
-        
         this._data = siteInputMap[this._currentInput](this._whatchedArray);
-       
         this.updateElement();
-        //this._callback.inputTypeChange();
     }
     
     setInputTypeChangeHandler(callback) {
@@ -217,32 +192,26 @@ export default class Stats extends SmartView {
     }
 
     _getInputs() {
-
         return [
             {
                 type: InputType.ALL_TIME,
                 name: "All time",
-                //count: siteInputMap[InputType.ALL_TIME](movies).length,
             },
             {
                 type: InputType.TODAY,
                 name: "Today",
-                //count: siteInputMap[InputType.TODAY](movies).length,
             },
             {
                 type: InputType.WEEK,
                 name: "Week",
-                //count: siteInputMap[InputType.WEEK](movies).length,
             },
             {
                 type: InputType.MONTH,
                 name: "Month",
-                //count: siteInputMap[InputType.MONTH](movies).length,
             },
             {
                 type: InputType.YEAR,
                 name: "Year",
-                //count: siteInputMap[InputType.YEAR](movies).length,
             },
   
         ];

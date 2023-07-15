@@ -1,4 +1,4 @@
-import {getRandomArrayElement, getRandomCeilNumber, getRandomNumber, getRandomArray, getTimeFormat} from "../utils/common.js";
+import {getRandomArrayElement, getRandomCeilNumber, getRandomNumber, getRandomArray} from "../utils/common.js";
 import {nanoid} from "nanoid";
 import {dayjs} from "../utils/common.js";
 import {relativeTime} from "../utils/common.js";
@@ -43,7 +43,7 @@ const commentIds = [5, 120, 7, 140, 1];
 const directors = ["Anthony Mann", "Guy Ritchie", "David Yates", "Ridley Scott", "Alfred Hitchcock"];
 const writers = ["Anne Wigton", "Heinz Herald", "Richard Weil", "Russell Tee", "Noel Adams", "Clemence Dane"];
 const actors = ["Robert De Niro", "Jack Nicholson", "Marlon Brando", "Denzel Washington", "Katharine Hepburn"];
-const releases = ["2019-05-11T00:00:00.000Z", "2019-05-11T00:00:00.000Z", "2019-05-11T00:00:00.000Z", "2019-05-11T00:00:00.000Z"];
+const releases = ["2009-05-11T00:00:00.000Z", "2010-05-11T00:00:00.000Z", "2000-05-11T00:00:00.000Z", "2019-05-11T00:00:00.000Z"];
 const countryes = ["USA","Great Britain", "Russia"];
 
 const commentAthors = ["Ivan Pypkov", "Kate Ritchie", "David", "Roman Scott", "Alfred"];
@@ -58,7 +58,6 @@ const commentEmotions = [
     "./images/emoji/smile.png"
 ];
 
-
 //const dateCommentFormat = dayjs(getRandomArrayElement(commentDates)).format("YYYY/MM/DD  hh:mm:ss");
 
 const generatePopupComment = () => {
@@ -66,17 +65,14 @@ const generatePopupComment = () => {
     return {
         id: getRandomArrayElement(commentIds).toString(),
         author: getRandomArrayElement(commentAthors),
-        commentText: getRandomArray(filmDescriptions, 0, 5),
+        comment: getRandomArray(filmDescriptions, 0, 5),
         //date: dayjs(getRandomArrayElement(commentDates)).format("YYYY/MM/DD  hh:mm"),//по общему тз
         date: dayjs(getRandomArrayElement(commentInFormatDates)).fromNow(),//по доп заданию в тз
         emotion: getRandomArrayElement(commentEmotions),
     };
 };
 
-
-
 const popupComments = new Array(MAX_COMMENTS_COUNT).fill().map(generatePopupComment);
-
 
 const getCommentsId = () => {
     const newPopupComments = popupComments.slice();
@@ -85,32 +81,35 @@ const getCommentsId = () => {
 
 };
 
-
 const generateFilm = () => {
     //const idOfComments = getRandomArrayElement(commentIds);
     return {
         id: nanoid(),
-        poster: getRandomArrayElement(filmPosters),
-        title: getRandomArrayElement(filmTitles),
-        rate: getRandomNumber(0, 10),
-        year: getRandomCeilNumber(1921, 2005),
-        duration: getRandomArrayElement(filmDurations),
-        genres:  getRandomArray(filmGenres, 0, 3),
-        description: getRandomArray(filmDescriptions, 0, 5),
         comments: getCommentsId(),
-        
-        isWatchList: Boolean(getRandomCeilNumber(0, 1)),
-        isWatched: Boolean(getRandomCeilNumber(0, 1)),
-        isFavorite: Boolean(getRandomCeilNumber(0, 1)),
-        watchingDate:getRandomArrayElement(watchingInFormatDates),
-
-        originalTitle: getRandomArrayElement(filmTitles),
-        director: getRandomArrayElement(directors),
-        writers: getRandomArray(writers, 0, 3),
-        actors: getRandomArray(actors, 0, 5),
-        release: dayjs(getRandomArrayElement(releases)).format("DD MMMM YYYY"),
-        ageRate: `${getRandomCeilNumber(0, 18)}+`,
-        country: getRandomArrayElement(countryes),
+        filmInfo: {
+            title: getRandomArrayElement(filmTitles),
+            alternativeTitle: getRandomArrayElement(filmTitles),//originalTitle
+            totalRating : getRandomNumber(0, 10),//rate
+            poster: getRandomArrayElement(filmPosters),
+            ageRating: `${getRandomCeilNumber(0, 18)}+`,//ageRate
+            director: getRandomArrayElement(directors),
+            writers: getRandomArray(writers, 0, 3),
+            actors: getRandomArray(actors, 0, 5),
+            release: {
+                date: getRandomArrayElement(releases),//release dayjs(getRandomArrayElement(releases)).format("DD MMMM YYYY")
+                //year: getRandomCeilNumber(1921, 2005),брать год в карточку фильма из даты релиза
+                releaseCountry: getRandomArrayElement(countryes),//country
+            },
+            runtime: getRandomArrayElement(filmDurations),//duration
+            genre:  getRandomArray(filmGenres, 0, 3),//genres
+            description: getRandomArray(filmDescriptions, 0, 5),
+        },
+        userDetails: {
+            watchlist: Boolean(getRandomCeilNumber(0, 1)),//isWatchList
+            alreadyWatched: Boolean(getRandomCeilNumber(0, 1)),//isWatched
+            watchingDate:getRandomArrayElement(watchingInFormatDates),//watchingDate
+            favorite: Boolean(getRandomCeilNumber(0, 1)),//isFavorite
+        }   
     };
 };
 

@@ -1,16 +1,17 @@
 import AbstractView from "./abstract.js";
 import {getTimeFormat} from "../utils/common.js";
+import {dayjs} from "../utils/common.js";
 
 const createFilmsControls = (film) => {
-    const {isWatchList, isWatched, isFavorite} = film;
+    const {userDetails:{watchlist, alreadyWatched, favorite}} = film;
 
-    const watchListClass = isWatchList
+    const watchListClass = watchlist
         ? "film-card__controls-item--add-to-watchlist film-card__controls-item--active" :
         "film-card__controls-item--add-to-watchlist";
-    const watchedClass = isWatched
+    const watchedClass = alreadyWatched
         ? "film-card__controls-item--mark-as-watched film-card__controls-item--active" :
         "film-card__controls-item--mark-as-watched";
-    const favoriteClass = isFavorite
+    const favoriteClass = favorite
         ? "film-card__controls-item--favorite film-card__controls-item--active" :
         "film-card__controls-item--favorite";
 
@@ -21,20 +22,22 @@ const createFilmsControls = (film) => {
     
 };
 
-
-
 const createFilmCardTemplate = (film) => {
-    const {poster, title, rate, year, duration, genres, description, comments} = film;
-    const genre = genres.slice(0, 1);
-    const newFormatDuration = getTimeFormat(duration);
+    const {
+        filmInfo:
+        {poster, title, totalRating, 
+            release:{date}, 
+            runtime, genre, description}, comments} = film;
+    const genres = genre.slice(0, 1);
+    const newFormatDuration = getTimeFormat(runtime);
 
     return `<article class="film-card">
     <h3 class="film-card__title">${title}</h3>
-    <p class="film-card__rating">${rate}</p>
+    <p class="film-card__rating">${totalRating}</p>
     <p class="film-card__info">
-      <span class="film-card__year">${year}</span>
+      <span class="film-card__year">${dayjs(date).format("YYYY")}</span>
       <span class="film-card__duration">${newFormatDuration}</span>
-      <span class="film-card__genre">${genre}</span>
+      <span class="film-card__genre">${genres}</span>
     </p>
     <img src="${poster}" alt="" class="film-card__poster">
     <p class="film-card__description">${description}</p>
@@ -65,7 +68,6 @@ export default class FilmCard extends AbstractView{
         return createFilmCardTemplate(this._film);
     }
 
-
     _filmPosterClickHandler(evt) {
         evt.preventDefault();
         this._callback.clickPoster();
@@ -83,15 +85,11 @@ export default class FilmCard extends AbstractView{
         this._callback.clickComment();
     }
 
-
-
     _filmCardMove(evt) {
         evt.preventDefault();
         // 3. А внутри абстрактного обработчика вызовем колбэк
         this._callback.move();
     }
-
-
 
     _addToWhatchListClickHandler(evt) {
         evt.preventDefault();
@@ -110,8 +108,6 @@ export default class FilmCard extends AbstractView{
         // 3. А внутри абстрактного обработчика вызовем колбэк
         this._callback.clickItemToFavorite();
     }
-
-
 
     setPosterClickHandler (callback) {
         this._callback.clickPoster = callback;
@@ -137,9 +133,6 @@ export default class FilmCard extends AbstractView{
             .addEventListener("click", this._filmCommentsClickHandler);
     }
 
-
-
-
     setAddToWatchListClickHandler (callback) {
         this._callback.clickItemWatchList = callback;
         this.getElement().querySelector(".film-card__controls-item--add-to-watchlist")
@@ -157,7 +150,6 @@ export default class FilmCard extends AbstractView{
         this.getElement().querySelector(".film-card__controls-item--favorite")
             .addEventListener("click", this._addToFavoriteClickHandler);
     }
-
 }
 
 

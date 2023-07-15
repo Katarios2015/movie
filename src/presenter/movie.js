@@ -1,10 +1,8 @@
 import FilmCardView from "../view/film-card.js";
 import PopupView from "../view/popup-film.js";
 import {render, RenderPosition, replace, remove} from "../utils/render.js";
-
-//import  UserAction from "../utils/constants.js";
-//import  UpdateType from "../utils/constants.js";
 import {UserAction, UpdateType} from "../utils/constants.js";
+
 
 const Mode = {
     DEFAULT: "DEFAULT",
@@ -12,13 +10,14 @@ const Mode = {
 };
 
 export default class Movie {
-    constructor (siteBody, changeData, changeMode, commentsModel) {
+    constructor (siteBody, changeData, changeMode, commentsModel, api) {
         this._siteBodyContainer = siteBody;
         this._changeData = changeData;
         this._changeMode = changeMode;
         this._mode = Mode.DEFAULT;
         this._filmCardComponent = null;
         this._popupComponent = null;
+        this._api = api; 
 
         this._commentsModel = commentsModel;
 
@@ -42,22 +41,16 @@ export default class Movie {
     init(filmContainer, filmData) {
         this._filmContainer = filmContainer;
         this._filmData = filmData;
-
-
         const prevFilmCardComponent = this._filmCardComponent;
         const prevPopupComponent = this._popupComponent;
-
+        this._popupComponent =  new PopupView(this._filmData, this._commentsModel.getComments());
         this._filmCardComponent = new FilmCardView(filmData);
-        
-        this._popupComponent = new PopupView(filmData, this._commentsModel.getComments());
-
         this._popupComponent.setExitBtnClickHandler(this._handleHidePopup);
 
         this._filmCardComponent.setPosterClickHandler(this._handleShowPopupClick);
         this._filmCardComponent.setTitleMoveHandler(this._handleMove);
         this._filmCardComponent.setTitleClickHandler(this._handleShowPopupClick);
         this._filmCardComponent.setCommentsClickHandler(this._handleShowPopupClick);
-
 
         this._filmCardComponent.setAddToWatchListClickHandler(this._handleAddToWatchedListClick);
         this._filmCardComponent.setAlreadyWatchedClickHandler(this._handleAddToAlreadyWatchedClick);
@@ -66,7 +59,6 @@ export default class Movie {
         this._popupComponent.setAddToWatchBtnListClickHandler(this._handleAddToWatchedListClick);
         this._popupComponent.setAlreadyWatchedBtnClickHandler(this._handleAddToAlreadyWatchedClick);
         this._popupComponent.setAddToFavoriteBtnClickHandler(this._handleAddToFavoriteClick);
-
         this._popupComponent.setDeleteCommentClickHandler(this._handleDeleteCommentClick);
         this._popupComponent.setAddCommentClickHandler(this._handleAddComment);
 
@@ -74,8 +66,6 @@ export default class Movie {
             render(this._filmContainer, this._filmCardComponent, RenderPosition.BEFOREEND);
             return;
         }
-
-
         if (this._mode === Mode.DEFAULT) {
             replace(this._filmCardComponent, prevFilmCardComponent);
         }
@@ -90,7 +80,6 @@ export default class Movie {
 
         remove(prevFilmCardComponent);
         remove(prevPopupComponent);
-
     }
 
     destroy() {
@@ -122,26 +111,27 @@ export default class Movie {
     this._mode = Mode.DEFAULT;
   }*/
 
-
     _handleShowPopupClick() {
         this._changeMode();
-       
-        render(this._siteBodyContainer, this._popupComponent, RenderPosition.BEFOREEND);
-        this._mode = Mode.EDITING;
-        this._commentsModel.addObserver(this._handleModelEvent);
+        this._api.getComments(this._filmData.id)
+            .then((comments) => {
+                this._commentsModel.setComments(comments);
+                this._popupComponent =  new PopupView(this._filmData, this._commentsModel.getComments());
+                this._movieId = this._filmData.id;
+                render(this._siteBodyContainer, this._popupComponent, RenderPosition.BEFOREEND);
+                this._mode = Mode.EDITING;
+                this._commentsModel.addObserver(this._handleModelEvent);
 
-        this._siteBodyContainer.classList.add("hide-overflow");
-        this._popupComponent.setExitBtnClickHandler(this._handleHidePopup);
-        this._popupComponent.setAddToWatchBtnListClickHandler(this._handleAddToWatchedListClick);
-        this._popupComponent.setAlreadyWatchedBtnClickHandler(this._handleAddToAlreadyWatchedClick);
-        this._popupComponent.setAddToFavoriteBtnClickHandler(this._handleAddToFavoriteClick);
-        this._popupComponent.setDeleteCommentClickHandler(this._handleDeleteCommentClick);
+                this._siteBodyContainer.classList.add("hide-overflow");
+                this._popupComponent.setExitBtnClickHandler(this._handleHidePopup);
+                this._popupComponent.setAddToWatchBtnListClickHandler(this._handleAddToWatchedListClick);
+                this._popupComponent.setAlreadyWatchedBtnClickHandler(this._handleAddToAlreadyWatchedClick);
+                this._popupComponent.setAddToFavoriteBtnClickHandler(this._handleAddToFavoriteClick);
 
-        this._popupComponent.setAddCommentClickHandler(this._handleAddComment);
-
-        document.addEventListener("keydown", this._onEscKeyDownHandler);
-
-        // console.log(this._mode);
+                this._popupComponent.setDeleteCommentClickHandler(this._handleDeleteCommentClick);
+                this._popupComponent.setAddCommentClickHandler(this._handleAddComment);
+                document.addEventListener("keydown", this._onEscKeyDownHandler);
+            });
     }
 
     _handleHidePopup() {
@@ -158,16 +148,16 @@ export default class Movie {
         this._filmCardComponent.getElement().querySelector(".film-card__title").style.cursor = "pointer";
     }
 
-
     _handleAddToWatchedListClick() {
         this._changeData(
+            
             UserAction.UPDATE_MOVIE,
             UpdateType.PATCH,
             Object.assign(
                 {},
                 this._filmData,
                 {
-                    isWatchList: !this._filmData.isWatchList,
+                    userDetails:{...this._filmData.userDetails, watchlist: !this._filmData.userDetails.watchlist},
                 },
             ),
         );
@@ -181,7 +171,7 @@ export default class Movie {
                 {},
                 this._filmData,
                 {
-                    isWatched: !this._filmData.isWatched,
+                    userDetails: {...this._filmData.userDetails, alreadyWatched: !this._filmData.userDetails.alreadyWatched},
                 },
             ),
         );
@@ -195,7 +185,7 @@ export default class Movie {
                 {},
                 this._filmData,
                 {
-                    isFavorite: !this._filmData.isFavorite,
+                    userDetails:{...this._filmData.userDetails, favorite: !this._filmData.userDetails.favorite},
                 },
             ),
         );
@@ -227,6 +217,7 @@ export default class Movie {
             UserAction.ADD_COMMENT,
             UpdateType.MINOR,
             newComment,
+            this._filmData.id
         );
 
         this._changeData(
@@ -239,16 +230,21 @@ export default class Movie {
                     comments: [...this._filmData.comments, (newComment.id)],
                 },
             ),
+            
         );
+        
+        
+      
     }
+    
 
-    _handleModelEvent(updateType, data) {
+    _handleModelEvent(updateType) {
         switch (updateType) {
-        case UpdateType.PATCH:
+        case UpdateType.PATCH:      
             // - обновить часть списка (например, когда удалили/добавили коммент)
             break;
         case UpdateType.MINOR:
-            this._popupComponent.update(this._commentsModel.getComments(data.id));
+            this._popupComponent.update(this._commentsModel.getComments());
             break;
         }
     }

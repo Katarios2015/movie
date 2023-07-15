@@ -1,18 +1,18 @@
 export const dayjs = require("dayjs");
 export const relativeTime = require("dayjs/plugin/relativeTime");
+dayjs.extend(relativeTime);
+const duration = require("dayjs/plugin/duration");
+dayjs.extend(duration);
+
 export const utc = require("dayjs/plugin/utc");
 export const he = require("he");
 
-const ranks = ["novice", "fan", "movie buff"];
-
+import {RANKS} from "./constants.js";
 
 const getRandomArrayElement = (items) => {
     const randElement = items[Math.floor(Math.random() * items.length)];
     return randElement;
 };
-
-
-
 
 const getRandomCeilNumber = (min, max) => {
     min = Math.ceil(min);
@@ -20,8 +20,6 @@ const getRandomCeilNumber = (min, max) => {
     const randCeilNumber = Number(Math.round(Math.random() * (max - min) + min));
     return randCeilNumber;
 };
-
-
 
 const getRandomNumber = (min, max) => {
     const randNumber = Number((Math.random() * (max - min) + min).toFixed(1));
@@ -61,21 +59,21 @@ const getTimeFormatMinutes = (minutes) => {
     return timeFormatMinutes;
 };
 
-const getUserRank = (whatchedFilmsCount) => {
-    let userRank = "";
-    if (whatchedFilmsCount >=1 && whatchedFilmsCount<= 10) {
-        userRank = ranks[0];
-    } else if (whatchedFilmsCount >=11 && whatchedFilmsCount<= 20) {
-        userRank = ranks[1];
-    }else if (whatchedFilmsCount >=21 ) {
-        userRank = ranks[2];
-    }
-    return userRank;
-};
-
 const getUpperCase = (lowString) => {
     const upperString = lowString[0].toUpperCase() + lowString.slice(1);
     return upperString;
+};
+
+const getUserRank = (whatchedFilmsCount) => {
+    let userRank = "";
+    if (whatchedFilmsCount >=1 && whatchedFilmsCount<= 10) {
+        userRank = getUpperCase(RANKS[0]);
+    } else if (whatchedFilmsCount >=11 && whatchedFilmsCount<= 20) {
+        userRank = getUpperCase(RANKS[1]);
+    }else if (whatchedFilmsCount >=21 ) {
+        userRank = getUpperCase(RANKS[2]);
+    }
+    return userRank;
 };
 
 
