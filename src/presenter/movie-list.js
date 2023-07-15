@@ -88,18 +88,15 @@ export default class MovieList {
     _handleViewAction(actionType, updateType, update, movieId) {
         switch (actionType) {
         case UserAction.UPDATE_MOVIE:
-        
             this._api.updateMovie(update).then((response) => {
                 console.log(response);
                 this._moviesModel.updateMovie(updateType, response);
-                //this._moviesModel.updateMovie(updateType, response.movie);
             });
             break;
         case UserAction.ADD_COMMENT:
             this._api.addComment(update, movieId).then((response) => {
                 console.log(response);
                 this._commentsModel.setComments(response.comments);
-                //this._moviesModel.updateMovie(updateType, response.movie.id);
             });
             break;
         case UserAction.DELETE_COMMENT:
