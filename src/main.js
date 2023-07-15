@@ -89,7 +89,6 @@ movieListPresenter.init();
 
 api.getMovies()
     .then((movies) => {
-        //console.log(movies);
         moviesModel.setMovies(UpdateType.INIT, movies);
         render(siteMainContainer, mainNavComponent, RenderPosition.AFTERBEGIN);
         const allWhatchedFilms = siteFilterMap[FilterType.HISTORY](moviesModel.getMovies()).length;
