@@ -1107,7 +1107,7 @@ button {
 }
 
 
-/*@keyframes shake {
+@keyframes shake {
         0%,
         100% {
             transform: translateX(0);
@@ -1131,4 +1131,4 @@ button {
 
     .shake {
         animation: shake 0.6s;
-    }*/
+    }
