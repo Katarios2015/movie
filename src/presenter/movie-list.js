@@ -88,26 +88,29 @@ export default class MovieList {
     _handleViewAction(actionType, updateType, update, movieId) {
         switch (actionType) {
         case UserAction.UPDATE_MOVIE:
+            this._moviePresenter[update.id].setViewState(State.ADDING);
             this._api.updateMovie(update).then((response) => {
                 this._moviesModel.updateMovie(updateType, response);
-            });
+            })
+                .catch(()=> {
+                    this._moviePresenter[update.id].setViewState(State.ABORTING);
+                });
             break;
         case UserAction.ADD_COMMENT:
             this._api.addComment(update, movieId).then((response) => {
                 this._commentsModel.setComments(response.comments);
             })
-                .catch(() => {
-                    this.setViewState(State.ABORTING);
+                .catch(()=> {
+                    this._moviePresenter[update.id].setViewState(State.ABORTING);
                 });
             break;
         case UserAction.DELETE_COMMENT:
-            
             this._api.deleteComment(update)
                 .then(() => {
                     this._commentsModel.deleteComment(updateType, update);
                 })
-                .catch(() => {
-                    this.setViewState(State.ABORTING);
+                .catch(()=> {
+                    this._moviePresenter[update.id].setViewState(State.ABORTING);
                 });
             //при удалении комментариев возвращать с сервера нечего, остается update
             break;

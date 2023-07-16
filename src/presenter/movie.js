@@ -101,7 +101,7 @@ export default class Movie {
 
     setViewState(state) {
         const resetFormState = () => {
-            this._taskEditComponent.updateData({
+            this._popupComponent.updateData({
                 isDisabled: false,
                 isDeleting: false,
             });
@@ -116,7 +116,6 @@ export default class Movie {
         case State.DELETING:
             this._popupComponent.updateData({
                 isDisabled: true,
-                isDeleting: true,
             });
             break;
         case State.ABORTING:
@@ -244,8 +243,6 @@ export default class Movie {
             ),
         );
     }
-
-
 
     _handleAddComment(newComment) {
         this.setViewState(State.ADDING);

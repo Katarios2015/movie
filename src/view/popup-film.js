@@ -294,6 +294,7 @@ export default class Popup extends SmartView {
             if (this._data.comment === "" || this._data.imgSrc === "") {
                 return;
             }
+            evt.preventDefault();
             const newComment = {
                 id: "0",
                 comment: this._data.comment,
