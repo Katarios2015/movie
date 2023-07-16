@@ -10,8 +10,9 @@ const Mode = {
 };
 
 export const State = {
-    SAVING: "SAVING",
+    ADDING: "ADDING",
     DELETING: "DELETING",
+    ABORTING: "ABORTING",
 };
 
 export default class Movie {
@@ -98,7 +99,31 @@ export default class Movie {
         }
     }
 
-   
+    setViewState(state) {
+        const resetFormState = () => {
+            this._popupComponent.updateData({
+                isDisabled: false,
+                isDeleting: false,
+            });
+        };
+        switch (state) {
+           
+        case State.ADDING:
+            this._popupComponent.updateData({
+                isDisabled: true,
+            });
+            break;
+        case State.DELETING:
+            this._popupComponent.updateData({
+                isDisabled: true,
+            });
+            break;
+        case State.ABORTING:
+            //this._filmCardComponent.shake(resetFormState);
+            this._popupComponent.shake(resetFormState);
+            break;
+        }
+    }
 
     _onEscKeyDownHandler(evt) {
         if (evt.key === "Escape" || evt.keyCode === 27) {
@@ -199,6 +224,7 @@ export default class Movie {
     }
 
     _handleDeleteCommentClick(deletedId) {
+        this.setViewState(State.DELETING);
         this._changeData(
             UserAction.DELETE_COMMENT,
             UpdateType.PATCH,            
@@ -218,10 +244,8 @@ export default class Movie {
         );
     }
 
-
-
     _handleAddComment(newComment) {
-      
+        this.setViewState(State.ADDING);
         this._changeData(
             UserAction.ADD_COMMENT,
             UpdateType.MINOR,

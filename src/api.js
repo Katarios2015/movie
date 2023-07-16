@@ -65,7 +65,7 @@ export default class Api {
             .then((response)=> { 
                 return Object.assign(
                     {},
-                  {
+                    {
                         comments: response.comments.map(CommentsModel.adaptToClient)
                     }
                 );

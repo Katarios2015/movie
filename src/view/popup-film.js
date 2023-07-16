@@ -59,17 +59,16 @@ const createCommentTemplate = (data, commentsOfModel, isDisabled, isDeleting) =>
                 <p class="film-details__comment-info">
                 <span class="film-details__comment-author">${author}</span>
                 <span class="film-details__comment-day">${dayjs(date).fromNow()}</span>
-                <button class="film-details__comment-delete"${isDisabled ? "disabled" : ""} data-id="${id}">${isDeleting ? "Deleting..." : "Delete"}</button>
+                <button class="film-details__comment-delete"${isDisabled ? "disabled" : ""} data-id="${id}">Delete</button>
                 </p>
                 </div>
                 </li>`);
         }
     }
-    
     return includesComments;
 };
 
-const createNewCommentTemplate = (isChecked, imgSrc, comment) => {
+const createNewCommentTemplate = (isChecked, imgSrc, comment, isDisabled) => {
     const emojiValues = Object.values(EMOJI);
    
     const emojiImg = isChecked ?
@@ -79,13 +78,15 @@ const createNewCommentTemplate = (isChecked, imgSrc, comment) => {
     <div class="film-details__add-emoji-label">${emojiImg}</div>
   
     <label class="film-details__comment-label">
-    <textarea class="film-details__comment-input"
-    placeholder="Select reaction below and write comment here" name="comment">${he.encode(comment)}</textarea>
+    <textarea 
+    class="film-details__comment-input"
+     placeholder="Select reaction below and write comment here" name="comment" ${isDisabled ? "disabled" : ""}>${he.encode(comment)}</textarea>
     </label>
   
     <div class="film-details__emoji-list">
       ${emojiValues.map((emotion) => `
-      <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emotion}" value="${emotion}">
+      <input class="film-details__emoji-item visually-hidden"
+       name="comment-emoji" type="radio" id="emoji-${emotion}" value="${emotion}">
       <label class="film-details__emoji-label" for="emoji-${emotion}">
         <img src="./images/emoji/${emotion}.png" width="30" height="30" alt="${emotion}">
       </label>`).join("")}
@@ -93,16 +94,16 @@ const createNewCommentTemplate = (isChecked, imgSrc, comment) => {
   </div>`);
 };
 
-const createPopupTemplate = (data, commentsOfmodel, isDisabled) => {
+const createPopupTemplate = (data, commentsOfmodel) => {
     const {filmInfo:{poster, title, alternativeTitle,
         director, writers, actors,
         totalRating, ageRating, 
         runtime, description, release:{date, releaseCountry}},
-    isChecked, imgSrc, comment} = data;
+    isChecked, imgSrc, comment, isDisabled, isDeleting} = data;
     const newFormatDuration = getTimeFormat(runtime);
 
     return `<section class="film-details">
-    <form class="film-details__inner" action="" method="get" ${isDisabled ? "disabled" : ""}>
+    <form class="film-details__inner" action="" method="get" >
       <div class="film-details__top-container">
         <div class="film-details__close">
           <button class="film-details__close-btn" type="button">close</button>
@@ -167,9 +168,9 @@ const createPopupTemplate = (data, commentsOfmodel, isDisabled) => {
           Comments <span class="film-details__comments-count">${data.comments.length}</span>
           </h3>
           <ul class="film-details__comments-list">
-           ${createCommentTemplate(data.comments, commentsOfmodel).join("")}
+           ${createCommentTemplate(data.comments, commentsOfmodel, isDisabled, isDeleting).join("")}
           </ul>
-          ${createNewCommentTemplate(isChecked, imgSrc, comment)}
+          ${createNewCommentTemplate(isChecked, imgSrc, comment, isDisabled)}
         </section>
       </div>
     </form>
@@ -208,6 +209,8 @@ export default class Popup extends SmartView {
                 isChecked: "",
                 imgSrc: "",
                 comment: "",
+                isDisabled: false,
+                isDeleting: false,
             }
         );
     }
@@ -225,8 +228,6 @@ export default class Popup extends SmartView {
             this._parseFilmToData(popupFilm)
         );
     }
-
-
 
     update(comments) {
         this._comments = comments.slice();
@@ -283,6 +284,9 @@ export default class Popup extends SmartView {
         evt.preventDefault();
         const deletedCommentId = evt.target.dataset.id;
         this._callback.deleteClick(deletedCommentId);
+        const deleteButton = document.querySelector(`[data-id="${deletedCommentId}"]`);
+        deleteButton.disabled = true;
+        deleteButton.textContent = "Deleting...";
     }
     
     _addCommentEnterHandler(evt) {
@@ -290,6 +294,7 @@ export default class Popup extends SmartView {
             if (this._data.comment === "" || this._data.imgSrc === "") {
                 return;
             }
+            evt.preventDefault();
             const newComment = {
                 id: "0",
                 comment: this._data.comment,
