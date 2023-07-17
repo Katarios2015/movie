@@ -2,7 +2,8 @@ import FilmCardView from "../view/film-card.js";
 import PopupView from "../view/popup-film.js";
 import {render, RenderPosition, replace, remove} from "../utils/render.js";
 import {UserAction, UpdateType} from "../utils/constants.js";
-
+import {isOnline} from "../utils/common.js";
+import {toast} from "../utils/toast.js";
 
 const Mode = {
     DEFAULT: "DEFAULT",
@@ -163,6 +164,7 @@ export default class Movie {
                 this._popupComponent.setDeleteCommentClickHandler(this._handleDeleteCommentClick);
                 this._popupComponent.setAddCommentClickHandler(this._handleAddComment);
                 document.addEventListener("keydown", this._onEscKeyDownHandler);
+               
             });
     }
 
@@ -224,6 +226,11 @@ export default class Movie {
     }
 
     _handleDeleteCommentClick(deletedId) {
+        if (!isOnline()) {
+            this.setViewState(State.ABORTING);
+            toast("You can't delete comment offline");
+            return;
+        }
         this.setViewState(State.DELETING);
         this._changeData(
             UserAction.DELETE_COMMENT,
@@ -252,7 +259,8 @@ export default class Movie {
             newComment,
             this._filmData.id
         );
-
+       
+        
         this._changeData(
             UserAction.UPDATE_MOVIE,
             UpdateType.PATCH,

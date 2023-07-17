@@ -7,7 +7,8 @@ import SortView from "../view/sort.js";
 import LoadView from "../view/loading.js";
 import {UserAction, UpdateType, SortType, ExtraTitle} from "../utils/constants.js";
 import {sortMovieDate, sortMovieRate, render, RenderPosition, remove} from "../utils/render.js";
-
+import {isOnline} from "../utils/common.js";
+import {toast} from "../utils/toast.js";
 import MoviePresenter, {State} from "./movie.js";
 
 const MAX_FILM_COUNT = 5;
@@ -88,6 +89,11 @@ export default class MovieList {
     _handleViewAction(actionType, updateType, update, movieId) {
         switch (actionType) {
         case UserAction.UPDATE_MOVIE:
+            if (!isOnline()) {
+                this._moviePresenter[update.id].setViewState(State.ABORTING);
+                toast("You can't add comment offline");
+                return;
+            }
             this._moviePresenter[update.id].setViewState(State.ADDING);
             this._api.updateMovie(update).then((response) => {
                 this._moviesModel.updateMovie(updateType, response);
@@ -158,15 +164,15 @@ export default class MovieList {
         const filterType = this._filterModel.getFilter();
         const movies = this._moviesModel.getMovies();
         const filtredMovies = siteFilterMap[filterType](movies);
-        const slicedArray = filtredMovies.slice();
+
         switch (this._currentSortType) {
         case SortType.DATE:
             return filtredMovies.sort(sortMovieDate);
         case SortType.RATE:
             return filtredMovies.sort(sortMovieRate);
-        //default:
         }
-        return slicedArray;
+        return filtredMovies;
+        
     }
 
     _renderSort() {
