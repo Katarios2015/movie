@@ -18,14 +18,22 @@ import MoviesModel from "./model/movies.js";
 import CommentsModel from "./model/comments.js";
 import FilterModel from "./model/filter.js";
 
-import Api from "./api.js";
+import Api from "./api/api.js";
+import Store from "./api/store.js";
+import Provider from "./api/provider.js";
+//import {isOnline} from "./utils/common.js";
 
-//const MOCK_FILMS_COUNT = 20;
+const STORE_PREFIX = "cinemaddict-localstorage";
+const STORE_VER = "v1";
+const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
+
 
 const AUTHORIZATION = "Basic 39w3ash4q2";
 const END_POINT = "https://14.ecmascript.pages.academy/cinemaddict"; 
 
 const api = new Api(END_POINT, AUTHORIZATION);
+const store = new Store(STORE_NAME, window.localStorage);
+const apiWithProvider = new Provider(api, store);
 
 const mainNavComponent = new MainNavView ();
 
@@ -82,12 +90,12 @@ const handleFilterMenuClick = (menuItem) => {
 };
 
 const filterPresenter = new MenuFilterPresenter (mainNavContainer, filterModel, moviesModel);
-const movieListPresenter = new MovieListPresenter(siteMainContainer, siteBody, moviesModel, commentsModel, filterModel, api);
+const movieListPresenter = new MovieListPresenter(siteMainContainer, siteBody, moviesModel, commentsModel, filterModel, apiWithProvider);
 
 filterPresenter.init();
 movieListPresenter.init();
 
-api.getMovies()
+apiWithProvider.getMovies()
     .then((movies) => {
         moviesModel.setMovies(UpdateType.INIT, movies);
         render(siteMainContainer, mainNavComponent, RenderPosition.AFTERBEGIN);
@@ -95,7 +103,6 @@ api.getMovies()
         render(siteHeader, new UserRank(generateUseRank(allWhatchedFilms)), RenderPosition.BEFOREEND);
         
         mainNavComponent.setMenuClickHandler(handleFilterMenuClick);
-        
         renderTemplate (footerStat, `<p>${moviesModel.getMovies().length} movies inside</p>`, RenderPosition.BEFOREEND);
     })
     .catch(() => {
@@ -104,3 +111,16 @@ api.getMovies()
         mainNavComponent.setMenuClickHandler(handleFilterMenuClick);
         console.log("error load");
     });
+
+window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js");
+});
+
+window.addEventListener("online", () => {
+    document.title = document.title.replace(" [offline]", "");
+    apiWithProvider.sync();
+});
+  
+window.addEventListener("offline", () => {
+    document.title += " [offline]";
+});

@@ -96,6 +96,10 @@ export default class Observer {
     }
 }
 
+export const isOnline = () => {
+    return window.navigator.onLine;
+};
+
 /*duplicates =  watchedGenres.filter((number, index, numbers) => {
     //console.log(number); // number - элемент массива
     //console.log(index); // index - индекс элемента массива

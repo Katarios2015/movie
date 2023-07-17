@@ -1,8 +1,8 @@
 import {FilterType} from "./constants.js" ;
 
 export const siteFilterMap = {
-    [FilterType.ALL]: (mockFilms) => mockFilms,
-    [FilterType.WATCHLIST]: (mockFilms) => mockFilms.filter((film) => film.userDetails.watchlist),
-    [FilterType.HISTORY]:  (mockFilms) => mockFilms.filter((film) => film.userDetails.alreadyWatched),
-    [FilterType.FAVORITES]:  (mockFilms) => mockFilms.filter((film) => film.userDetails.favorite),
+    [FilterType.ALL]: (movies) => movies.slice(),
+    [FilterType.WATCHLIST]: (movies) => movies.filter((film) => film.userDetails.watchlist),
+    [FilterType.HISTORY]:  (movies) => movies.filter((film) => film.userDetails.alreadyWatched),
+    [FilterType.FAVORITES]:  (movies) => movies.filter((film) => film.userDetails.favorite),
 };

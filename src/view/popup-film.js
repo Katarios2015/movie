@@ -232,8 +232,6 @@ export default class Popup extends SmartView {
     update(comments) {
         this._comments = comments.slice();
         this.updateElement();
-        const scrollTop = this.getElement().scrollTop;
-        this.getElement().scrollTop = scrollTop;
     }
 
 
